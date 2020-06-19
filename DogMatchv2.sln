@@ -3,11 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30114.105
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DogMatch.Server", "DogMatch\Server\DogMatch.Server.csproj", "{7AA3E33F-A2A8-42D3-ADF6-9FA6D45B836E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DogMatch.Server", "DogMatch\Server\DogMatch.Server.csproj", "{7AA3E33F-A2A8-42D3-ADF6-9FA6D45B836E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DogMatch.Client", "DogMatch\Client\DogMatch.Client.csproj", "{01720A25-C35E-4262-ABD7-CEE1A73F01BF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DogMatch.Client", "DogMatch\Client\DogMatch.Client.csproj", "{01720A25-C35E-4262-ABD7-CEE1A73F01BF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DogMatch.Shared", "DogMatch\Shared\DogMatch.Shared.csproj", "{A3E8487D-94A0-4C9C-8DB8-9BD36494D9D4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DogMatch.Shared", "DogMatch\Shared\DogMatch.Shared.csproj", "{A3E8487D-94A0-4C9C-8DB8-9BD36494D9D4}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

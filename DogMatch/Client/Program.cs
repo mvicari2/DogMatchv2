@@ -1,13 +1,11 @@
 using System;
 using System.Net.Http;
-using System.Collections.Generic;
 using System.Threading.Tasks;
-using System.Text;
 using Microsoft.AspNetCore.Components.WebAssembly.Authentication;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
+using Blazor.FileReader;
+using DogMatch.Client.Services;
 
 namespace DogMatch.Client
 {
@@ -25,6 +23,10 @@ namespace DogMatch.Client
             builder.Services.AddTransient(sp => sp.GetRequiredService<IHttpClientFactory>().CreateClient("DogMatch.ServerAPI"));
 
             builder.Services.AddApiAuthorization();
+
+            builder.Services.AddFileReaderService(options => options.UseWasmSharedBuffer = true);
+
+            builder.Services.AddSingleton<DogState>();
 
             await builder.Build().RunAsync();
         }

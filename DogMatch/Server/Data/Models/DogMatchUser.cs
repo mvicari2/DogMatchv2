@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Identity;
 
-namespace DogMatch.Server.Models
+namespace DogMatch.Server.Data.Models
 {
     public class DogMatchUser : IdentityUser
     {
@@ -14,7 +14,7 @@ namespace DogMatch.Server.Models
             Addresses = new HashSet<Addresses>();
             AddressesCreatedByUser = new HashSet<Addresses>();
             AddressesModifiedByUser = new HashSet<Addresses>();
-            AlbumImages = new HashSet<Album>();
+            AlbumImages = new HashSet<Images>();
             BiographiesCreatedByUser = new HashSet<Biography>();
             BiographiesModifiedByUser = new HashSet<Biography>();
             TemperamentsCreatedByUser = new HashSet<Temperament>();
@@ -39,7 +39,7 @@ namespace DogMatch.Server.Models
         public virtual ICollection<Addresses> Addresses { get; set; }
         public virtual ICollection<Addresses> AddressesCreatedByUser { get; set; }
         public virtual ICollection<Addresses> AddressesModifiedByUser { get; set; }
-        public virtual ICollection<Album> AlbumImages { get; set; }
+        public virtual ICollection<Images> AlbumImages { get; set; }
         public virtual ICollection<Biography> BiographiesCreatedByUser { get; set; }
         public virtual ICollection<Biography> BiographiesModifiedByUser { get; set; }
         public virtual ICollection<Temperament> TemperamentsCreatedByUser { get; set; }

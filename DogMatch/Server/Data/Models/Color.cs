@@ -1,7 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 
-namespace DogMatch.Server.Models
+namespace DogMatch.Server.Data.Models
 {
     public class Color
     {

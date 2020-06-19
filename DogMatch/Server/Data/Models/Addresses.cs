@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
 
-namespace DogMatch.Server.Models
+namespace DogMatch.Server.Data.Models
 {
     public class Addresses
     {

@@ -1,5 +1,5 @@
 ﻿using AutoMapper.Mappers;
-using DogMatch.Server.Models;
+using DogMatch.Server.Data.Models;
 using IdentityServer4.EntityFramework.Options;
 using Microsoft.AspNetCore.ApiAuthorization.IdentityServer;
 using Microsoft.EntityFrameworkCore;
@@ -19,11 +19,11 @@ namespace DogMatch.Server.Data
         {
         }
 
-        public DbSet<Addresses> Addresses { get; set; }
-        public DbSet<Album> Album { get; set; }
+        public DbSet<Addresses> Addresses { get; set; }        
         public DbSet<Biography> Biography { get; set; }
         public DbSet<Color> Color { get; set; }
         public DbSet<Dogs> Dogs { get; set; }
+        public DbSet<Images> Images { get; set; }
         public DbSet<Temperament> Temperament { get; set; }
         public DbSet<DogMatchUser> DogMatchUser { get; set; }
 
@@ -89,48 +89,7 @@ namespace DogMatch.Server.Data
                     .HasConstraintName("FK_Addresses_ModifiedByUser");
 
                 entity.ToTable("Addresses");
-            });
-
-            modelBuilder.Entity<Album>(entity =>
-            {
-                entity.HasKey(e => e.Id);
-                entity.Property(e => e.Id)
-                    .ValueGeneratedOnAdd()
-                    .HasColumnType("int");
-                entity.Property(e => e.DogId)
-                    .IsRequired()
-                    .HasColumnType("int");
-                entity.Property(e => e.Filename)
-                    .HasColumnType("nvarchar(255)");
-                entity.Property(e => e.Image)
-                    .HasColumnType("varbinary(max)");
-                entity.Property(e => e.IsDeleted)
-                    .HasColumnType("bit");
-                entity.Property(e => e.Created)
-                    .HasColumnType("datetime");
-                entity.Property(e => e.CreatedBy)
-                    .HasColumnType("nvarchar(450)");
-                entity.Property(e => e.AlbumGUID)
-                    .ValueGeneratedOnAdd()
-                    .HasDefaultValueSql("NEWID()");
-
-                entity.HasIndex("DogId");
-                entity.HasIndex("CreatedBy");
-
-                entity.HasOne(e => e.Dog)
-                    .WithMany(e => e.AlbumImages)
-                    .HasPrincipalKey(e => e.Id)
-                    .HasForeignKey(e => e.DogId)
-                    .HasConstraintName("FK_AlbumImage_Dog");
-
-                entity.HasOne(e => e.CreatedByUser)
-                    .WithMany(e => e.AlbumImages)
-                    .HasPrincipalKey(e => e.Id)
-                    .HasForeignKey(e => e.CreatedBy)
-                    .HasConstraintName("FK_Album_CreatedByUser");
-
-                entity.ToTable("Album");
-            });
+            });            
 
             modelBuilder.Entity<Biography>(entity =>
             {
@@ -228,8 +187,8 @@ namespace DogMatch.Server.Data
                     .HasColumnType("char(1)");
                 entity.Property(e => e.Weight)
                     .HasColumnType("int");
-                entity.Property(e => e.ProfileImage)
-                    .HasColumnType("varbinary(max)");
+                entity.Property(e => e.ProfileImageId)
+                    .HasColumnType("int");
                 entity.Property(e => e.TemperamentId)
                     .HasColumnType("int");
                 entity.Property(e => e.BiographyId)
@@ -271,6 +230,13 @@ namespace DogMatch.Server.Data
                     .HasForeignKey<Dogs>(e => e.BiographyId)
                     .HasConstraintName("FK_Dog_Biography");
 
+                entity.HasOne(e => e.ProfileImage)
+                    .WithOne(e => e.ProfileImageDog)
+                    .HasPrincipalKey<Images>(e => e.Id)
+                    .HasForeignKey<Dogs>(e => e.ProfileImageId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_Dog_ProfileImage");
+
                 entity.HasOne(e => e.Temperament)
                     .WithOne(e => e.Dog)
                     .HasPrincipalKey<Temperament>(e => e.Id)
@@ -296,6 +262,47 @@ namespace DogMatch.Server.Data
                     .HasConstraintName("FK_Dogs_ModifiedByUser");
 
                 entity.ToTable("Dogs");
+            });
+
+            modelBuilder.Entity<Images>(entity =>
+            {
+                entity.HasKey(e => e.Id);
+                entity.Property(e => e.Id)
+                    .ValueGeneratedOnAdd()
+                    .HasColumnType("int");
+                entity.Property(e => e.DogId)
+                    .IsRequired()
+                    .HasColumnType("int");
+                entity.Property(e => e.Filename)
+                    .HasColumnType("nvarchar(max)");
+                entity.Property(e => e.IsProfileImage)
+                    .HasColumnType("bit");
+                entity.Property(e => e.IsDeleted)
+                    .HasColumnType("bit");
+                entity.Property(e => e.Created)
+                    .HasColumnType("datetime");
+                entity.Property(e => e.CreatedBy)
+                    .HasColumnType("nvarchar(450)");
+                entity.Property(e => e.ImageGUID)
+                    .ValueGeneratedOnAdd()
+                    .HasDefaultValueSql("NEWID()");
+
+                entity.HasIndex("DogId");
+                entity.HasIndex("CreatedBy");
+
+                entity.HasOne(e => e.Dog)
+                    .WithMany(e => e.AlbumImages)
+                    .HasPrincipalKey(e => e.Id)
+                    .HasForeignKey(e => e.DogId)
+                    .HasConstraintName("FK_AlbumImage_Dog");
+
+                entity.HasOne(e => e.CreatedByUser)
+                    .WithMany(e => e.AlbumImages)
+                    .HasPrincipalKey(e => e.Id)
+                    .HasForeignKey(e => e.CreatedBy)
+                    .HasConstraintName("FK_Album_CreatedByUser");
+
+                entity.ToTable("Images");
             });
 
             modelBuilder.Entity<Temperament>(entity =>

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace DogMatch.Server.Models
+namespace DogMatch.Server.Data.Models
 {
     public class Biography
     {

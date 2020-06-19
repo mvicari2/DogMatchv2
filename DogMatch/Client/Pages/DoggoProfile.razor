@@ -1,0 +1,56 @@
+﻿@page "/DoggoProfile/{id:int}"
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Components.WebAssembly.Authentication
+@using Microsoft.AspNetCore.Components.Authorization
+@using DogMatch.Client.Services
+
+@attribute [Authorize]
+@inject DogState state
+
+<MatH2>@state.dog.Name</MatH2>
+<br />
+
+@if (state.dog == null)
+{
+    <div class="col-lg-12">
+        <Flow Size="200px" Color="#003366" Center="true" />
+    </div>
+}
+
+<RadzenCard Style="width:90%;margin-bottom: 20px;">
+    <div class="row">
+        <div class="col-md-6">
+            <img src="@state.dog.ProfileImage" style="max-width:200px;height:auto" />
+            <br />
+            <div>Name:</div>
+            <b>@state.dog.Name</b>
+            <div style="margin-top:20px">Breed:</div>
+            <b>@state.dog.Breed</b>
+
+        </div>
+        <div class="col-md-6">
+            <div>Gender:</div>
+            <b>@state.dog.Gender</b>
+            <div style="margin-top:20px">Weight:</div>
+            <b>@state.dog.Weight</b>
+            <div style="margin-top:20px">Birthday/Age</div>
+            @if (state.dog.Birthday.HasValue)
+            {
+                <b>@state.GetBirthday(state.dog.Birthday) - @state.dog.Age</b>
+            }
+
+            <div style="margin-top:20px">Owner</div>
+            <b>@state.dog.Owner</b>
+        </div>
+    </div>
+</RadzenCard>
+
+@code {
+    [Parameter]
+    public int Id { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await state.GetDoggo(Id);
+    }
+}

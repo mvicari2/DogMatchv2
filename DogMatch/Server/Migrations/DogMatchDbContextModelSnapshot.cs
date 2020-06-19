@@ -15,11 +15,11 @@ namespace DogMatch.Server.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "3.1.3")
+                .HasAnnotation("ProductVersion", "3.1.4")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-            modelBuilder.Entity("DogMatch.Server.Models.Addresses", b =>
+            modelBuilder.Entity("DogMatch.Server.Data.Models.Addresses", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -79,46 +79,7 @@ namespace DogMatch.Server.Migrations
                     b.ToTable("Addresses");
                 });
 
-            modelBuilder.Entity("DogMatch.Server.Models.Album", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<Guid>("AlbumGUID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier")
-                        .HasDefaultValueSql("NEWID()");
-
-                    b.Property<DateTime>("Created")
-                        .HasColumnType("datetime");
-
-                    b.Property<string>("CreatedBy")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<int>("DogId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Filename")
-                        .HasColumnType("nvarchar(255)");
-
-                    b.Property<byte[]>("Image")
-                        .HasColumnType("varbinary(max)");
-
-                    b.Property<bool?>("IsDeleted")
-                        .HasColumnType("bit");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CreatedBy");
-
-                    b.HasIndex("DogId");
-
-                    b.ToTable("Album");
-                });
-
-            modelBuilder.Entity("DogMatch.Server.Models.Biography", b =>
+            modelBuilder.Entity("DogMatch.Server.Data.Models.Biography", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -175,7 +136,7 @@ namespace DogMatch.Server.Migrations
                     b.ToTable("Biography");
                 });
 
-            modelBuilder.Entity("DogMatch.Server.Models.Color", b =>
+            modelBuilder.Entity("DogMatch.Server.Data.Models.Color", b =>
                 {
                     b.Property<int>("DogId")
                         .HasColumnType("int");
@@ -199,7 +160,7 @@ namespace DogMatch.Server.Migrations
                     b.ToTable("Color");
                 });
 
-            modelBuilder.Entity("DogMatch.Server.Models.DogMatchUser", b =>
+            modelBuilder.Entity("DogMatch.Server.Data.Models.DogMatchUser", b =>
                 {
                     b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)");
@@ -306,7 +267,7 @@ namespace DogMatch.Server.Migrations
                     b.ToTable("AspNetUsers");
                 });
 
-            modelBuilder.Entity("DogMatch.Server.Models.Dogs", b =>
+            modelBuilder.Entity("DogMatch.Server.Data.Models.Dogs", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -337,7 +298,6 @@ namespace DogMatch.Server.Migrations
                         .HasDefaultValueSql("NEWID()");
 
                     b.Property<string>("Gender")
-                        .IsRequired()
                         .HasColumnType("char(1)");
 
                     b.Property<bool?>("IsDeleted")
@@ -356,13 +316,13 @@ namespace DogMatch.Server.Migrations
                     b.Property<string>("OwnerId")
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<byte[]>("ProfileImage")
-                        .HasColumnType("varbinary(max)");
+                    b.Property<int?>("ProfileImageId")
+                        .HasColumnType("int");
 
                     b.Property<int?>("TemperamentId")
                         .HasColumnType("int");
 
-                    b.Property<int>("Weight")
+                    b.Property<int?>("Weight")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
@@ -379,6 +339,10 @@ namespace DogMatch.Server.Migrations
 
                     b.HasIndex("OwnerId");
 
+                    b.HasIndex("ProfileImageId")
+                        .IsUnique()
+                        .HasFilter("[ProfileImageId] IS NOT NULL");
+
                     b.HasIndex("TemperamentId")
                         .IsUnique()
                         .HasFilter("[TemperamentId] IS NOT NULL");
@@ -386,7 +350,47 @@ namespace DogMatch.Server.Migrations
                     b.ToTable("Dogs");
                 });
 
-            modelBuilder.Entity("DogMatch.Server.Models.Temperament", b =>
+            modelBuilder.Entity("DogMatch.Server.Data.Models.Images", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<DateTime>("Created")
+                        .HasColumnType("datetime");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int?>("DogId")
+                        .IsRequired()
+                        .HasColumnType("int");
+
+                    b.Property<string>("Filename")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("ImageGUID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier")
+                        .HasDefaultValueSql("NEWID()");
+
+                    b.Property<bool?>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<bool?>("IsProfileImage")
+                        .HasColumnType("bit");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CreatedBy");
+
+                    b.HasIndex("DogId");
+
+                    b.ToTable("Images");
+                });
+
+            modelBuilder.Entity("DogMatch.Server.Data.Models.Temperament", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -754,19 +758,19 @@ namespace DogMatch.Server.Migrations
                     b.ToTable("AspNetUserTokens");
                 });
 
-            modelBuilder.Entity("DogMatch.Server.Models.Addresses", b =>
+            modelBuilder.Entity("DogMatch.Server.Data.Models.Addresses", b =>
                 {
-                    b.HasOne("DogMatch.Server.Models.DogMatchUser", "CreatedByUser")
+                    b.HasOne("DogMatch.Server.Data.Models.DogMatchUser", "CreatedByUser")
                         .WithMany("AddressesCreatedByUser")
                         .HasForeignKey("CreatedBy")
                         .HasConstraintName("FK_Addresses_CreatedByUser");
 
-                    b.HasOne("DogMatch.Server.Models.DogMatchUser", "ModifiedByUser")
+                    b.HasOne("DogMatch.Server.Data.Models.DogMatchUser", "ModifiedByUser")
                         .WithMany("AddressesModifiedByUser")
                         .HasForeignKey("LastModifiedBy")
                         .HasConstraintName("FK_Addresses_ModifiedByUser");
 
-                    b.HasOne("DogMatch.Server.Models.DogMatchUser", "User")
+                    b.HasOne("DogMatch.Server.Data.Models.DogMatchUser", "User")
                         .WithMany("Addresses")
                         .HasForeignKey("UserId")
                         .HasConstraintName("FK_Addresses_User")
@@ -774,37 +778,22 @@ namespace DogMatch.Server.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("DogMatch.Server.Models.Album", b =>
+            modelBuilder.Entity("DogMatch.Server.Data.Models.Biography", b =>
                 {
-                    b.HasOne("DogMatch.Server.Models.DogMatchUser", "CreatedByUser")
-                        .WithMany("AlbumImages")
-                        .HasForeignKey("CreatedBy")
-                        .HasConstraintName("FK_Album_CreatedByUser");
-
-                    b.HasOne("DogMatch.Server.Models.Dogs", "Dog")
-                        .WithMany("AlbumImages")
-                        .HasForeignKey("DogId")
-                        .HasConstraintName("FK_AlbumImage_Dog")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("DogMatch.Server.Models.Biography", b =>
-                {
-                    b.HasOne("DogMatch.Server.Models.DogMatchUser", "CreatedByUser")
+                    b.HasOne("DogMatch.Server.Data.Models.DogMatchUser", "CreatedByUser")
                         .WithMany("BiographiesCreatedByUser")
                         .HasForeignKey("CreatedBy")
                         .HasConstraintName("FK_Biographies_CreatedByUser");
 
-                    b.HasOne("DogMatch.Server.Models.DogMatchUser", "ModifiedByUser")
+                    b.HasOne("DogMatch.Server.Data.Models.DogMatchUser", "ModifiedByUser")
                         .WithMany("BiographiesModifiedByUser")
                         .HasForeignKey("LastModifiedBy")
                         .HasConstraintName("FK_Biographies_ModifiedByUser");
                 });
 
-            modelBuilder.Entity("DogMatch.Server.Models.Color", b =>
+            modelBuilder.Entity("DogMatch.Server.Data.Models.Color", b =>
                 {
-                    b.HasOne("DogMatch.Server.Models.Dogs", "Dog")
+                    b.HasOne("DogMatch.Server.Data.Models.Dogs", "Dog")
                         .WithMany("Colors")
                         .HasForeignKey("DogId")
                         .HasConstraintName("FK_Color_Dog")
@@ -812,55 +801,75 @@ namespace DogMatch.Server.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("DogMatch.Server.Models.DogMatchUser", b =>
+            modelBuilder.Entity("DogMatch.Server.Data.Models.DogMatchUser", b =>
                 {
-                    b.HasOne("DogMatch.Server.Models.Addresses", "PrimaryAddress")
+                    b.HasOne("DogMatch.Server.Data.Models.Addresses", "PrimaryAddress")
                         .WithOne("PrimaryAddressUser")
-                        .HasForeignKey("DogMatch.Server.Models.DogMatchUser", "PrimaryAddressId")
+                        .HasForeignKey("DogMatch.Server.Data.Models.DogMatchUser", "PrimaryAddressId")
                         .HasConstraintName("FK_User_PrimaryAddress");
                 });
 
-            modelBuilder.Entity("DogMatch.Server.Models.Dogs", b =>
+            modelBuilder.Entity("DogMatch.Server.Data.Models.Dogs", b =>
                 {
-                    b.HasOne("DogMatch.Server.Models.Addresses", "Address")
+                    b.HasOne("DogMatch.Server.Data.Models.Addresses", "Address")
                         .WithMany("Dogs")
                         .HasForeignKey("AddressId")
                         .HasConstraintName("FK_Dogs_Address");
 
-                    b.HasOne("DogMatch.Server.Models.Biography", "Biography")
+                    b.HasOne("DogMatch.Server.Data.Models.Biography", "Biography")
                         .WithOne("Dog")
-                        .HasForeignKey("DogMatch.Server.Models.Dogs", "BiographyId")
+                        .HasForeignKey("DogMatch.Server.Data.Models.Dogs", "BiographyId")
                         .HasConstraintName("FK_Dog_Biography");
 
-                    b.HasOne("DogMatch.Server.Models.DogMatchUser", "CreatedByUser")
+                    b.HasOne("DogMatch.Server.Data.Models.DogMatchUser", "CreatedByUser")
                         .WithMany("DogsCreatedByUser")
                         .HasForeignKey("CreatedBy")
                         .HasConstraintName("FK_Dogs_CreatedByUser");
 
-                    b.HasOne("DogMatch.Server.Models.DogMatchUser", "ModifiedByUser")
+                    b.HasOne("DogMatch.Server.Data.Models.DogMatchUser", "ModifiedByUser")
                         .WithMany("DogsModifiedByUser")
                         .HasForeignKey("LastModifiedBy")
                         .HasConstraintName("FK_Dogs_ModifiedByUser");
 
-                    b.HasOne("DogMatch.Server.Models.DogMatchUser", "Owner")
+                    b.HasOne("DogMatch.Server.Data.Models.DogMatchUser", "Owner")
                         .WithMany("Dogs")
                         .HasForeignKey("OwnerId")
                         .HasConstraintName("FK_Dogs_Owner");
 
-                    b.HasOne("DogMatch.Server.Models.Temperament", "Temperament")
+                    b.HasOne("DogMatch.Server.Data.Models.Images", "ProfileImage")
+                        .WithOne("ProfileImageDog")
+                        .HasForeignKey("DogMatch.Server.Data.Models.Dogs", "ProfileImageId")
+                        .HasConstraintName("FK_Dog_ProfileImage");
+
+                    b.HasOne("DogMatch.Server.Data.Models.Temperament", "Temperament")
                         .WithOne("Dog")
-                        .HasForeignKey("DogMatch.Server.Models.Dogs", "TemperamentId")
+                        .HasForeignKey("DogMatch.Server.Data.Models.Dogs", "TemperamentId")
                         .HasConstraintName("FK_Dog_Temperament");
                 });
 
-            modelBuilder.Entity("DogMatch.Server.Models.Temperament", b =>
+            modelBuilder.Entity("DogMatch.Server.Data.Models.Images", b =>
                 {
-                    b.HasOne("DogMatch.Server.Models.DogMatchUser", "CreatedByUser")
+                    b.HasOne("DogMatch.Server.Data.Models.DogMatchUser", "CreatedByUser")
+                        .WithMany("AlbumImages")
+                        .HasForeignKey("CreatedBy")
+                        .HasConstraintName("FK_Album_CreatedByUser");
+
+                    b.HasOne("DogMatch.Server.Data.Models.Dogs", "Dog")
+                        .WithMany("AlbumImages")
+                        .HasForeignKey("DogId")
+                        .HasConstraintName("FK_AlbumImage_Dog")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("DogMatch.Server.Data.Models.Temperament", b =>
+                {
+                    b.HasOne("DogMatch.Server.Data.Models.DogMatchUser", "CreatedByUser")
                         .WithMany("TemperamentsCreatedByUser")
                         .HasForeignKey("CreatedBy")
                         .HasConstraintName("FK_Temperaments_CreatedByUser");
 
-                    b.HasOne("DogMatch.Server.Models.DogMatchUser", "ModifiedByUser")
+                    b.HasOne("DogMatch.Server.Data.Models.DogMatchUser", "ModifiedByUser")
                         .WithMany("TemperamentsModifiedByUser")
                         .HasForeignKey("LastModifiedBy")
                         .HasConstraintName("FK_Temperaments_ModifiedByUser");
@@ -877,7 +886,7 @@ namespace DogMatch.Server.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
                 {
-                    b.HasOne("DogMatch.Server.Models.DogMatchUser", null)
+                    b.HasOne("DogMatch.Server.Data.Models.DogMatchUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -886,7 +895,7 @@ namespace DogMatch.Server.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
                 {
-                    b.HasOne("DogMatch.Server.Models.DogMatchUser", null)
+                    b.HasOne("DogMatch.Server.Data.Models.DogMatchUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -901,7 +910,7 @@ namespace DogMatch.Server.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("DogMatch.Server.Models.DogMatchUser", null)
+                    b.HasOne("DogMatch.Server.Data.Models.DogMatchUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -910,7 +919,7 @@ namespace DogMatch.Server.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
                 {
-                    b.HasOne("DogMatch.Server.Models.DogMatchUser", null)
+                    b.HasOne("DogMatch.Server.Data.Models.DogMatchUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)

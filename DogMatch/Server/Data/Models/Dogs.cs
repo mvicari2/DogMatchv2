@@ -1,22 +1,22 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace DogMatch.Server.Models
+namespace DogMatch.Server.Data.Models
 {
     public class Dogs
     {
         public Dogs()
         {
             Colors = new HashSet<Color>();
-            AlbumImages = new HashSet<Album>();
+            AlbumImages = new HashSet<Images>();
         }
         public int Id { get; set; }
         public string Name { get; set; }
         public string Breed { get; set; }
         public DateTime? Birthday { get; set; }
-        public char Gender { get; set; }
-        public int Weight { get; set; }
-        public byte[] ProfileImage { get; set; }
+        public char? Gender { get; set; }
+        public int? Weight { get; set; }
+        public int? ProfileImageId { get; set; }
         public int? TemperamentId { get; set; }
         public int? BiographyId { get; set; }
         public string OwnerId { get; set; }
@@ -27,6 +27,7 @@ namespace DogMatch.Server.Models
         public DateTime? LastModified { get; set; }
         public string LastModifiedBy { get; set; }
         public Guid DogGUID { get; set; }
+        public virtual Images ProfileImage { get; set; }
         public virtual Biography Biography { get; set; }
         public virtual Temperament Temperament { get; set; }
         public virtual DogMatchUser Owner { get; set; }
@@ -34,6 +35,6 @@ namespace DogMatch.Server.Models
         public virtual DogMatchUser ModifiedByUser { get; set; }
         public virtual Addresses Address { get; set; }        
         public virtual ICollection<Color> Colors { get; set; }
-        public virtual ICollection<Album> AlbumImages { get; set; }
+        public virtual ICollection<Images> AlbumImages { get; set; }
     }
 }

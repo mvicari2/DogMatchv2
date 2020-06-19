@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace DogMatch.Server.Migrations
 {
-    public partial class DogMatchInitialSchema : Migration
+    public partial class DogMatchDbInitial : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -353,9 +353,9 @@ namespace DogMatch.Server.Migrations
                     Name = table.Column<string>(type: "nvarchar(200)", nullable: false),
                     Breed = table.Column<string>(type: "nvarchar(200)", nullable: true),
                     Birthday = table.Column<DateTime>(type: "datetime", nullable: true),
-                    Gender = table.Column<string>(type: "char(1)", nullable: false),
-                    Weight = table.Column<int>(type: "int", nullable: false),
-                    ProfileImage = table.Column<byte[]>(type: "varbinary(max)", nullable: true),
+                    Gender = table.Column<string>(type: "char(1)", nullable: true),
+                    Weight = table.Column<int>(type: "int", nullable: true),
+                    ProfileImageId = table.Column<int>(type: "int", nullable: true),
                     TemperamentId = table.Column<int>(type: "int", nullable: true),
                     BiographyId = table.Column<int>(type: "int", nullable: true),
                     OwnerId = table.Column<string>(type: "nvarchar(450)", nullable: true),
@@ -409,37 +409,6 @@ namespace DogMatch.Server.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Album",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    DogId = table.Column<int>(type: "int", nullable: false),
-                    Filename = table.Column<string>(type: "nvarchar(255)", nullable: true),
-                    Image = table.Column<byte[]>(type: "varbinary(max)", nullable: true),
-                    IsDeleted = table.Column<bool>(type: "bit", nullable: true),
-                    Created = table.Column<DateTime>(type: "datetime", nullable: false),
-                    CreatedBy = table.Column<string>(type: "nvarchar(450)", nullable: true),
-                    AlbumGUID = table.Column<Guid>(nullable: false, defaultValueSql: "NEWID()")
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Album", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Album_CreatedByUser",
-                        column: x => x.CreatedBy,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_AlbumImage_Dog",
-                        column: x => x.DogId,
-                        principalTable: "Dogs",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "Color",
                 columns: table => new
                 {
@@ -460,6 +429,37 @@ namespace DogMatch.Server.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "Images",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    DogId = table.Column<int>(type: "int", nullable: false),
+                    Filename = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    IsProfileImage = table.Column<bool>(type: "bit", nullable: true),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: true),
+                    Created = table.Column<DateTime>(type: "datetime", nullable: false),
+                    CreatedBy = table.Column<string>(type: "nvarchar(450)", nullable: true),
+                    ImageGUID = table.Column<Guid>(nullable: false, defaultValueSql: "NEWID()")
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Images", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Album_CreatedByUser",
+                        column: x => x.CreatedBy,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_AlbumImage_Dog",
+                        column: x => x.DogId,
+                        principalTable: "Dogs",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_Addresses_CreatedBy",
                 table: "Addresses",
@@ -474,16 +474,6 @@ namespace DogMatch.Server.Migrations
                 name: "IX_Addresses_UserId",
                 table: "Addresses",
                 column: "UserId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Album_CreatedBy",
-                table: "Album",
-                column: "CreatedBy");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Album_DogId",
-                table: "Album",
-                column: "DogId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
@@ -586,11 +576,28 @@ namespace DogMatch.Server.Migrations
                 column: "OwnerId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Dogs_ProfileImageId",
+                table: "Dogs",
+                column: "ProfileImageId",
+                unique: true,
+                filter: "[ProfileImageId] IS NOT NULL");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Dogs_TemperamentId",
                 table: "Dogs",
                 column: "TemperamentId",
                 unique: true,
                 filter: "[TemperamentId] IS NOT NULL");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Images_CreatedBy",
+                table: "Images",
+                column: "CreatedBy");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Images_DogId",
+                table: "Images",
+                column: "DogId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_PersistedGrants_Expiration",
@@ -626,6 +633,14 @@ namespace DogMatch.Server.Migrations
                 principalTable: "Addresses",
                 principalColumn: "Id",
                 onDelete: ReferentialAction.Restrict);
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_Dog_ProfileImage",
+                table: "Dogs",
+                column: "ProfileImageId",
+                principalTable: "Images",
+                principalColumn: "Id",
+                onDelete: ReferentialAction.Restrict);
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -642,8 +657,45 @@ namespace DogMatch.Server.Migrations
                 name: "FK_Addresses_User",
                 table: "Addresses");
 
-            migrationBuilder.DropTable(
-                name: "Album");
+            migrationBuilder.DropForeignKey(
+                name: "FK_Biographies_CreatedByUser",
+                table: "Biography");
+
+            migrationBuilder.DropForeignKey(
+                name: "FK_Biographies_ModifiedByUser",
+                table: "Biography");
+
+            migrationBuilder.DropForeignKey(
+                name: "FK_Dogs_CreatedByUser",
+                table: "Dogs");
+
+            migrationBuilder.DropForeignKey(
+                name: "FK_Dogs_ModifiedByUser",
+                table: "Dogs");
+
+            migrationBuilder.DropForeignKey(
+                name: "FK_Dogs_Owner",
+                table: "Dogs");
+
+            migrationBuilder.DropForeignKey(
+                name: "FK_Album_CreatedByUser",
+                table: "Images");
+
+            migrationBuilder.DropForeignKey(
+                name: "FK_Temperaments_CreatedByUser",
+                table: "Temperament");
+
+            migrationBuilder.DropForeignKey(
+                name: "FK_Temperaments_ModifiedByUser",
+                table: "Temperament");
+
+            migrationBuilder.DropForeignKey(
+                name: "FK_Dogs_Address",
+                table: "Dogs");
+
+            migrationBuilder.DropForeignKey(
+                name: "FK_AlbumImage_Dog",
+                table: "Images");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoleClaims");
@@ -673,19 +725,22 @@ namespace DogMatch.Server.Migrations
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
+                name: "AspNetUsers");
+
+            migrationBuilder.DropTable(
+                name: "Addresses");
+
+            migrationBuilder.DropTable(
                 name: "Dogs");
 
             migrationBuilder.DropTable(
                 name: "Biography");
 
             migrationBuilder.DropTable(
+                name: "Images");
+
+            migrationBuilder.DropTable(
                 name: "Temperament");
-
-            migrationBuilder.DropTable(
-                name: "AspNetUsers");
-
-            migrationBuilder.DropTable(
-                name: "Addresses");
         }
     }
 }
