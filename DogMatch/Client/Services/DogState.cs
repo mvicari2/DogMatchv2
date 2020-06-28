@@ -44,7 +44,7 @@ namespace DogMatch.Client.Services
 
         public async Task CreateDoggo()
         {
-            var response = await _http.PostAsJsonAsync<Dog>("api/Doggo/", dog);
+            var response = await _http.PostAsJsonAsync("api/Doggo/", dog);
             var newDog = await response.Content.ReadFromJsonAsync<Dog>();            
            
             dog.Id = newDog.Id;            

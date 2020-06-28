@@ -1,25 +1,40 @@
 ﻿<!DOCTYPE html>
-@if (IsSectionDefined("scripts"))
-{
-    RenderSection("scripts");
-}
-<html>
-
+<html lang="en">
 <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-    <title>@ViewBag.Title</title>
-    <link href="~/css/bootstrap/bootstrap.min.css" rel="stylesheet" />
-    <link href="~/css/app.css" rel="stylesheet" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - DogMatch</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/open-iconic/1.1.1/font/css/open-iconic-bootstrap.min.css" />
 </head>
-
 <body>
-    <partial    
-    <div class="main">
-        <div class="content px-4">
-            @RenderBody()
-        </div>
-    </div>
-</body>
+    <header>
+        <partial name="_LoginPartial" />
+    </header>
 
+    <div class="container">
+        <main role="main" class="pb-3">
+            @RenderBody()
+        </main>
+    </div>
+
+    <footer 
+            class="fixed-bottom" 
+            style="display: block; padding: 0px; height: 20px; width: 100%;">
+        <div style="background-color: #003366; border-top: 1px solid #E7E7E7; border-top: 1px solid #E7E7E7; text-align: center; padding: 0px; position: fixed; left: 0; bottom: 0; height: 20px; width: 100%; font-size: small; color: white;">
+            &copy; 2020 - DogMatch v0.1.2
+        </div>
+    </footer>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    @*<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>*@
+    <script src="~/lib/bootstrap/dist/js/bootstrap.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+
+    @if (IsSectionDefined("scripts"))
+    {
+        RenderSection("scripts", required: true);
+    }
+</body>
 </html>

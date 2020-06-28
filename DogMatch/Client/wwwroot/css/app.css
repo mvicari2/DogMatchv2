@@ -4,6 +4,11 @@ html, body {
     font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
 }
 
+body {
+    padding-top: 50px;
+    padding-bottom: 20px;
+}
+
 a, .btn-link {
     color: #0366d6;
 }
@@ -14,7 +19,7 @@ a, .btn-link {
     border-color: #1861ac;
 }
 
-app {
+app {    
     position: relative;
     display: flex;
     flex-direction: column;
