@@ -12,6 +12,7 @@ using AutoMapper;
 using DogMatch.Server.Infrastructure;
 using Microsoft.Extensions.FileProviders;
 using System.IO;
+using DogMatch.Server.Data.Repositories;
 
 namespace DogMatch.Server
 {
@@ -48,6 +49,8 @@ namespace DogMatch.Server
 
             services.AddScoped<IDogService, DogService>();
             services.AddScoped<IImageService, ImageService>();
+            services.AddScoped<ITemperamentService, TemperamentService>();
+            services.AddScoped<ITemperamentRepository, TemperamentRepository>();
 
             var mappingConfig = new MapperConfiguration(mc =>
             {

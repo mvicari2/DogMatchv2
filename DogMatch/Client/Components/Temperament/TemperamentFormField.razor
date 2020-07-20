@@ -1,0 +1,20 @@
+﻿@using DogMatch.Client.Services
+@inject TemperamentState state
+
+<div>
+    <RadzenRating Stars="10"
+                  Value="@Value"
+                  Style="margin-bottom: 20px"
+                  Change="@((val) => state.ChangeValue(val, Name))" 
+                  class="custom-rating"/>
+</div>
+
+@code {
+    [Parameter]
+    public int Value { get; set; }
+    [Parameter]
+    public string Name { get; set; }
+
+    protected override void OnInitialized() => state.OnChange += RefreshComponent;
+    private void RefreshComponent() => StateHasChanged();
+}

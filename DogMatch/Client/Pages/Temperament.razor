@@ -1,0 +1,35 @@
+﻿@page "/Temperament/{id:int}"
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Components.Authorization
+@using DogMatch.Client.Services
+@using DogMatch.Client.Components.Temperament
+
+@attribute [Authorize]
+@inject TemperamentState state
+
+<AuthorizeView>
+    <Authorized>
+        <div style="text-align:center !important">
+            <MatH3>Temperament for @state.temperament.DogName</MatH3>
+            <MatH5>Please give us more details about your dog to complete the profile.</MatH5>
+            <TemperamentStepper />
+            <br /><br />
+            <StepperBtnNav />
+            <br /><br />
+        </div>
+    </Authorized>
+</AuthorizeView>
+
+
+@code {
+    [Parameter]
+    public int Id { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await state.GetTemperament(Id);
+        state.OnChange += RefreshComponent;
+    }
+
+    private void RefreshComponent() => StateHasChanged();
+}

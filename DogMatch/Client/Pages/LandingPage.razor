@@ -1,9 +1,9 @@
 ﻿@page "/"
 @using Microsoft.AspNetCore.Components.Authorization
-@using Microsoft.AspNetCore.Components.WebAssembly.Authentication
+@using DogMatch.Client.Services
 
 @inject HttpClient Http
-@inject NavigationManager NavigationManager
+@inject NavigationService navigate
 
 <div style="text-align:center;">
     <MatH1>DogMatch</MatH1>
@@ -40,18 +40,10 @@
         // route user to All Doggos if authenticated
         if (authenticationState.User.Identity.IsAuthenticated)
         {
-            NavigationManager.NavigateTo("/AllDoggos");
+            navigate.ToAllDoggos();
         }
     }
 
-    private void Login()
-    {
-        NavigationManager.NavigateTo("authentication/login");
-    }
-
-    private void Register()
-    {
-        NavigationManager.NavigateTo("authentication/register");
-    }
-
+    private void Login() => navigate.ToLogin();
+    private void Register() => navigate.ToRegister();
 }

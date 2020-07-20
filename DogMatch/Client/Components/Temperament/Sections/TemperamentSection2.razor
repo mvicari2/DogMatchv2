@@ -1,0 +1,33 @@
+﻿@using DogMatch.Client.Services
+@inject TemperamentState state
+
+<div>
+    <MatH5>Overall Friendliness Rating</MatH5>
+    <TemperamentFormField Value="@(state.temperament.FriendlinessOverall ?? 0)"
+                          Name="FriendlinessOverall" />
+    <br />
+    <MatH5>Good with People Rating</MatH5>
+    <TemperamentFormField Value="@(state.temperament.GoodWithPeople ?? 0)"
+                          Name="GoodWithPeople" />
+    <br />
+    <MatH5>Good with Other Dogs Rating</MatH5>
+    <TemperamentFormField Value="@(state.temperament.GoodWithOtherDogs ?? 0)"
+                          Name="GoodWithOtherDogs" />
+    <br />
+    <MatH5>Good with Cats Rating</MatH5>
+    <TemperamentFormField Value="@(state.temperament.GoodWithCats ?? 0)"
+                          Name="GoodWithCats" />
+    <br />
+    <MatH5>Good with Other Animals Rating</MatH5>
+    <TemperamentFormField Value="@(state.temperament.GoodWithOtherAnimals ?? 0)"
+                          Name="GoodWithOtherAnimals" />
+    <br />
+    <MatH5>Good with Children Rating</MatH5>
+    <TemperamentFormField Value="@(state.temperament.GoodWithChildren ?? 0)"
+                          Name="GoodWithChildren" />
+</div>
+
+@code {
+    protected override void OnInitialized() => state.OnChange += RefreshComponent;
+    private void RefreshComponent() => StateHasChanged();
+}

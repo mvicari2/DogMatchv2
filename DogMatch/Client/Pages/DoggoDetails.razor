@@ -3,19 +3,17 @@
 @using Microsoft.AspNetCore.Components.Authorization
 @using DogMatch.Client.Services
 @using System.IO
-@using System.Net.Http
 @using Blazor.FileReader
 
 @attribute [Authorize]
 @inject DogState state
-@inject HttpClient Http
-@inject NavigationManager NavigationManager
+@inject NavigationService navigate
 @inject IFileReaderService fileReaderService
 
 <AuthorizeView>
     <Authorized>
         <div style="text-align:center !important">
-            <MatH3>Create @state.dog.Name 's Profile</MatH3>
+            <MatH3>Details for @state.dog.Name</MatH3>
             <MatH5>Please give us more details about your dog to complete the profile.</MatH5>
             <form>
                 <div class="row">
@@ -82,7 +80,8 @@
                     }
                 </div>
                 <br />
-                <button type="button" class="btn btn-outline-primary" @onclick="@state.UpdateDoggo">Create Doggo</button>
+                <button type="button" class="btn btn-outline-secondary" @onclick="@SaveAndGoToProfile">Save</button>
+                <button type="button" class="btn btn-outline-primary" @onclick="@SaveAndGoToTemperament">Save and Go To Temperament</button>
             </form>
             <br />
             <br />
@@ -102,10 +101,7 @@
     public bool imgInProgress = false;
     public string profileImage = string.Empty;
 
-    protected override async Task OnInitializedAsync()
-    {
-        await state.GetDoggo(Id);
-    }
+    protected override async Task OnInitializedAsync() => await state.GetDoggo(Id);
 
     // handle profile image
     public async Task ReadFile()
@@ -125,5 +121,17 @@
             }
         }
         imgInProgress = false;
+    }
+
+    public async Task SaveAndGoToProfile()
+    {
+        await state.UpdateDoggo();
+        navigate.ToProfile(state.dog.Id);
+    }
+
+    public async Task SaveAndGoToTemperament()
+    {
+        await state.UpdateDoggo();
+        navigate.ToTemperament(state.dog.Id);
     }
 }

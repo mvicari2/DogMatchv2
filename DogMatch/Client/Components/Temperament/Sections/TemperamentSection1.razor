@@ -1,0 +1,25 @@
+﻿@using DogMatch.Client.Services
+@inject TemperamentState state
+
+<div>
+    <MatH6>Empathetic Rating</MatH6>
+    <TemperamentFormField Value="@(state.temperament.Empathetic ?? 0)"
+                          Name="Empathetic" />
+    <br />
+    <MatH6>Anxiety Rating</MatH6>
+    <TemperamentFormField Value="@(state.temperament.Anxiety ?? 0)"
+                          Name="Anxiety" />
+    <br />
+    <MatH6>Overall Fearfulness Rating</MatH6>
+    <TemperamentFormField Value="@(state.temperament.Fearful ?? 0)"
+                          Name="Fearful" />
+    <br />
+    <MatH6>Afraid of Fireworks or Loud Noises Rating</MatH6>
+    <TemperamentFormField Value="@(state.temperament.IsAfraidFireworks ?? 0)"
+                          Name="IsAfraidFireworks" />
+</div>
+
+@code {
+    protected override void OnInitialized() => state.OnChange += RefreshComponent;
+    private void RefreshComponent() => StateHasChanged();
+}

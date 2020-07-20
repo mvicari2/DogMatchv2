@@ -3,87 +3,100 @@ using System.Collections.Generic;
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
+using DogMatch.Shared.Globals;
 using DogMatch.Shared.Models;
-using Microsoft.AspNetCore.Components;
 
 namespace DogMatch.Client.Services
 {
+    /// <summary>
+    /// Manages client state for Dog components and pages.
+    /// </summary> 
     public class DogState
     {
-        // declarations
+        #region Properties / Variables / DI
         public Dog dog { get; set; }
         public IEnumerable<Dog> doggos { get; set; }
-        public DateTime today = DateTime.Now;      
-
-        // styles
-        public string ColStyle = "display: block; margin-left: auto; margin-right: auto;";
-        public string CardStyle = "display: block; margin-left: auto; margin-right: auto; width: 60%; margin-bottom: 20px; height:200px;";
+        public DateTime today = DateTime.Now;       
 
         // DI
         private readonly HttpClient _http;
-        private readonly NavigationManager _nav;        
+        private readonly NavigationService _navigate;
+        private readonly NotificationMsgService _notification;
 
-        public DogState(HttpClient httpInstance, NavigationManager navigation)
+        public DogState(HttpClient httpInstance, NavigationService navigate, NotificationMsgService notification)
         {
             _http = httpInstance;
-            _nav = navigation;
+            _navigate = navigate;
+            _notification = notification;
         }
-        
+        #endregion Properties / Variables / DI
 
-        // actions / webapi calls
-        public async Task GetAllDoggos()
-        {
+        #region Methods / WebApi Calls
+        /// <summary>
+        /// Calls WebApi that returns all doggos and sets them into state.
+        /// </summary>        
+        public async Task GetAllDoggos() =>
             doggos = await _http.GetFromJsonAsync<IEnumerable<Dog>>("/api/Doggo");
-        }
 
+        /// <summary>
+        /// Calls WebApi to get single dog and set dog into state.
+        /// </summary>        
+        /// <param name="id">Dog Id integer</param>
         public async Task GetDoggo(int id)
         {
             NewDoggo();
-            dog = await _http.GetFromJsonAsync<Dog>("api/Doggo/" + id);           
+            dog = await _http.GetFromJsonAsync<Dog>($"api/Doggo/{id}");           
         }
 
+        /// <summary>
+        /// Calls WebApi to POST new dog.
+        /// </summary>        
         public async Task CreateDoggo()
         {
             var response = await _http.PostAsJsonAsync("api/Doggo/", dog);
-            var newDog = await response.Content.ReadFromJsonAsync<Dog>();            
-           
-            dog.Id = newDog.Id;            
-            _nav.NavigateTo("/DoggoDetails/" + dog.Id);
+            dog = await response.Content.ReadFromJsonAsync<Dog>();
+
+            _notification.DisplayMessage(NotificationType.DogCreated, dog.Name);
+            _navigate.ToUpdateDoggo(dog.Id);
         }
 
+        /// <summary>
+        /// Calls WebApi to update single dog.
+        /// </summary>        
         public async Task UpdateDoggo()
         {
-            var response = await _http.PutAsJsonAsync("api/Doggo/" + dog.Id, dog);
+            var response = await _http.PutAsJsonAsync($"api/Doggo/{dog.Id}", dog);
 
             if (response.IsSuccessStatusCode)
             {
-                _nav.NavigateTo("/DoggoProfile/" + dog.Id);
+                _notification.DisplayMessage(NotificationType.DogUpdated, dog.Name);
+            }
+            else
+            {
+                _notification.DisplayMessage(NotificationType.DogUpdateError, dog.Name);
             }
         }
+        #endregion Methods / WebApi Calls        
 
-        // Navigation
-        public void ViewProfile(int id)
-        {
-            _nav.NavigateTo("/DoggoProfile/" + id);
-        }
+        #region Data Methods
+        /// <summary>
+        /// Initializes new Dog object in state.
+        /// </summary>
+        public void NewDoggo() => dog = new Dog();
 
-        public void UpdateProfile(int id)
-        {
-            _nav.NavigateTo("/DoggoDetails/" + id);
-        }
+        /// <summary>
+        /// Converts birthday <see cref="DateTime?"/> to short date string.
+        /// </summary>        
+        /// <param name="bday">nullable birthday DateTime</param>
+        /// <returns>short DateTime string</returns>
+        public string GetBirthday(DateTime? bday) =>
+            bday.Value.ToShortDateString();
 
-
-        // data
-        public void NewDoggo()
-        {
-            dog = new Dog();
-        }
-
-        public string GetBirthday(DateTime? bday)
-        {
-            return bday.Value.ToShortDateString();
-        }
-        
+        /// <summary>
+        /// Sets dog.Birthday and gets current age (dog.Age) string based on birthday <see cref="DateTime?"/>.
+        /// </summary>        
+        /// <param name="date">birthday <see cref="DateTime?"/></param>
+        /// <returns><see cref="string"/> containing current age</returns>
         public Task GetAge(DateTime? date)
         {
             dog.Birthday = date;
@@ -115,6 +128,12 @@ namespace DogMatch.Client.Services
             }
 
             return Task.CompletedTask;
-        }             
+        }
+        #endregion Data Methods
+
+        #region Styles
+        public string ColStyle = "display: block; margin-left: auto; margin-right: auto;";
+        public string CardStyle = "display: block; margin-left: auto; margin-right: auto; width: 60%; margin-bottom: 20px; height:200px;";
+        #endregion Styles
     }
 }

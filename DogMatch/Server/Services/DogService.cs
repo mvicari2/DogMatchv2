@@ -23,6 +23,12 @@ namespace DogMatch.Server.Services
             _imgService = imgService;
         }
 
+        #region Service Methods
+        /// <summary>
+        /// Gets single <see cref="Dog"/> by Id
+        /// </summary>        
+        /// <param name="id">Dog Id integer</param>
+        /// <returns>The found (mapped) <see cref="Dog"/> instance if it exists</returns>
         public async Task<Dog> GetDog(int id)
         {            
             Dogs dogEntity = await _context.Dogs
@@ -31,11 +37,13 @@ namespace DogMatch.Server.Services
                 .AsNoTracking()
                 .FirstOrDefaultAsync(d => d.Id == id);
 
-            var dog = _mapper.Map<Dog>(dogEntity);
-
-            return dog;
+            return _mapper.Map<Dog>(dogEntity);
         }
 
+        /// <summary>
+        /// Gets all active dogs
+        /// </summary>        
+        /// <returns>Mapped, enumerated <see cref="Dog"/></returns>
         public async Task<IEnumerable<Dog>> GetAllDogs()
         {
             var dogsEntity = await _context.Dogs
@@ -50,6 +58,12 @@ namespace DogMatch.Server.Services
             return dogs;
         }
 
+        /// <summary>
+        /// Create and save new <see cref="Dogs"/> entity
+        /// </summary>
+        /// <param name="dog"></param>
+        /// <param name="userId"></param>
+        /// <returns><see cref="Dog"/> instance mapped from new entity with SQL generated Id</returns>
         public async Task<Dog> CreateDog(Dog dog, string userId)
         {
             var dogEntity = _mapper.Map<Dogs>(dog);
@@ -69,14 +83,21 @@ namespace DogMatch.Server.Services
             return dog;
         }
 
+        /// <summary>
+        /// Updates single <see cref="Dogs"/> entity, mapped from <see cref="Dog"/> object
+        /// </summary>
+        /// <param name="id">dog Id int</param>
+        /// <param name="dog"><see cref="Dog"/> object with updated values</param>
+        /// <param name="userId">user Id string</param>
+        /// <returns><see cref="bool"/>, true if entity successfully updated and saved</returns>
         public async Task<bool> UpdateDog(int id, Dog dog, string userId)
         {
             Dogs dogEntity = await _context.Dogs.FindAsync(id);
-            _mapper.Map<Dog, Dogs>(dog, dogEntity);
+            _mapper.Map(dog, dogEntity);
 
             if (dog.ProfileImage != null && dog.Extension != null)
             {
-                dogEntity.ProfileImageId = await _imgService.HandleProfileImage(dog.ProfileImage, dog.Extension, dog.Id, userId);
+                dogEntity.ProfileImageId = await _imgService.SaveProfileImage(dog.ProfileImage, dog.Extension, dog.Id, userId);
             }
 
             dogEntity.LastModified = DateTime.Now;
@@ -102,10 +123,17 @@ namespace DogMatch.Server.Services
 
             return true;
         }
+        #endregion Service Methods
 
-        private bool DogExists(int id)
-        {
-            return _context.Dogs.Any(e => e.Id == id);
-        }
+        #region Interal Methods
+        /// <summary>
+        /// Checks if dog exists by dog Id
+        /// </summary>
+        /// <param name="id">Dog Id int</param>
+        /// <returns><see cref="bool"/>, true is dog exists</returns>
+        private bool DogExists(int id) =>
+            _context.Dogs.Any(d => d.Id == id);
+
+        #endregion Internal Methods
     }
 }

@@ -23,8 +23,9 @@ namespace DogMatch.Server.Controllers
         {
             _context = context;
             _service = service;
-        }       
+        }
 
+        #region WebApi Methods
         // GET: api/Doggo
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Dog>>> GetDogs()
@@ -59,10 +60,9 @@ namespace DogMatch.Server.Controllers
             if (id != dog.Id)
             {
                 return BadRequest();
-            }            
+            }   
 
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var success = await _service.UpdateDog(id, dog, userId);
+            var success = await _service.UpdateDog(id, dog, GetUserId());
 
             if (success)
             {
@@ -76,14 +76,10 @@ namespace DogMatch.Server.Controllers
 
         // POST: api/Doggo 
         [HttpPost]
-        public async Task<ActionResult<Dog>> Post(Dog dog)
-        {
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            Dog newDog = await _service.CreateDog(dog, userId);
+        public async Task<ActionResult<Dog>> Post(Dog dog) =>
+            await _service.CreateDog(dog, GetUserId());
 
-            return newDog;
-        }
-
+        // to-do: make service method to soft delete dog and rm this method ->
         // DELETE: api/Doggo/{id}
         [HttpDelete("{id}")]
         public async Task<ActionResult<Dogs>> DeleteDog(int id)
@@ -98,6 +94,13 @@ namespace DogMatch.Server.Controllers
             await _context.SaveChangesAsync();
 
             return dog;
-        }   
+        }
+        #endregion WebApi Methods
+
+        #region Internal 
+        private string GetUserId() =>
+            User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+        #endregion Internal
     }
 }

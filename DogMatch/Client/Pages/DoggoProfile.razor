@@ -49,8 +49,5 @@
     [Parameter]
     public int Id { get; set; }
 
-    protected override async Task OnInitializedAsync()
-    {
-        await state.GetDoggo(Id);
-    }
+    protected override async Task OnInitializedAsync() => await state.GetDoggo(Id);
 }

@@ -6,6 +6,8 @@ using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Blazor.FileReader;
 using DogMatch.Client.Services;
+using MatBlazor;
+using Radzen;
 
 namespace DogMatch.Client
 {
@@ -23,10 +25,13 @@ namespace DogMatch.Client
             builder.Services.AddTransient(sp => sp.GetRequiredService<IHttpClientFactory>().CreateClient("DogMatch.ServerAPI"));
 
             builder.Services.AddApiAuthorization();
-
             builder.Services.AddFileReaderService(options => options.UseWasmSharedBuffer = true);
 
             builder.Services.AddSingleton<DogState>();
+            builder.Services.AddSingleton<TemperamentState>();
+            builder.Services.AddSingleton<NotificationService>();
+            builder.Services.AddSingleton<NotificationMsgService>();
+            builder.Services.AddSingleton<NavigationService>();
 
             await builder.Build().RunAsync();
         }

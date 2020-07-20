@@ -1,0 +1,37 @@
+﻿@using DogMatch.Client.Components.Temperament.Sections
+@using DogMatch.Client.Services
+
+@inject TemperamentState state
+
+<RadzenSteps SelectedIndex="@state.tabIndex"
+             Change="(index => state.TabChanged(index))"
+             class="custom-stepper">
+    <Steps>
+        <RadzenStepsItem Text="Empathy/Fearfulness">
+            <TemperamentSection1 />
+        </RadzenStepsItem>
+        <RadzenStepsItem Text="Friendliness">
+            <TemperamentSection2 />
+        </RadzenStepsItem>
+        <RadzenStepsItem Text="Playfulness">
+            <TemperamentSection3 />
+        </RadzenStepsItem>
+        <RadzenStepsItem Text="Training">
+            <TemperamentSection4 />
+        </RadzenStepsItem>
+        <RadzenStepsItem Text="Instinct">
+            <TemperamentSection5 />
+        </RadzenStepsItem>
+        <RadzenStepsItem Text="General">
+            <TemperamentSection6 />
+        </RadzenStepsItem>
+        <RadzenStepsItem Text="Preferences">
+            <TemperamentSection7 />
+        </RadzenStepsItem>
+    </Steps>
+</RadzenSteps>
+
+@code{
+    protected override void OnInitialized() => state.OnChange += RefreshComponent;
+    private void RefreshComponent() => StateHasChanged();
+}

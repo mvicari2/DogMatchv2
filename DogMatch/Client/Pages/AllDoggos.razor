@@ -4,6 +4,7 @@
 
 @attribute [Authorize]
 @inject DogState state
+@inject NavigationService navigate
 
 <MatH2>All Doggos</MatH2>
 <br />
@@ -47,14 +48,14 @@
                 <div class="col-md-6">
                     <button type="button"
                             class="btn btn-outline-primary"
-                            @onclick="@(e => state.ViewProfile(dog.Id))">
+                            @onclick="@(e => navigate.ToProfile(dog.Id))">
                         View Profile
                     </button>
                 </div>
                 <div class="col-md-6">
                     <button type="button"
                             class="btn btn-outline-info"
-                            @onclick="@(e => state.UpdateProfile(dog.Id))">
+                            @onclick="@(e => navigate.ToUpdateDoggo(dog.Id))">
                         Update Profile
                     </button>
                 </div>
@@ -64,9 +65,6 @@
 </RadzenDataList>
 
 
-@code { 
-    protected override async Task OnInitializedAsync()
-    {        
-        await state.GetAllDoggos();        
-    }    
+@code {
+    protected override async Task OnInitializedAsync() => await state.GetAllDoggos();
 }

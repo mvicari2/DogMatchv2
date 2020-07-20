@@ -25,6 +25,16 @@ app {
     flex-direction: column;
 }
 
+/* hide built in stepper buttons in Radzen Stepper component */
+.custom-stepper .ui-steps-buttons {
+    display: none !important;
+}
+
+/* hide ban (clear) rating icon in Radzen Rating component */
+.custom-rating .pi-ban {
+    display: none !important;
+}
+
 .top-row {
     height: 3.5rem;
     display: flex;

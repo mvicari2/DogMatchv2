@@ -1,0 +1,41 @@
+﻿@using DogMatch.Client.Services
+@using DogMatch.Shared.Globals
+
+@inject TemperamentState state
+
+@if (state.tabIndex != 0)
+{
+    <button type="button"
+            class="btn btn-outline-primary"
+            @onclick="@(args => state.StepperChange(TemperamentDirection.Back))">
+        Previous Step
+    </button>
+}
+
+<button type="button"
+        class="btn btn-outline-primary"
+        @onclick="@(args => state.StepperChange(TemperamentDirection.Profile))">
+    Back to Profile
+</button>
+
+@if (state.tabIndex != 6)
+{
+    <button type="button"
+            class="btn btn-outline-primary"
+            @onclick="@(args => state.StepperChange(TemperamentDirection.Forward))">
+        Next Step
+    </button>
+}
+else
+{
+    <button type="button"
+            class="btn btn-outline-primary"
+            @onclick="@(args => state.StepperChange(TemperamentDirection.Profile))">
+        Next to Biography
+    </button>
+}
+
+@code {
+    protected override void OnInitialized() => state.OnChange += RefreshComponent;
+    private void RefreshComponent() => StateHasChanged();
+}

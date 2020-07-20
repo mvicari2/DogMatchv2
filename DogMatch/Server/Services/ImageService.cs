@@ -2,7 +2,6 @@
 using DogMatch.Server.Data.Models;
 using System;
 using System.Threading.Tasks;
-using AutoMapper;
 using System.IO;
 
 namespace DogMatch.Server.Services
@@ -10,15 +9,18 @@ namespace DogMatch.Server.Services
     public class ImageService : IImageService
     {
         private readonly DogMatchDbContext _context;
-        private readonly IMapper _mapper;       
+        public ImageService(DogMatchDbContext context) => _context = context;
 
-        public ImageService(DogMatchDbContext context, IMapper mapper)
-        {
-            _context = context;
-            _mapper = mapper;
-        }
-
-        public async Task<int?> HandleProfileImage(string imgStr, string extension, int dogId, string userId)
+        #region Service Methods
+        /// <summary>
+        /// Saves new <see cref="Images"/> entity instance and calls method to write file to disk
+        /// </summary>        
+        /// <param name="imgStr">Base64 encoded string of user uploaded image</param>
+        /// <param name="extension">File extension of uploaded image</param>
+        /// <param name="dogId">Dog Id int for dog that owns image</param>
+        /// <param name="userId">User Id string for user that uploaded image</param>
+        /// <returns>SQL generated image Id for newly saved image</returns>
+        public async Task<int?> SaveProfileImage(string imgStr, string extension, int dogId, string userId)
         {
             var filename = SaveImageToDisk(imgStr, extension);
 
@@ -35,8 +37,16 @@ namespace DogMatch.Server.Services
             await _context.SaveChangesAsync();
 
             return img.Id;
-        }    
-        
+        }
+        #endregion Service Methods
+
+        #region Interal Methods
+        /// <summary>
+        /// Generates internal filename and writes image file to disk
+        /// </summary>        
+        /// <param name="imgStr">Base64 encoded string of user uploaded image</param>
+        /// <param name="extension">File extension of uploaded image</param>
+        /// <returns>Generated filename string for image</returns>
         private string SaveImageToDisk(string imgStr, string extension)
         { 
             var rootDir = "Images/ProfileImages/";
@@ -58,5 +68,6 @@ namespace DogMatch.Server.Services
                 return string.Empty;
             }            
         }
+        #endregion Interal Methods
     }
 }
