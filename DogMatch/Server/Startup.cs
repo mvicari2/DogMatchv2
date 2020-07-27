@@ -47,9 +47,13 @@ namespace DogMatch.Server
             services.AddControllersWithViews();
             services.AddRazorPages();
 
+            // scoped services
             services.AddScoped<IDogService, DogService>();
             services.AddScoped<IImageService, ImageService>();
             services.AddScoped<ITemperamentService, TemperamentService>();
+
+            // scoped repositories
+            services.AddScoped<IDogRepository, DogRepository>();            
             services.AddScoped<ITemperamentRepository, TemperamentRepository>();
 
             var mappingConfig = new MapperConfiguration(mc =>

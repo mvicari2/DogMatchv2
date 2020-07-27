@@ -1,27 +1,27 @@
-﻿using DogMatch.Server.Data;
-using DogMatch.Shared.Models;
+﻿using DogMatch.Shared.Models;
 using DogMatch.Server.Data.Models;
-using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
+using DogMatch.Server.Data.Repositories;
 
 namespace DogMatch.Server.Services
 {
     public class DogService : IDogService
     {
-        private readonly DogMatchDbContext _context;
+        #region DI
+        private readonly IDogRepository _repository;
         private readonly IMapper _mapper;
         private readonly IImageService _imgService;
 
-        public DogService(DogMatchDbContext context, IMapper mapper, IImageService imgService)
+        public DogService(IDogRepository repository, IMapper mapper, IImageService imgService)
         {
-            _context = context;
+            _repository = repository;
             _mapper = mapper;
             _imgService = imgService;
         }
+        #endregion DI
 
         #region Service Methods
         /// <summary>
@@ -29,43 +29,25 @@ namespace DogMatch.Server.Services
         /// </summary>        
         /// <param name="id">Dog Id integer</param>
         /// <returns>The found (mapped) <see cref="Dog"/> instance if it exists</returns>
-        public async Task<Dog> GetDog(int id)
-        {            
-            Dogs dogEntity = await _context.Dogs
-                .Include(d => d.Owner)
-                .Include(d => d.ProfileImage)
-                .AsNoTracking()
-                .FirstOrDefaultAsync(d => d.Id == id);
-
-            return _mapper.Map<Dog>(dogEntity);
-        }
+        public async Task<Dog> GetDog(int id) =>
+            _mapper.Map<Dog>(await _repository.FindDogById(id));
 
         /// <summary>
         /// Gets all active dogs
         /// </summary>        
-        /// <returns>Mapped, enumerated <see cref="Dog"/></returns>
-        public async Task<IEnumerable<Dog>> GetAllDogs()
-        {
-            var dogsEntity = await _context.Dogs
-                .AsNoTracking()
-                .Include(d => d.Owner)
-                .Include(d => d.ProfileImage)
-                .Where(d => d.IsDeleted != true)
-                .ToListAsync();
-
-            var dogs = _mapper.Map<IEnumerable<Dog>>(dogsEntity);
-
-            return dogs;
-        }
+        /// <returns>Mapped, <see cref="IEnumerable{Dog}"/><see cref="Dog"/></returns>
+        public async Task<IEnumerable<Dog>> GetAllDogs() =>
+            _mapper.Map<IEnumerable<Dog>>(await _repository.FindAllDogs());
 
         /// <summary>
         /// Create and save new <see cref="Dogs"/> entity
         /// </summary>
         /// <param name="dog"></param>
         /// <param name="userId"></param>
-        /// <returns><see cref="Dog"/> instance mapped from new entity with SQL generated Id</returns>
+        /// <returns><see cref="Dog"/> instance mapped from new entity with SQL generated Id <see cref="int"/></returns>
         public async Task<Dog> CreateDog(Dog dog, string userId)
         {
+            // map to new dog entity
             var dogEntity = _mapper.Map<Dogs>(dog);
 
             var now = DateTime.Now;
@@ -75,65 +57,53 @@ namespace DogMatch.Server.Services
             dogEntity.CreatedBy = userId;
             dogEntity.LastModifiedBy = userId;
 
-            _context.Dogs.Add(dogEntity);
-            await _context.SaveChangesAsync();
-
-            dog.Id = dogEntity.Id;
-
-            return dog;
+            return _mapper.Map<Dog>(await _repository.SaveNewDog(dogEntity));
         }
 
         /// <summary>
         /// Updates single <see cref="Dogs"/> entity, mapped from <see cref="Dog"/> object
         /// </summary>
-        /// <param name="id">dog Id int</param>
+        /// <param name="id">dog Id <see cref="int"/></param>
         /// <param name="dog"><see cref="Dog"/> object with updated values</param>
-        /// <param name="userId">user Id string</param>
+        /// <param name="userId">user Id <see cref="string"/></param>
         /// <returns><see cref="bool"/>, true if entity successfully updated and saved</returns>
         public async Task<bool> UpdateDog(int id, Dog dog, string userId)
         {
-            Dogs dogEntity = await _context.Dogs.FindAsync(id);
+            // find existing entity and map new values to it
+            Dogs dogEntity = await _repository.FindDogById(id);
             _mapper.Map(dog, dogEntity);
 
+            // save updated profile image if changed and get new image id
             if (dog.ProfileImage != null && dog.Extension != null)
-            {
+            {                
                 dogEntity.ProfileImageId = await _imgService.SaveProfileImage(dog.ProfileImage, dog.Extension, dog.Id, userId);
             }
 
+            // update last modified values
             dogEntity.LastModified = DateTime.Now;
-            dogEntity.LastModifiedBy = userId;            
+            dogEntity.LastModifiedBy = userId;
 
-            _context.Entry(dogEntity).State = EntityState.Modified;
+            // save entity
+            return await _repository.SaveDog(dogEntity);
+        }
 
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!DogExists(id))
-                {
-                    return false;
-                }
-                else
-                {
-                    throw;
-                }
-            }
+        /// <summary>
+        /// Soft deletes single <see cref="Dogs"/> instance (makes IsDeleted = true)
+        /// </summary>
+        /// <param name="id">Dog Id <see cref="int"/></param>
+        /// <param name="userId">User Id <see cref="string"/> of current user</param>
+        /// <returns><see cref="bool"/> to confirm dog was soft deleted successfully</returns>
+        public async Task<bool> DeleteDog(int id, string userId)
+        {
+            // find existing entity, soft delete and update last modified
+            Dogs dogEntity = await _repository.FindDogById(id);
+            dogEntity.IsDeleted = true;
+            dogEntity.LastModified = DateTime.Now;
+            dogEntity.LastModifiedBy = userId;
 
-            return true;
+            // save entity
+            return await _repository.SaveDog(dogEntity);
         }
         #endregion Service Methods
-
-        #region Interal Methods
-        /// <summary>
-        /// Checks if dog exists by dog Id
-        /// </summary>
-        /// <param name="id">Dog Id int</param>
-        /// <returns><see cref="bool"/>, true is dog exists</returns>
-        private bool DogExists(int id) =>
-            _context.Dogs.Any(d => d.Id == id);
-
-        #endregion Internal Methods
     }
 }
