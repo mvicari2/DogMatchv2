@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using AutoMapper;
 using DogMatch.Server.Data.Repositories;
+using DogMatch.Shared.Globals;
 
 namespace DogMatch.Server.Services
 {
@@ -92,17 +93,29 @@ namespace DogMatch.Server.Services
         /// </summary>
         /// <param name="id">Dog Id <see cref="int"/></param>
         /// <param name="userId">User Id <see cref="string"/> of current user</param>
-        /// <returns><see cref="bool"/> to confirm dog was soft deleted successfully</returns>
-        public async Task<bool> DeleteDog(int id, string userId)
+        /// <returns><see cref="DeleteDogResponse"/> to confirm if dog was soft deleted successfully, failed, or unauthorized (non-owner)</returns>
+        public async Task<DeleteDogResponse> DeleteDog(int id, string userId)
         {
-            // find existing entity, soft delete and update last modified
+            // find existing entity
             Dogs dogEntity = await _repository.FindDogById(id);
-            dogEntity.IsDeleted = true;
-            dogEntity.LastModified = DateTime.Now;
-            dogEntity.LastModifiedBy = userId;
 
-            // save entity
-            return await _repository.SaveDog(dogEntity);
+            // ensure owner is same user making request to delete
+            if (dogEntity.OwnerId == userId)
+            {
+                dogEntity.IsDeleted = true;
+                dogEntity.LastModified = DateTime.Now;
+                dogEntity.LastModifiedBy = userId;
+
+                // save entity
+                var success = await _repository.SaveDog(dogEntity);
+
+                return success ? DeleteDogResponse.Success : DeleteDogResponse.Failed;
+            }
+            else
+            {
+                // return not authorized to delete
+                return DeleteDogResponse.Unauthorized;
+            }            
         }
         #endregion Service Methods
     }

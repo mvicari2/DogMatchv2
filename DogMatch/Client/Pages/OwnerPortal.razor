@@ -1,4 +1,4 @@
-﻿@page "/AllDoggos"
+﻿@page "/OwnerPortal"
 @using Microsoft.AspNetCore.Authorization
 @using DogMatch.Client.Services
 @using DogMatch.Client.Components.Dog
@@ -7,7 +7,12 @@
 @inject DogState state
 @inject NavigationService navigate
 
-<MatH2>All Doggos</MatH2>
+<MatH2>Owner Portal</MatH2>
+<br />
+<MatH6>Your active Dog Profiles: @state.doggos.Count()</MatH6>
+<br />
+
+<MatH5>My Doggos</MatH5>
 <br />
 
 @if (state.doggos == null)
@@ -49,21 +54,9 @@
                     <br />
                     <div class="row inline-center-row">
                         <div class="col-md-12">
-                            @if (dog.Owner == context.User.Identity.Name)
-                            {
-                                <OwnerMenuBtn DogId="dog.Id"
-                                              DogName="@dog.Name"
-                                              BtnStyle="width:100%;" />
-                            }
-                            else
-                            {
-                                <button type="button"
-                                        class="btn btn-primary"
-                                        style="width: 100%"
-                                        @onclick="@(e => navigate.ToProfile(dog.Id))">
-                                    View Profile
-                                </button>
-                            }
+                            <OwnerMenuBtn DogId="dog.Id"
+                                          DogName="@dog.Name"
+                                          BtnStyle="width:100%;" />
                         </div>
                     </div>
                 </RadzenCard>
@@ -72,13 +65,6 @@
     </Authorized>
 </AuthorizeView>
 
-
 @code {
-    protected override async Task OnInitializedAsync()
-    {
-        await state.GetAllDoggos();
-        state.OnChange += RefreshComponent;
-    }
-
-    private void RefreshComponent() => StateHasChanged();
+    protected override async Task OnInitializedAsync() => await state.GetAllDoggos();
 }

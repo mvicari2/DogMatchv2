@@ -40,10 +40,22 @@ namespace DogMatch.Client.Services
             _service.NavigateTo("/AllDoggos/");
 
         /// <summary>
+        /// Navigates to Owner Portal.
+        /// </summary>        
+        public void ToOwnerPortal() =>
+            _service.NavigateTo("/OwnerPortal/");
+
+        /// <summary>
         /// Navigates to Login page.
         /// </summary>        
         public void ToLogin() =>
             _service.NavigateTo("/authentication/login");
+        
+        /// <summary>
+        /// Navigates to Logout
+        /// </summary>        
+        public void ToLogout() =>
+            _service.NavigateTo("/authentication/logout");
 
         /// <summary>
         /// Navigates to User Registration page.

@@ -1,0 +1,119 @@
+﻿@using DogMatch.Client.Services
+@using Microsoft.AspNetCore.Components
+
+@inject DogState state
+@inject NavigationService navigate
+
+<AuthorizeView>
+    <Authorized>
+        <MatThemeProvider Theme="@OwnerMenuTheme">
+            <MatButton OnClick="@OpenOwnerMenu"
+                       RefBack="@buttonForwardRef"
+                       Unelevated="true"
+                       Class="btn btn-primary"
+                       Style="@BtnStyle">
+                Owner Portal
+                <MatIcon Icon="expand_more" />
+            </MatButton>
+            <MatMenu @ref="Menu" TargetForwardRef="@buttonForwardRef">
+                <MatList Style="text-align: left;">
+                    <MatListItem>
+                        <NavLink class="nav-link dropdown-item text-dark"
+                                 @onclick="() => navigate.ToProfile(DogId)"
+                                 Match="NavLinkMatch.All">
+                            <MatIcon Icon="preview" Class="icon-align" />
+                            <span class="nav-text-align">
+                                &nbsp View Profile
+                            </span>
+                        </NavLink>
+                    </MatListItem>
+                    <MatListItem>
+                        <NavLink class="nav-link dropdown-item text-dark"
+                                 @onclick="() => navigate.ToUpdateDoggo(DogId)"
+                                 Match="NavLinkMatch.All">
+                            <MatIcon Icon="list" Class="icon-align" />
+                            <span class="nav-text-align">
+                                &nbsp Update Basic Details
+                            </span>
+                        </NavLink>
+                    </MatListItem>
+                    <MatListItem>
+                        <NavLink class="nav-link dropdown-item text-dark"
+                                 @onclick="() => navigate.ToTemperament(DogId)"
+                                 Match="NavLinkMatch.All">
+                            <MatIcon Icon="bar_chart" Class="icon-align" />
+                            <span class="nav-text-align">
+                                &nbsp Update Temperament Profile
+                            </span>
+                        </NavLink>
+                    </MatListItem>
+                    <MatListItem>
+                        <NavLink class="nav-link dropdown-item text-dark"
+                                 @onclick="() => ToggleModal()"
+                                 Match="NavLinkMatch.All">
+                            <MatIcon Icon="delete_forever" Class="icon-align" />
+                            <span class="nav-text-align">
+                                &nbsp Delete Dog
+                            </span>
+                        </NavLink>
+                    </MatListItem>
+                </MatList>
+            </MatMenu>
+        </MatThemeProvider>
+
+        <MatDialog @bind-IsOpen="@modalIsOpen">
+            <MatDialogTitle>Delete Doggo?</MatDialogTitle>
+            <MatDialogContent>
+                <span>
+                    Are you sure you want to delete the entire profile for <b>@DogName</b>?
+                    <br />
+                    Deletion is permanent and cannot be undone.
+                </span>
+                <div class="row inline-center-row">
+                    <button class="btn btn-danger button-margin"
+                            @onclick="() => DeleteConfirmed(context.User.Identity.Name)">
+                        Yes, Delete @DogName
+                    </button>
+                    <button class="btn btn-success button-margin"
+                            @onclick="@(() => ToggleModal())">
+                        No, Cancel Delete
+                    </button>
+                </div>
+            </MatDialogContent>
+        </MatDialog>
+    </Authorized>
+</AuthorizeView>
+
+@code {
+    [Parameter]
+    public int DogId { get; set; }
+    [Parameter]
+    public string DogName { get; set; }
+    [Parameter]
+    public string BtnStyle { get; set; }
+
+    private string profileMenuStyle = null;
+    string dogButtonId = string.Empty;
+    bool modalIsOpen = false;
+    ForwardRef buttonForwardRef = new ForwardRef();
+    BaseMatMenu Menu;
+
+    protected override void OnInitialized() => dogButtonId = $"ownerMenuBtn-{DogId}";
+    public void OpenOwnerMenu(MouseEventArgs e) => this.Menu.OpenAsync();
+    void ToggleModal() => modalIsOpen = !modalIsOpen;
+
+    private async Task DeleteConfirmed(string currentUser)
+    {
+        modalIsOpen = false;
+        await state.DeleteDog(DogId, currentUser);
+    }
+
+    /// <summary>
+    /// Initialize new color scheme for MatButton
+    /// </summary>
+    MatTheme OwnerMenuTheme = new MatTheme()
+    {
+        Primary = "#0275d8",
+        Secondary = "#5bc0de"
+    };
+}

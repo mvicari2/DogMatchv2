@@ -36,6 +36,15 @@ namespace DogMatch.Client.Services
                 case NotificationType.DogUpdateError:
                     DogUpdateError(dogName);
                     break;
+                case NotificationType.DogDeleted:
+                    DogDeleted(dogName);
+                    break;
+                case NotificationType.DogDeleteUnauthorized:
+                    DogDeleteUnauthorized(dogName);
+                    break;
+                case NotificationType.DogDeleteError:
+                    DogDeleteError(dogName);
+                    break;
             }          
         }
         #endregion Public Methods
@@ -45,7 +54,7 @@ namespace DogMatch.Client.Services
         /// Creates new <see cref="NotificationMessage"/> for Temperament Error,
         /// and calls <see cref="NotificationService"/> Notify.
         /// </summary>        
-        /// <param name="dogName">dog name string</param>
+        /// <param name="dogName">dog name <see cref="string"/></param>
         private void TemperamentError(string dogName) =>
             _service.Notify(
                 GetErrorMessage(
@@ -58,7 +67,7 @@ namespace DogMatch.Client.Services
         /// Creates new <see cref="NotificationMessage"/> for Temperament Saved,
         /// and calls <see cref="NotificationService"/> Notify.
         /// </summary>        
-        /// <param name="dogName">dog name string</param>
+        /// <param name="dogName">dog name <see cref="string"/></param>
         private void TemperamentSaved(string dogName) =>
             _service.Notify(
                 GetSuccessMessage(
@@ -71,7 +80,7 @@ namespace DogMatch.Client.Services
         /// Creates new <see cref="NotificationMessage"/> for Dog Created,
         /// and calls <see cref="NotificationService"/> Notify.
         /// </summary>        
-        /// <param name="dogName">dog name string</param>
+        /// <param name="dogName">dog name <see cref="string"/></param>
         private void DogCreated(string dogName) =>
             _service.Notify(
                 GetSuccessMessage(
@@ -84,7 +93,7 @@ namespace DogMatch.Client.Services
         /// Creates new <see cref="NotificationMessage"/> for Dog Updated,
         /// and calls <see cref="NotificationService"/> Notify.
         /// </summary>        
-        /// <param name="dogName">dog name string</param>
+        /// <param name="dogName">dog name <see cref="string"/></param>
         private void DogUpdated(string dogName) =>
             _service.Notify(
                 GetSuccessMessage(
@@ -97,13 +106,53 @@ namespace DogMatch.Client.Services
         /// Creates new <see cref="NotificationMessage"/> for Dog Update Error,
         /// and calls <see cref="NotificationService"/> Notify.
         /// </summary>        
-        /// <param name="dogName">dog name string</param>
+        /// <param name="dogName">dog name <see cref="string"/></param>
         private void DogUpdateError(string dogName) =>
             _service.Notify(
                 GetErrorMessage(
                     "Update Failed!",
                     $"Profile for {dogName} Fail to Update.",
                     5000
+                ));
+
+        /// <summary>
+        /// Creates new <see cref="NotificationMessage"/> for Dog Deleted successfully,
+        /// and calls <see cref="NotificationService"/> Notify.
+        /// </summary>        
+        /// <param name="dogName">dog name <see cref="string"/></param>
+        private void DogDeleted(string dogName) =>
+            _service.Notify(
+                GetSuccessMessage(
+                    "Dog Deleted!",
+                    $"Profile for {dogName} was deleted.",
+                    5000
+                ));
+
+        /// <summary>
+        /// Creates new warning <see cref="NotificationMessage"/> 
+        /// for unauthorized user (non-owner) delete attempt,
+        /// and calls <see cref="NotificationService"/> Notify.
+        /// </summary>        
+        /// <param name="dogName">dog name <see cref="string"/></param>
+        private void DogDeleteUnauthorized(string dogName) =>
+            _service.Notify(
+                GetWarningMessage(
+                    "Unauthorized!",
+                    $"You must be the dog's owner to delete profile for {dogName}.",
+                    6500
+                ));
+
+        /// <summary>
+        /// Creates new <see cref="NotificationMessage"/> for generic Dog Delete Error,
+        /// and calls <see cref="NotificationService"/> Notify.
+        /// </summary>        
+        /// <param name="dogName">dog name <see cref="string"/></param>
+        private void DogDeleteError(string dogName) =>
+            _service.Notify(
+                GetErrorMessage(
+                    "Delete Failed!",
+                    $"Delete failed for {dogName}, please try again.",
+                    6000
                 ));
 
         #endregion Notify Methods
@@ -143,7 +192,43 @@ namespace DogMatch.Client.Services
                 Detail = body,
                 Duration = duration
             };
-        }        
+        }
+
+        /// <summary>
+        /// Initialize new Info <see cref="NotificationMessage"/> object instance.
+        /// </summary>        
+        /// <param name="title">message title</param>
+        /// <param name="body">message body</param>
+        /// <param name="duration">message duration in ms</param>
+        /// <returns>new Info <see cref="NotificationMessage"/></returns>
+        private NotificationMessage GetInfoMessage(string title, string body, int duration)
+        {
+            return new NotificationMessage()
+            {
+                Severity = NotificationSeverity.Info,
+                Summary = title,
+                Detail = body,
+                Duration = duration
+            };
+        }
+
+        /// <summary>
+        /// Initialize new Warning <see cref="NotificationMessage"/> object instance.
+        /// </summary>        
+        /// <param name="title">message title</param>
+        /// <param name="body">message body</param>
+        /// <param name="duration">message duration in ms</param>
+        /// <returns>new Warning <see cref="NotificationMessage"/></returns>
+        private NotificationMessage GetWarningMessage(string title, string body, int duration)
+        {
+            return new NotificationMessage()
+            {
+                Severity = NotificationSeverity.Warning,
+                Summary = title,
+                Detail = body,
+                Duration = duration
+            };
+        }
         #endregion Toaster Notification Messages
     }
 }

@@ -1,7 +1,8 @@
 ﻿@using Microsoft.AspNetCore.Components.Authorization
 @using Microsoft.AspNetCore.Components.WebAssembly.Authentication
+@using DogMatch.Client.Services
 
-@inject NavigationManager Navigation
+@inject NavigationService navigate
 @inject SignOutSessionStateManager SignOutManager
 
 <nav class="@NavClass" style="@NavStyle">
@@ -9,7 +10,10 @@
         <NavLink class="navbar-brand text-light"
                  href="/"
                  Match="NavLinkMatch.All">
-            DogMatch
+            <MatIcon Icon="pets" Class="brand-icon-align" />
+            <span class="brand-text-align">
+                DogMatch
+            </span>
         </NavLink>
         <button class="navbar-toggler"
                 @onclick="ToggleNavMenu"
@@ -33,26 +37,30 @@
                         All Doggos
                     </NavLink>
                 </li>
-                <li class="nav-item px-3">
-                    <NavLink class="nav-link"
-                             href="MyDoggos"
-                             Match="NavLinkMatch.All">
-                        <span class="oi oi-list-rich"
-                              aria-hidden="true">
-                        </span>
-                        My Doggos
-                    </NavLink>
-                </li>
-                <li class="nav-item px-3">
-                    <NavLink class="nav-link"
-                             href="CreateDoggo"
-                             Match="NavLinkMatch.All">
-                        <span class="oi oi-plus"
-                              aria-hidden="true">
-                        </span>
-                        Create Doggo
-                    </NavLink>
-                </li>
+                <AuthorizeView>
+                    <Authorized>
+                        <li class="nav-item px-3">
+                            <NavLink class="nav-link"
+                                     href="CreateDoggo"
+                                     Match="NavLinkMatch.All">
+                                <span class="oi oi-plus"
+                                      aria-hidden="true">
+                                </span>
+                                Create Doggo
+                            </NavLink>
+                        </li>
+                        <li class="nav-item px-3">
+                            <NavLink class="nav-link"
+                                     href="OwnerPortal"
+                                     Match="NavLinkMatch.All">
+                                <span class="oi oi-list-rich"
+                                      aria-hidden="true">
+                                </span>
+                                Owner Portal
+                            </NavLink>
+                        </li>
+                    </Authorized>
+                </AuthorizeView>
 
                 @if (!collapseNavMenu)
                 {
@@ -206,10 +214,12 @@
     private async Task BeginSignOut(MouseEventArgs args)
     {
         await SignOutManager.SetSignOutState();
-        Navigation.NavigateTo("authentication/logout");
+        navigate.ToLogout();
     }
 
+    #region Styles
     private string NavMenuCssClass => collapseNavMenu ? "collapse navbar-collapse d-sm-inline-flex flex-sm-row-reverse" : "navbar-collapse d-sm-inline-flex flex-sm-row-reverse";
     private string NavClass = "navbar navbar-expand-md navbar-toggleable-md navbar-dark border-bottom box-shadow mb-3 fixed-top";
     private string NavStyle = "background-color: #273652";
+    #endregion Styles
 }

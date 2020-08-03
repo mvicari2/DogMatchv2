@@ -1,6 +1,8 @@
-﻿using DogMatch.Shared.Models;
+﻿using DogMatch.Shared.Globals;
+using DogMatch.Shared.Models;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using DogMatch.Server.Data.Models;
 
 namespace DogMatch.Server.Services
 {
@@ -41,7 +43,7 @@ namespace DogMatch.Server.Services
         /// </summary>
         /// <param name="id">Dog Id <see cref="int"/></param>
         /// <param name="userId">User Id <see cref="string"/> of current user</param>
-        /// <returns><see cref="bool"/> to confirm dog was soft deleted successfully</returns>
-        Task<bool> DeleteDog(int id, string userId);
+        /// <returns><see cref="DeleteDogResponse"/> to confirm if dog was soft deleted successfully, failed, or unauthorized (non-owner)</returns>
+        Task<DeleteDogResponse> DeleteDog(int id, string userId);
     }
 }

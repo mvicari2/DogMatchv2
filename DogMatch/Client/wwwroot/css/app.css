@@ -35,6 +35,44 @@ app {
     display: none !important;
 }
 
+/* ---- align icons and nav text ----- */
+/* for icons: */
+.icon-align {
+    display: inline-block;
+    vertical-align: -3px;
+}
+/* for nav link: */
+.nav-text-align {
+    display: inline-block;
+    vertical-align: 3px;
+}
+
+/* for brand icon: */
+.brand-icon-align {
+    display: inline-block;
+    vertical-align: -2px;
+}
+
+/* for brand text: */
+.brand-text-align {
+    display: inline-block;
+    vertical-align: 2px;
+}
+/*----------------------*/
+
+/* inline center row */
+.inline-center-row {
+    display: inline-block;
+    text-align: center;
+    margin-top: 30px;
+}
+
+/* button left/right 10px margin */
+.button-margin {
+    margin-left: 10px;
+    margin-right: 10px;
+}
+
 .top-row {
     height: 3.5rem;
     display: flex;

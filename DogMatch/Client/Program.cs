@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Blazor.FileReader;
 using DogMatch.Client.Services;
-using MatBlazor;
 using Radzen;
 
 namespace DogMatch.Client

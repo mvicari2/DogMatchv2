@@ -6,6 +6,7 @@ using DogMatch.Shared.Models;
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
 using DogMatch.Server.Services;
+using DogMatch.Shared.Globals;
 
 namespace DogMatch.Server.Controllers
 {
@@ -75,19 +76,9 @@ namespace DogMatch.Server.Controllers
         
         // DELETE: api/Doggo/{id}
         [HttpDelete("{id}")]
-        public async Task<ActionResult> Delete(int id)
-        {
-            var success = await _service.DeleteDog(id, GetUserId());
+        public async Task<ActionResult<DeleteDogResponse>> Delete(int id) =>
+            await _service.DeleteDog(id, GetUserId());
 
-            if (success)
-            {
-                return NoContent();
-            }
-            else
-            {
-                return NotFound();
-            }
-        }
         #endregion WebApi Methods
 
         #region Internal 

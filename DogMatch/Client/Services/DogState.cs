@@ -5,18 +5,21 @@ using System.Net.Http.Json;
 using System.Threading.Tasks;
 using DogMatch.Shared.Globals;
 using DogMatch.Shared.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace DogMatch.Client.Services
 {
     /// <summary>
     /// Manages client state for Dog components and pages.
     /// </summary> 
+    [Authorize]
     public class DogState
     {
         #region Properties / Variables / DI
         public Dog dog { get; set; }
         public IEnumerable<Dog> doggos { get; set; }
-        public DateTime today = DateTime.Now;       
+        public DateTime today = DateTime.Now;
+        public event Action OnChange;
 
         // DI
         private readonly HttpClient _http;
@@ -33,6 +36,11 @@ namespace DogMatch.Client.Services
 
         #region Methods / WebApi Calls
         /// <summary>
+        /// Invokes OnChange Action to notify subscribers state has changed.
+        /// </summary>
+        private void NotifyStateChanged() => OnChange?.Invoke();
+
+        /// <summary>
         /// Calls WebApi that returns all doggos and sets them into state.
         /// </summary>        
         public async Task GetAllDoggos() =>
@@ -45,7 +53,7 @@ namespace DogMatch.Client.Services
         public async Task GetDoggo(int id)
         {
             NewDoggo();
-            dog = await _http.GetFromJsonAsync<Dog>($"api/Doggo/{id}");           
+            dog = await _http.GetFromJsonAsync<Dog>($"api/Doggo/{id}");
         }
 
         /// <summary>
@@ -76,11 +84,53 @@ namespace DogMatch.Client.Services
                 _notification.DisplayMessage(NotificationType.DogUpdateError, dog.Name);
             }
         }
+
+        /// <summary>
+        /// Calls WebApi to delete single dog by dog Id, refreshes doggos
+        /// </summary>
+        /// <param name="dogId">Dog Id <see cref="int"/></param>
+        /// <param name="currentUser">Current Username <see cref="string"/></param>
+        public async Task DeleteDog(int dogId, string currentUser)
+        {
+            // get Dog
+            var doggo = await _http.GetFromJsonAsync<Dog>($"api/Doggo/{dogId}");
+
+            // soft delete dog if request user is owner
+            if (doggo.Owner == currentUser)
+            {
+                var response = await _http.DeleteAsync($"api/Doggo/{dogId}");
+                var delResponse = await response.Content.ReadFromJsonAsync<DeleteDogResponse>();
+
+                if (delResponse == DeleteDogResponse.Success)
+                {
+                    _notification.DisplayMessage(NotificationType.DogDeleted, doggo.Name);
+
+                    // refresh all doggogs and notify subscriber state has changed
+                    await GetAllDoggos();
+                    NotifyStateChanged();
+                }
+                else if (delResponse == DeleteDogResponse.Unauthorized)
+                {
+                    // service delcares user unathorized to make delete request (non-owner)
+                    _notification.DisplayMessage(NotificationType.DogDeleteUnauthorized, dog.Name);
+                }
+                else
+                {
+                    // failed response
+                    _notification.DisplayMessage(NotificationType.DogDeleteError, doggo.Name);
+                }
+            }
+            else
+            {
+                // user not authorization to delete dog (non-owner)
+                _notification.DisplayMessage(NotificationType.DogDeleteUnauthorized, dog.Name);
+            }
+        }
         #endregion Methods / WebApi Calls        
 
         #region Data Methods
         /// <summary>
-        /// Initializes new Dog object in state.
+        /// Initializes new Dog object dog in state.
         /// </summary>
         public void NewDoggo() => dog = new Dog();
 

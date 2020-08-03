@@ -40,7 +40,7 @@ namespace DogMatch.Client.Services
         /// <summary>
         /// Calls WebApi to get Temperament for single dog.
         /// </summary>        
-        /// <param name="id">Dog Id integer</param>
+        /// <param name="id">Dog Id <see cref="int" /></param>
         public async Task GetTemperament(int id)
         {
             tabIndex = 0;

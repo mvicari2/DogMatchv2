@@ -30,7 +30,7 @@ namespace DogMatch.Server.Data.Repositories
             .AsNoTracking()
             .Include(d => d.Owner)
             .Include(d => d.ProfileImage)
-            .SingleOrDefaultAsync(d => d.Id == id);
+            .SingleOrDefaultAsync(d => d.Id == id && d.IsDeleted != true);
 
         /// <summary>
         /// Finds all active (non-deleted) Dogs
@@ -39,7 +39,7 @@ namespace DogMatch.Server.Data.Repositories
         public async Task<IEnumerable<Dogs>> FindAllDogs() =>
             await _dbSet
             .AsNoTracking()
-            .Where(d => d.IsDeleted != false)
+            .Where(d => d.IsDeleted != true)
             .Include(d => d.Owner)
             .Include(d => d.ProfileImage)
             .ToListAsync();
