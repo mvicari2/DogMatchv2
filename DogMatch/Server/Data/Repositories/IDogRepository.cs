@@ -20,6 +20,13 @@ namespace DogMatch.Server.Data.Repositories
         Task<IEnumerable<Dogs>> FindAllDogs();
 
         /// <summary>
+        /// Find Dogs by Owner (finds all dogs where current user is owner)
+        /// </summary>        
+        /// <param name="userId">User Id <see cref="string"/> for owner</param>
+        /// <returns><see cref="IEnumerable{Dogs}" /> All dogs owned by user</returns>
+        Task<IEnumerable<Dogs>> FindDogsByOwner(string userId);
+
+        /// <summary>
         /// Writes new, single <see cref="Dogs"/> entity to database.
         /// </summary>        
         /// <param name="dog"><see cref="Dogs"/> entity object</param>

@@ -8,24 +8,20 @@
 <div style="text-align:center;">
     <MatH1>DogMatch</MatH1>
     <br />
-    <MatH6>DogMatch matches good doggos on common traits. 
-    <br /> Find the best matches for your dog.</MatH6><br />
+    <MatH6>
+        DogMatch matches good doggos on common traits.
+        <br /> Find the best matches for your dog.
+    </MatH6><br />
 
-    <div class="container col-md-4">
-        <div class="row">
-            <div class="col-sm">
-                <button class="btn btn-primary"
-                        @onclick="@Login">
-                    Login
-                </button>
-            </div>            
-            <div class="col-sm">
-                <button class="btn btn-primary"
-                        @onclick="@Register">
-                    Register
-                </button>
-            </div>
-        </div>
+    <div class="container col-md-4 inline-center-row">
+        <button class="btn btn-primary"
+                @onclick="@Login">
+            Login
+        </button>
+        <button class="btn btn-primary"
+                @onclick="@Register">
+            Register
+        </button>
     </div>
 </div>
 
@@ -35,7 +31,7 @@
 
     protected override async Task OnInitializedAsync()
     {
-        var authenticationState = await AuthenticationStateTask;
+        AuthenticationState authenticationState = await AuthenticationStateTask;
 
         // route user to All Doggos if authenticated
         if (authenticationState.User.Identity.IsAuthenticated)

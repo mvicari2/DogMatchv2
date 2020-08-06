@@ -25,7 +25,7 @@ namespace DogMatch.Server.Controllers.Api
         [HttpGet("{id}")]
         public async Task<ActionResult<DogMatchUser>> GetUser(string id)
         {
-            var user = await _userManager.GetUserAsync(User);
+            DogMatchUser user = await _userManager.GetUserAsync(User);
 
             if (user == null)
             {

@@ -10,7 +10,7 @@
 <MatH2>All Doggos</MatH2>
 <br />
 
-@if (state.doggos == null)
+@if (state.Doggos == null)
 {
     <div class="col-lg-12">
         <Flow Size="200px" Color="#003366" Center="true" />
@@ -19,7 +19,7 @@
 
 <AuthorizeView>
     <Authorized>
-        <RadzenDataList WrapItems="true" AllowPaging="true" Data="@state.doggos" TItem="DogMatch.Shared.Models.Dog">
+        <RadzenDataList WrapItems="true" AllowPaging="true" Data="@state.Doggos" TItem="DogMatch.Shared.Models.Dog">
             <Template Context="dog">
                 <RadzenCard Style="width:300px;">
                     <img src="@dog.ProfileImage"

@@ -1,4 +1,5 @@
 ﻿using DogMatch.Server.Data.Models;
+using DogMatch.Shared.Models;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
@@ -40,6 +41,19 @@ namespace DogMatch.Server.Data.Repositories
             await _dbSet
             .AsNoTracking()
             .Where(d => d.IsDeleted != true)
+            .Include(d => d.Owner)
+            .Include(d => d.ProfileImage)
+            .ToListAsync();
+
+        /// <summary>
+        /// Find Dogs by Owner (finds all dogs where current user is owner)
+        /// </summary>        
+        /// <param name="userId">User Id <see cref="string"/> for owner</param>
+        /// <returns><see cref="IEnumerable{Dogs}" /> All dogs owned by user</returns>
+        public async Task<IEnumerable<Dogs>> FindDogsByOwner(string userId) =>
+            await _dbSet
+            .AsNoTracking()
+            .Where(d => d.IsDeleted != true && d.OwnerId == userId)
             .Include(d => d.Owner)
             .Include(d => d.ProfileImage)
             .ToListAsync();

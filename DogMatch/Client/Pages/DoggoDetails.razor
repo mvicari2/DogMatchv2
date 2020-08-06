@@ -13,21 +13,21 @@
 <AuthorizeView>
     <Authorized>
         <div style="text-align:center !important">
-            <MatH3>Details for @state.dog.Name</MatH3>
+            <MatH3>Details for @state.Doggo.Name</MatH3>
             <MatH5>Please give us more details about your dog to complete the profile.</MatH5>
             <form>
                 <div class="row">
                     <div class="form-group col-md-4 col-md-6" style="@state.ColStyle">
                         <label for="Breed" class="control-label">Breed</label>
-                        <input type="text" class="form-control" id="breedText" placeholder="ex. German Shepard" @bind="@state.dog.Breed" @bind:event="oninput">
+                        <input type="text" class="form-control" id="breedText" placeholder="ex. German Shepard" @bind="@state.Doggo.Breed" @bind:event="oninput">
                     </div>
                     <div class="form-group col-xs-4 col-md-4" style="@state.ColStyle">
                         <label for="Birthday" class="control-label">Birthday</label>
                         <br />
 
-                        <RadzenDatePicker @bind-Value="@state.dog.Birthday" DateFormat="d" Change="@(args => state.GetAge(args))" Placeholder="Click icon to pick date..." />
+                        <RadzenDatePicker @bind-Value="@state.Doggo.Birthday" DateFormat="d" Change="@(args => state.GetAge(args))" Placeholder="Click icon to pick date..." />
                         <br />
-                        @state.dog.Age
+                        @state.Doggo.Age
                     </div>
                 </div>
                 <br />
@@ -36,16 +36,16 @@
                     <div class="form-group col-xs-4 col-md-4" style="@state.ColStyle">
                         <label for="Gender" class="control-label">Gender</label>
                         <br />
-                        <MatRadioGroup @bind-Value="@state.dog.Gender" TValue="string">
+                        <MatRadioGroup @bind-Value="@state.Doggo.Gender" TValue="string">
                             <MatRadioButton Value="@("female")" Label="Female" TValue="string"></MatRadioButton>
                             <MatRadioButton Value="@("male")" TValue="string">Male</MatRadioButton>
                         </MatRadioGroup>
                     </div>
                     <div class="form-group col-xs-4 col-md-4" style="@state.ColStyle">
                         <label for="Weight" class="control-label">Weight</label>
-                        <RadzenSlider @bind-Value="@state.dog.Weight" TValue="int" Min="0" Max="300" Style="margin-bottom: 20px;" />
+                        <RadzenSlider @bind-Value="@state.Doggo.Weight" TValue="int" Min="0" Max="300" Style="margin-bottom: 20px;" />
                         <br />
-                        Weight: @state.dog.Weight lbs.
+                        Weight: @state.Doggo.Weight lbs.
                     </div>
                 </div>
 
@@ -68,12 +68,12 @@
                             <h5>Preview: </h5><br />
                             <img src="@profileImage" style="max-height:400px;height:auto" />
                         }
-                        else if (state.dog.ProfileImage != null)
+                        else if (state.Doggo.ProfileImage != null)
                         {
-                            if (!state.dog.ProfileImage.Contains("dogmatch_paw.png"))
+                            if (!state.Doggo.ProfileImage.Contains("dogmatch_paw.png"))
                             {
                                 <h5>Current Profile Image: </h5><br />
-                                <img src="@state.dog.ProfileImage"
+                                <img src="@state.Doggo.ProfileImage"
                                      style="max-height:400px;height:auto" />
                             }
                         }
@@ -110,14 +110,14 @@
 
         foreach (var file in await fileReaderService.CreateReference(inputTypeFileElement).EnumerateFilesAsync())
         {
-            var fileInfo = await file.ReadFileInfoAsync();
-            state.dog.Extension = Path.GetExtension(fileInfo.Name);
+            IFileInfo fileInfo = await file.ReadFileInfoAsync();
+            state.Doggo.Extension = Path.GetExtension(fileInfo.Name);
 
             await using (MemoryStream memoryStream = await file.CreateMemoryStreamAsync(4096))
             {
-                var img = memoryStream.ToArray();
+                byte[] img = memoryStream.ToArray();
                 profileImage = $"data:image/jpg;base64,{Convert.ToBase64String(img)}";
-                state.dog.ProfileImage = profileImage;
+                state.Doggo.ProfileImage = profileImage;
             }
         }
         imgInProgress = false;
@@ -126,12 +126,12 @@
     public async Task SaveAndGoToProfile()
     {
         await state.UpdateDoggo();
-        navigate.ToProfile(state.dog.Id);
+        navigate.ToProfile(state.Doggo.Id);
     }
 
     public async Task SaveAndGoToTemperament()
     {
         await state.UpdateDoggo();
-        navigate.ToTemperament(state.dog.Id);
+        navigate.ToTemperament(state.Doggo.Id);
     }
 }

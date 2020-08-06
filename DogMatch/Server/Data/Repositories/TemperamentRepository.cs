@@ -24,7 +24,7 @@ namespace DogMatch.Server.Data.Repositories
         /// <returns><see cref="Temperament"/> entity</returns>
         public async Task<Temperament> FindTemperament(int dogId)
         {
-            var temperament = await _dbSet
+            Temperament temperament = await _dbSet
                 .Where(t => t.DogId == dogId)              
                 .SingleOrDefaultAsync();
 

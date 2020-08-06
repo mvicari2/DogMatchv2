@@ -16,8 +16,9 @@ namespace DogMatch.Client.Services
     public class DogState
     {
         #region Properties / Variables / DI
-        public Dog dog { get; set; }
-        public IEnumerable<Dog> doggos { get; set; }
+        public Dog Doggo { get; set; }
+        public IEnumerable<Dog> Doggos { get; set; }
+        public IEnumerable<Dog> OwnersDogs { get; set; }
         public DateTime today = DateTime.Now;
         public event Action OnChange;
 
@@ -44,7 +45,13 @@ namespace DogMatch.Client.Services
         /// Calls WebApi that returns all doggos and sets them into state.
         /// </summary>        
         public async Task GetAllDoggos() =>
-            doggos = await _http.GetFromJsonAsync<IEnumerable<Dog>>("/api/Doggo");
+            Doggos = await _http.GetFromJsonAsync<IEnumerable<Dog>>("/api/Doggo");
+
+        /// <summary>
+        /// Calls WebApi that returns all doggos owned by current user and sets them into state.
+        /// </summary>        
+        public async Task GetOwnersDoggos() =>
+            OwnersDogs = await _http.GetFromJsonAsync<IEnumerable<Dog>>("/api/Owners");
 
         /// <summary>
         /// Calls WebApi to get single dog and set dog into state.
@@ -53,7 +60,7 @@ namespace DogMatch.Client.Services
         public async Task GetDoggo(int id)
         {
             NewDoggo();
-            dog = await _http.GetFromJsonAsync<Dog>($"api/Doggo/{id}");
+            Doggo = await _http.GetFromJsonAsync<Dog>($"api/Doggo/{id}");
         }
 
         /// <summary>
@@ -61,11 +68,11 @@ namespace DogMatch.Client.Services
         /// </summary>        
         public async Task CreateDoggo()
         {
-            var response = await _http.PostAsJsonAsync("api/Doggo/", dog);
-            dog = await response.Content.ReadFromJsonAsync<Dog>();
+            HttpResponseMessage response = await _http.PostAsJsonAsync("api/Doggo/", Doggo);
+            Doggo = await response.Content.ReadFromJsonAsync<Dog>();
 
-            _notification.DisplayMessage(NotificationType.DogCreated, dog.Name);
-            _navigate.ToUpdateDoggo(dog.Id);
+            _notification.DisplayMessage(NotificationType.DogCreated, Doggo.Name);
+            _navigate.ToUpdateDoggo(Doggo.Id);
         }
 
         /// <summary>
@@ -73,15 +80,15 @@ namespace DogMatch.Client.Services
         /// </summary>        
         public async Task UpdateDoggo()
         {
-            var response = await _http.PutAsJsonAsync($"api/Doggo/{dog.Id}", dog);
+            HttpResponseMessage response = await _http.PutAsJsonAsync($"api/Doggo/{Doggo.Id}", Doggo);
 
             if (response.IsSuccessStatusCode)
             {
-                _notification.DisplayMessage(NotificationType.DogUpdated, dog.Name);
+                _notification.DisplayMessage(NotificationType.DogUpdated, Doggo.Name);
             }
             else
             {
-                _notification.DisplayMessage(NotificationType.DogUpdateError, dog.Name);
+                _notification.DisplayMessage(NotificationType.DogUpdateError, Doggo.Name);
             }
         }
 
@@ -93,13 +100,13 @@ namespace DogMatch.Client.Services
         public async Task DeleteDog(int dogId, string currentUser)
         {
             // get Dog
-            var doggo = await _http.GetFromJsonAsync<Dog>($"api/Doggo/{dogId}");
+            Dog doggo = await _http.GetFromJsonAsync<Dog>($"api/Doggo/{dogId}");
 
             // soft delete dog if request user is owner
             if (doggo.Owner == currentUser)
             {
-                var response = await _http.DeleteAsync($"api/Doggo/{dogId}");
-                var delResponse = await response.Content.ReadFromJsonAsync<DeleteDogResponse>();
+                HttpResponseMessage response = await _http.DeleteAsync($"api/Doggo/{dogId}");
+                DeleteDogResponse delResponse = await response.Content.ReadFromJsonAsync<DeleteDogResponse>();
 
                 if (delResponse == DeleteDogResponse.Success)
                 {
@@ -112,7 +119,7 @@ namespace DogMatch.Client.Services
                 else if (delResponse == DeleteDogResponse.Unauthorized)
                 {
                     // service delcares user unathorized to make delete request (non-owner)
-                    _notification.DisplayMessage(NotificationType.DogDeleteUnauthorized, dog.Name);
+                    _notification.DisplayMessage(NotificationType.DogDeleteUnauthorized, Doggo.Name);
                 }
                 else
                 {
@@ -123,7 +130,7 @@ namespace DogMatch.Client.Services
             else
             {
                 // user not authorization to delete dog (non-owner)
-                _notification.DisplayMessage(NotificationType.DogDeleteUnauthorized, dog.Name);
+                _notification.DisplayMessage(NotificationType.DogDeleteUnauthorized, Doggo.Name);
             }
         }
         #endregion Methods / WebApi Calls        
@@ -132,7 +139,7 @@ namespace DogMatch.Client.Services
         /// <summary>
         /// Initializes new Dog object dog in state.
         /// </summary>
-        public void NewDoggo() => dog = new Dog();
+        public void NewDoggo() => Doggo = new Dog();
 
         /// <summary>
         /// Converts birthday <see cref="DateTime?"/> to short date string.
@@ -149,15 +156,13 @@ namespace DogMatch.Client.Services
         /// <returns><see cref="string"/> containing current age</returns>
         public Task GetAge(DateTime? date)
         {
-            dog.Birthday = date;
+            Doggo.Birthday = date;
 
-            var today = DateTime.Today;
-            var age = 0;
+            DateTime today = DateTime.Today;
+            int a = (today.Year * 100 + today.Month) * 100 + today.Day;
+            int b = (date.Value.Year * 100 + date.Value.Month) * 100 + date.Value.Day;
 
-            var a = (today.Year * 100 + today.Month) * 100 + today.Day;
-            var b = (date.Value.Year * 100 + date.Value.Month) * 100 + date.Value.Day;
-
-            age = (a - b) / 10000;
+            int age = (a - b) / 10000;
 
             // if less than 1 year old then determine age in months
             if (age < 1)
@@ -166,15 +171,15 @@ namespace DogMatch.Client.Services
                 int m2 = (today.Year - date.Value.Year) * 12;
                 int months = m1 + m2;
 
-                dog.Age = "Age: " + months + " months old";
+                Doggo.Age = "Age: " + months + " months old";
             }
             else if (age == 1)
             {
-                dog.Age = "Age: " + age + " year old";
+                Doggo.Age = "Age: " + age + " year old";
             }
             else
             {
-                dog.Age = "Age: " + age + " years old";
+                Doggo.Age = "Age: " + age + " years old";
             }
 
             return Task.CompletedTask;

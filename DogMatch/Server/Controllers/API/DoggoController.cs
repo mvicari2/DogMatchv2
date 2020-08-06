@@ -25,7 +25,7 @@ namespace DogMatch.Server.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Dog>>> GetDogs()
         {
-            var dogs = await _service.GetAllDogs();        
+            IEnumerable<Dog> dogs = await _service.GetAllDogs();        
 
             if (dogs.Count() < 1)
             {
@@ -57,7 +57,7 @@ namespace DogMatch.Server.Controllers
                 return BadRequest();
             }   
 
-            var success = await _service.UpdateDog(id, dog, GetUserId());
+            bool success = await _service.UpdateDog(id, dog, GetUserId());
 
             if (success)
             {

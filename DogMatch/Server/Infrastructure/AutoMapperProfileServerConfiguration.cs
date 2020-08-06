@@ -63,15 +63,13 @@ namespace DogMatch.Server.Infrastructure
         // uses birthday datetime to return string w/current age of dog
         public string GetAge(DateTime? bday)
         {
-            var today = DateTime.Today;
-            var age = 0;
-            var ageStr = string.Empty;
+            DateTime today = DateTime.Today;
+            int a = (today.Year * 100 + today.Month) * 100 + today.Day;
+            int b = (bday.Value.Year * 100 + bday.Value.Month) * 100 + bday.Value.Day;
 
-            var a = (today.Year * 100 + today.Month) * 100 + today.Day;
-            var b = (bday.Value.Year * 100 + bday.Value.Month) * 100 + bday.Value.Day;
+            int age = (a - b) / 10000;
 
-            age = (a - b) / 10000;
-
+            string ageStr;
             // if less than 1 year old then determine age in months
             if (age < 1)
             {

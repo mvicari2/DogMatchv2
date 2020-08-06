@@ -9,13 +9,13 @@
 
 <MatH2>Owner Portal</MatH2>
 <br />
-<MatH6>Your active Dog Profiles: @state.doggos.Count()</MatH6>
+<MatH6>Your active Dog Profiles: @state.Doggos.Count()</MatH6>
 <br />
 
 <MatH5>My Doggos</MatH5>
 <br />
 
-@if (state.doggos == null)
+@if (state.Doggos == null)
 {
     <div class="col-lg-12">
         <Flow Size="200px" Color="#003366" Center="true" />
@@ -24,7 +24,7 @@
 
 <AuthorizeView>
     <Authorized>
-        <RadzenDataList WrapItems="true" AllowPaging="true" Data="@state.doggos" TItem="DogMatch.Shared.Models.Dog">
+        <RadzenDataList WrapItems="true" AllowPaging="true" Data="@state.OwnersDogs" TItem="DogMatch.Shared.Models.Dog">
             <Template Context="dog">
                 <RadzenCard Style="width:300px;">
                     <img src="@dog.ProfileImage"
@@ -66,5 +66,11 @@
 </AuthorizeView>
 
 @code {
-    protected override async Task OnInitializedAsync() => await state.GetAllDoggos();
+    protected override async Task OnInitializedAsync()
+    {
+        await state.GetOwnersDoggos();
+        state.OnChange += RefreshComponent;
+    }
+
+    private void RefreshComponent() => StateHasChanged();
 }

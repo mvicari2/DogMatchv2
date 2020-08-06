@@ -23,7 +23,8 @@ namespace DogMatch.Server.Controllers.API
         [HttpGet("{id}")]
         public async Task<DogTemperament> Get(int id)
         {
-            var temperament = await _service.GetDogTemperament(id);
+            DogTemperament temperament = await _service.GetDogTemperament(id);
+
             if (temperament != null)
             {
                 return temperament;
@@ -43,7 +44,7 @@ namespace DogMatch.Server.Controllers.API
                 return BadRequest();
             }
 
-            var success = await _service.UpdateTemperament(temperament, GetUserId());
+            bool success = await _service.UpdateTemperament(temperament, GetUserId());
 
             if (success)
             {

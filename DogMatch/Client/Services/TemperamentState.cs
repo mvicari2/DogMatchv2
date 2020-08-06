@@ -14,7 +14,7 @@ namespace DogMatch.Client.Services
     public class TemperamentState
     {
         #region Properties / Variables / DI
-        public DogTemperament temperament { get; set; }
+        public DogTemperament Temperament { get; set; }
         public event Action OnChange;
         public int tabIndex;        
 
@@ -45,9 +45,9 @@ namespace DogMatch.Client.Services
         {
             tabIndex = 0;
             NewTemperament();
-            temperament = await _http.GetFromJsonAsync<DogTemperament>($"api/Temperament/{id}");
+            Temperament = await _http.GetFromJsonAsync<DogTemperament>($"api/Temperament/{id}");
 
-            if (temperament != null)
+            if (Temperament != null)
             {
                 NotifyStateChanged();
             }
@@ -58,15 +58,15 @@ namespace DogMatch.Client.Services
         /// </summary>        
         public async Task UpdateTemperament()
         {
-            var response = await _http.PutAsJsonAsync($"api/Temperament/{temperament.DogId}", temperament);
+            HttpResponseMessage response = await _http.PutAsJsonAsync($"api/Temperament/{Temperament.DogId}", Temperament);
 
             if (response.IsSuccessStatusCode)
             {
-                _notification.DisplayMessage(NotificationType.TemperamentSaved, temperament.DogName);
+                _notification.DisplayMessage(NotificationType.TemperamentSaved, Temperament.DogName);
             }
             else
             {
-                _notification.DisplayMessage(NotificationType.TemperamentError, temperament.DogName);
+                _notification.DisplayMessage(NotificationType.TemperamentError, Temperament.DogName);
             }
         }
 
@@ -77,8 +77,8 @@ namespace DogMatch.Client.Services
         /// <param name="name">name of property to be changed</param>
         public void ChangeValue(int value, string name)
         {
-            PropertyInfo property = temperament.GetType().GetProperty(name);
-            property.SetValue(temperament, value, null);
+            PropertyInfo property = Temperament.GetType().GetProperty(name);
+            property.SetValue(Temperament, value, null);
             NotifyStateChanged();
         }
 
@@ -100,8 +100,8 @@ namespace DogMatch.Client.Services
                 val = false;
             }
 
-            PropertyInfo property = temperament.GetType().GetProperty(name);
-            property.SetValue(temperament, val, null);
+            PropertyInfo property = Temperament.GetType().GetProperty(name);
+            property.SetValue(Temperament, val, null);
             NotifyStateChanged();
         }
 
@@ -127,12 +127,12 @@ namespace DogMatch.Client.Services
             {
                 case TemperamentDirection.Forward:
                     tabIndex++;
-                        break;
+                    break;
                 case TemperamentDirection.Back:
                     tabIndex--;
                     break;
                 case TemperamentDirection.Profile:
-                    _navigate.ToProfile(temperament.DogId);
+                    _navigate.ToProfile(Temperament.DogId);
                     break;
             }            
 
@@ -145,7 +145,7 @@ namespace DogMatch.Client.Services
         /// <summary>
         /// Initializes new DogTemperament object in state.
         /// </summary>        
-        public void NewTemperament() => temperament = new DogTemperament();
+        public void NewTemperament() => Temperament = new DogTemperament();
 
         #endregion New Temperament
     }

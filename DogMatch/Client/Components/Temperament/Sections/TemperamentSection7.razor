@@ -1,12 +1,11 @@
 ﻿@using DogMatch.Client.Services
-
 @inject TemperamentState state
 
 <div>
     <MatH6>Hair or Fur?</MatH6>
     <RadzenRadioButtonList TValue="int"
                            Change="@(val => state.ChangeBoolValue(val, "HairOrFur"))"
-                           Value="@(state.temperament.HairOrFur.HasValue ? state.temperament.HairOrFur.Value ? 1 : 2 : 0)">
+                           Value="@(state.Temperament.HairOrFur.HasValue ? state.Temperament.HairOrFur.Value ? 1 : 2 : 0)">
         <Items>
             <RadzenRadioButtonListItem Text="Hair" Value="1" />
             <RadzenRadioButtonListItem Text="Fur" Value="2" />
@@ -16,7 +15,7 @@
     <MatH6>Housebroken?</MatH6>
     <RadzenRadioButtonList TValue="int"
                            Change="@(val => state.ChangeBoolValue(val, "Housebroken"))"
-                           Value="@(state.temperament.Housebroken.HasValue ? state.temperament.Housebroken.Value ? 1 : 2 : 0)">
+                           Value="@(state.Temperament.Housebroken.HasValue ? state.Temperament.Housebroken.Value ? 1 : 2 : 0)">
         <Items>
             <RadzenRadioButtonListItem Text="Yes" Value="1" />
             <RadzenRadioButtonListItem Text="No" Value="2" />
@@ -26,7 +25,7 @@
     <MatH6>Prefers Outside or Inside</MatH6>
     <RadzenRadioButtonList TValue="int"
                            Change="@(val => state.ChangeBoolValue(val, "OutsideOrInside"))"
-                           Value="@(state.temperament.OutsideOrInside.HasValue ? state.temperament.OutsideOrInside.Value ? 1 : 2 : 0)">
+                           Value="@(state.Temperament.OutsideOrInside.HasValue ? state.Temperament.OutsideOrInside.Value ? 1 : 2 : 0)">
         <Items>
             <RadzenRadioButtonListItem Text="Outside" Value="1" />
             <RadzenRadioButtonListItem Text="Inside" Value="2" />
@@ -36,7 +35,7 @@
     <MatH6>Is Spayed/Neutered?</MatH6>
     <RadzenRadioButtonList TValue="int"
                            Change="@(val => state.ChangeBoolValue(val, "IsFixed"))"
-                           Value="@(state.temperament.IsFixed.HasValue ? state.temperament.IsFixed.Value ? 1 : 2 : 0)">
+                           Value="@(state.Temperament.IsFixed.HasValue ? state.Temperament.IsFixed.Value ? 1 : 2 : 0)">
         <Items>
             <RadzenRadioButtonListItem Text="Yes" Value="1" />
             <RadzenRadioButtonListItem Text="No" Value="2" />

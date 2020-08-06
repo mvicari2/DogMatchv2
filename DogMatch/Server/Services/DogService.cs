@@ -41,6 +41,14 @@ namespace DogMatch.Server.Services
             _mapper.Map<IEnumerable<Dog>>(await _repository.FindAllDogs());
 
         /// <summary>
+        /// Gets all active dogs owned by single user
+        /// </summary>
+        /// <param name="userId">Owner/User Id <see cref="string"/></param>
+        /// <returns><see cref="IEnumerable{Dog}"/> Owner's/User's dogs, mapped to <see cref="Dog"/> from entity</returns>
+        public async Task<IEnumerable<Dog>> GetDogsByOwner(string userId) =>
+            _mapper.Map<IEnumerable<Dog>>(await _repository.FindDogsByOwner(userId));
+
+        /// <summary>
         /// Create and save new <see cref="Dogs"/> entity
         /// </summary>
         /// <param name="dog"></param>
@@ -49,9 +57,9 @@ namespace DogMatch.Server.Services
         public async Task<Dog> CreateDog(Dog dog, string userId)
         {
             // map to new dog entity
-            var dogEntity = _mapper.Map<Dogs>(dog);
+            Dogs dogEntity = _mapper.Map<Dogs>(dog);
 
-            var now = DateTime.Now;
+            DateTime now = DateTime.Now;
             dogEntity.Created = now;
             dogEntity.LastModified = now;
             dogEntity.OwnerId = userId;
@@ -107,7 +115,7 @@ namespace DogMatch.Server.Services
                 dogEntity.LastModifiedBy = userId;
 
                 // save entity
-                var success = await _repository.SaveDog(dogEntity);
+                bool success = await _repository.SaveDog(dogEntity);
 
                 return success ? DeleteDogResponse.Success : DeleteDogResponse.Failed;
             }

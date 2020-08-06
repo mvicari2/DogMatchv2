@@ -22,7 +22,7 @@ namespace DogMatch.Server.Services
         /// <returns>SQL generated image Id for newly saved image</returns>
         public async Task<int?> SaveProfileImage(string imgStr, string extension, int dogId, string userId)
         {
-            var filename = SaveImageToDisk(imgStr, extension);
+            string filename = SaveImageToDisk(imgStr, extension);
 
             Images img = new Images()
             {
@@ -49,14 +49,14 @@ namespace DogMatch.Server.Services
         /// <returns>Generated filename string for image</returns>
         private string SaveImageToDisk(string imgStr, string extension)
         { 
-            var rootDir = "Images/ProfileImages/";
+            string rootDir = "Images/ProfileImages/";
 
             // clean up image string and convert to byte array
             imgStr = imgStr.Substring(22, imgStr.Length - 22);
             byte[] imgArr = Convert.FromBase64String(imgStr);
 
             // randomize file name excessively
-            var filename = Guid.NewGuid().ToString();
+            string filename = Guid.NewGuid().ToString();
             filename = filename + DateTime.Now.Ticks.ToString() + extension;
             try
             {

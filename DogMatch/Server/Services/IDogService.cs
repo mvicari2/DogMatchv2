@@ -22,6 +22,13 @@ namespace DogMatch.Server.Services
         Task<IEnumerable<Dog>> GetAllDogs();
 
         /// <summary>
+        /// Gets all active dogs owned by single user
+        /// </summary>
+        /// <param name="userId">Owner/User Id <see cref="string"/></param>
+        /// <returns><see cref="IEnumerable{Dog}"/> Owner's/User's dogs, mapped to <see cref="Dog"/> from entity</returns>
+        Task<IEnumerable<Dog>> GetDogsByOwner(string userId);
+
+        /// <summary>
         /// Create and save new <see cref="Dogs"/> entity
         /// </summary>
         /// <param name="dog"></param>

@@ -26,7 +26,7 @@ namespace DogMatch.Server.Services
         /// <returns>The found (mapped) <see cref="DogTemperament"/> instance if it exists</returns>
         public async Task<DogTemperament> GetDogTemperament(int dogId)
         {
-            var temperamentEntity = await _repository.FindTemperament(dogId);
+            Temperament temperamentEntity = await _repository.FindTemperament(dogId);
             return _mapper.Map<DogTemperament>(temperamentEntity);            
         }
 
@@ -38,8 +38,8 @@ namespace DogMatch.Server.Services
         /// <returns>Created (mapped) <see cref="DogTemperament"/> instance with SQL generated Id</returns>
         public async Task<DogTemperament> CreateTemperament(int dogId, string userId)
         {
-            var now = DateTime.Now;
-            var temperamentEntity = new Temperament
+            DateTime now = DateTime.Now;
+            Temperament temperamentEntity = new Temperament
             {
                 DogId = dogId,
                 Created = now,
@@ -48,7 +48,7 @@ namespace DogMatch.Server.Services
                 LastModifiedBy = userId
             };            
 
-            var newEntity = await _repository.CreateNewTemperament(temperamentEntity);
+            Temperament newEntity = await _repository.CreateNewTemperament(temperamentEntity);
             return _mapper.Map<DogTemperament>(newEntity);
         }
 
@@ -62,13 +62,13 @@ namespace DogMatch.Server.Services
         /// <returns>Updated (mapped) <see cref="DogTemperament"/> instance</returns>
         public async Task<bool> UpdateTemperament(DogTemperament temperament, string userId)
         {
-            var temperamentEntity = await _repository.FindTemperament(temperament.DogId);
+            Temperament temperamentEntity = await _repository.FindTemperament(temperament.DogId);
             _mapper.Map(temperament, temperamentEntity);
             
             temperamentEntity.LastModified = DateTime.Now;           
             temperamentEntity.LastModifiedBy = userId;
 
-            var updated = await _repository.SaveTemperament(temperamentEntity);
+            bool updated = await _repository.SaveTemperament(temperamentEntity);
 
             if (updated)
             {
