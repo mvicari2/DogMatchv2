@@ -5,14 +5,13 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using DogMatch.Server.Data;
-using DogMatch.Server.Data.Models;
-using DogMatch.Server.Services;
+using DogMatch.Domain.Data;
+using DogMatch.Domain.Data.Models;
+using DogMatch.Domain.Services;
 using AutoMapper;
-using DogMatch.Server.Infrastructure;
+using DogMatch.Domain.Infrastructure;
 using Microsoft.Extensions.FileProviders;
-using System.IO;
-using DogMatch.Server.Data.Repositories;
+using DogMatch.Domain.Data.Repositories;
 
 namespace DogMatch.Server
 {
@@ -58,7 +57,7 @@ namespace DogMatch.Server
 
             var mappingConfig = new MapperConfiguration(mc =>
             {
-                mc.AddProfile(new AutoMapperProfileServerConfiguration());
+                mc.AddProfile(new AutoMapperProfileDomainConfiguration());
             });
 
             IMapper mapper = mappingConfig.CreateMapper();
@@ -98,9 +97,14 @@ namespace DogMatch.Server
                 endpoints.MapFallbackToFile("index.html");
             });
 
+            //app.UseStaticFiles(new StaticFileOptions
+            //{
+            //    FileProvider = new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), "Images/ProfileImages")),
+            //    RequestPath = "/ProfileImage"
+            //});
             app.UseStaticFiles(new StaticFileOptions
             {
-                FileProvider = new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), "Images/ProfileImages")),
+                FileProvider = new PhysicalFileProvider(Configuration.GetValue<string>("FilePaths:ProfileImageDir")),
                 RequestPath = "/ProfileImage"
             });
         }

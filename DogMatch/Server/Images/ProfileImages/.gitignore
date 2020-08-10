@@ -1,9 +1,0 @@
-# ignore all static user uploaded profile images (all files in directory)
-/*
-# but do not ignore the .gitignore file
-!.gitignore
-
-# do not ignore AlbumImages dir itself
-!/ProfileImages
-# but ignore files and sub dirs in the /AlbumImages
-/ProfileImages/*

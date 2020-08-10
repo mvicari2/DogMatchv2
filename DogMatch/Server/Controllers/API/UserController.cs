@@ -1,7 +1,7 @@
 ﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using DogMatch.Server.Data;
-using DogMatch.Server.Data.Models;
+using DogMatch.Domain.Data;
+using DogMatch.Domain.Data.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 
