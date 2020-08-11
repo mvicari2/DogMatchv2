@@ -9,7 +9,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DogMatch.Client", "DogMatch
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DogMatch.Shared", "DogMatch\Shared\DogMatch.Shared.csproj", "{A3E8487D-94A0-4C9C-8DB8-9BD36494D9D4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DogMatch.Domain", "DogMatch\Domain\DogMatch.Domain.csproj", "{965A3393-A9C1-476E-9208-1E7DB3F65427}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DogMatch.Domain", "DogMatch\Domain\DogMatch.Domain.csproj", "{965A3393-A9C1-476E-9208-1E7DB3F65427}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

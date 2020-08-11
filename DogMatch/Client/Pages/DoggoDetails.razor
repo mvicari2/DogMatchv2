@@ -12,16 +12,18 @@
 
 <AuthorizeView>
     <Authorized>
-        <div style="text-align:center !important">
+        <div class="center-align">
             <MatH3>Details for @state.Doggo.Name</MatH3>
             <MatH5>Please give us more details about your dog to complete the profile.</MatH5>
             <form>
-                <div class="row">
+                <div class="row center-row">
                     <div class="form-group col-md-4 col-md-6" style="@state.ColStyle">
                         <label for="Breed" class="control-label">Breed</label>
                         <input type="text" class="form-control" id="breedText" placeholder="ex. German Shepard" @bind="@state.Doggo.Breed" @bind:event="oninput">
                     </div>
-                    <div class="form-group col-xs-4 col-md-4" style="@state.ColStyle">
+                </div>
+                <div class="row center-row">
+                    <div class="form-group col-md-4 col-md-6" style="@state.ColStyle">
                         <label for="Birthday" class="control-label">Birthday</label>
                         <br />
 
@@ -30,10 +32,9 @@
                         @state.Doggo.Age
                     </div>
                 </div>
-                <br />
 
-                <div class="row">
-                    <div class="form-group col-xs-4 col-md-4" style="@state.ColStyle">
+                <div class="row center-row">
+                    <div class="form-group col-md-4 col-md-6" style="@state.ColStyle">
                         <label for="Gender" class="control-label">Gender</label>
                         <br />
                         <MatRadioGroup @bind-Value="@state.Doggo.Gender" TValue="string">
@@ -41,15 +42,28 @@
                             <MatRadioButton Value="@("male")" TValue="string">Male</MatRadioButton>
                         </MatRadioGroup>
                     </div>
-                    <div class="form-group col-xs-4 col-md-4" style="@state.ColStyle">
-                        <label for="Weight" class="control-label">Weight</label>
-                        <RadzenSlider @bind-Value="@state.Doggo.Weight" TValue="int" Min="0" Max="300" Style="margin-bottom: 20px;" />
+                </div>
+                <div class="row center-row">
+                    <div class="form-group" style="@state.ColStyle">
+                        <label for="Weight" class="control-label">Weight</label><br />
+                        <RadzenSlider @bind-Value="@state.Doggo.Weight" TValue="int" Min="0" Max="120" Style="margin-bottom: 20px;" />
                         <br />
-                        Weight: @state.Doggo.Weight lbs.
+                        @if (state.Doggo.Weight > 119)
+                        {
+                            <span>
+                                Weight: 120+ lbs.
+                            </span>
+                        }
+                        else
+                        {
+                            <span>
+                                Weight: @state.Doggo.Weight lbs.
+                            </span>
+                        }
                     </div>
                 </div>
-
                 <br />
+
                 <div class="form-group" style="@state.ColStyle">
                     <h3>Profile Image</h3>
                     <input type="file" @ref="inputTypeFileElement" @onchange="@ReadFile" />
@@ -87,10 +101,6 @@
             <br />
         </div>
     </Authorized>
-    <NotAuthorized>
-        <a href="authentication/register">Register</a>
-        <a href="authentication/login">Log in</a>
-    </NotAuthorized>
 </AuthorizeView>
 
 

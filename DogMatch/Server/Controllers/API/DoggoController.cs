@@ -25,12 +25,7 @@ namespace DogMatch.Server.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Dog>>> GetDogs()
         {
-            IEnumerable<Dog> dogs = await _service.GetAllDogs();        
-
-            if (dogs.Count() < 1)
-            {
-                return BadRequest();
-            }
+            IEnumerable<Dog> dogs = await _service.GetAllDogs();
             return Ok(dogs);
         }        
 

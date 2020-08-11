@@ -73,6 +73,16 @@ app {
     margin-right: 10px;
 }
 
+.center-align {
+    text-align: center;
+}
+
+.center-row {
+    text-align: center;
+    margin-top: 15px;
+    margin-bottom: 15px;
+}
+
 .top-row {
     height: 3.5rem;
     display: flex;

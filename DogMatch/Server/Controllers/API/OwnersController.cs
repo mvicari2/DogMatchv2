@@ -25,11 +25,6 @@ namespace DogMatch.Server.Controllers.API
         public async Task<ActionResult<IEnumerable<Dog>>> Get()
         {
             IEnumerable<Dog> dogs = await _service.GetDogsByOwner(GetUserId());
-
-            if (dogs.Count() < 1)
-            {
-                return BadRequest();
-            }
             return Ok(dogs);
         }
         #endregion Owners API

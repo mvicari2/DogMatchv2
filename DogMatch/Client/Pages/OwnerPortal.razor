@@ -9,59 +9,14 @@
 
 <MatH2>Owner Portal</MatH2>
 <br />
-<MatH6>Your active Dog Profiles: @state.Doggos.Count()</MatH6>
-<br />
-
-<MatH5>My Doggos</MatH5>
-<br />
-
-@if (state.Doggos == null)
-{
-    <div class="col-lg-12">
-        <Flow Size="200px" Color="#003366" Center="true" />
-    </div>
-}
 
 <AuthorizeView>
     <Authorized>
-        <RadzenDataList WrapItems="true" AllowPaging="true" Data="@state.OwnersDogs" TItem="DogMatch.Shared.Models.Dog">
-            <Template Context="dog">
-                <RadzenCard Style="width:300px;">
-                    <img src="@dog.ProfileImage"
-                         style="width:auto; height: 250px" />
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div style="margin-top:20px">Name:</div>
-                            <b>@dog.Name</b>
-                            <div style="margin-top:20px">Breed:</div>
-                            <b>@dog.Breed</b>
-                            <br />
-                            <div style="margin-top:20px">Gender:</div>
-                            <b>@dog.Gender</b>
-                        </div>
-                        <div class="col-md-6">
-                            <div style="margin-top:20px">Weight:</div>
-                            <b>@dog.Weight</b>
-                            <div style="margin-top:20px">Birthday/Age</div>
-                            @if (dog.Birthday.HasValue)
-                            {
-                                <b>@dog.Birthday.Value.ToShortDateString() <br /> @dog.Age</b>
-                            }
-                            <div style="margin-top:20px">Owner</div>
-                            <b>@dog.Owner</b>
-                        </div>
-                    </div>
-                    <br />
-                    <div class="row inline-center-row">
-                        <div class="col-md-12">
-                            <OwnerMenuBtn DogId="dog.Id"
-                                          DogName="@dog.Name"
-                                          BtnStyle="width:100%;" />
-                        </div>
-                    </div>
-                </RadzenCard>
-            </Template>
-        </RadzenDataList>
+        <MatH6>Your active Dog Profiles: @state.OwnersDogs?.Count()</MatH6>
+        <br />
+        <MatH5>My Doggos</MatH5>
+        <br />
+        <DogsList Dogs="state.OwnersDogs" />
     </Authorized>
 </AuthorizeView>
 
