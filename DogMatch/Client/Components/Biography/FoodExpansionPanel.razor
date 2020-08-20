@@ -1,0 +1,55 @@
+﻿@using DogMatch.Client.Services
+@using DogMatch.Shared.Globals
+
+@inject BiographyState state
+
+<MatExpansionPanel Expanded="@state.Expanded.FoodExpanded">
+    <MatExpansionPanelSummary @onclick="() => state.ChangeExpanded(BiographyExpansion.Food)">
+        <MatExpansionPanelHeader>
+            @if (state.Expanded.FoodExpanded)
+            {
+                <MatIcon Icon="sentiment_satisfied_alt" Class="icon-align" />
+            }
+            else
+            {
+                <MatIcon Icon="pets" Class="icon-align" />
+            }
+        </MatExpansionPanelHeader>
+        <MatExpansionPanelSubHeader>
+            <b>Favorite Foods and Treats</b>
+        </MatExpansionPanelSubHeader>
+    </MatExpansionPanelSummary>
+    <MatExpansionPanelDetails>
+        <span>
+            Tell us about your dog's favorite foods and treats.
+            What foods do your dog go crazy for?
+            What would your dog eat if they could choose their own diet?
+        </span>
+        <br />
+        <MatTextField @bind-Value="@state.Biography.FavoriteFoods"
+                      Label="Your Dog's Favorite Foods or Treats"
+                      TextArea="true"
+                      Style="width: 100%"
+                      Outlined="true"
+                      TValue="string"
+                      rows="5" />
+        <br />
+        <div class="container col-md-4 inline-center-row">
+            <button type="button"
+                    class="btn btn-sm btn-primary"
+                    @onclick="() => state.ChangeExpanded(BiographyExpansion.Memory)">
+                Go To Previous
+            </button>
+            <button type="button"
+                    class="btn btn-sm btn-primary"
+                    @onclick="() => state.ChangeExpanded(BiographyExpansion.Toy)">
+                Go To Next
+            </button>
+        </div>
+    </MatExpansionPanelDetails>
+</MatExpansionPanel>
+
+@code {
+    protected override void OnInitialized() => state.OnChange += RefreshComponent;
+    private void RefreshComponent() => StateHasChanged();
+}

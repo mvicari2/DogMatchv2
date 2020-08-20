@@ -1,0 +1,53 @@
+﻿@using DogMatch.Client.Services
+@using DogMatch.Shared.Globals
+
+@inject BiographyState state
+
+<MatExpansionPanel Expanded="state.Expanded.MemoryExpanded">
+    <MatExpansionPanelSummary @onclick="() => state.ChangeExpanded(BiographyExpansion.Memory)">
+        <MatExpansionPanelHeader>
+            @if (state.Expanded.MemoryExpanded)
+            {
+                <MatIcon Icon="sentiment_satisfied_alt" Class="icon-align" />
+            }
+            else
+            {
+                <MatIcon Icon="pets" Class="icon-align" />
+            }
+        </MatExpansionPanelHeader>
+        <MatExpansionPanelSubHeader>
+            <b>Favorite Memories:</b>
+        </MatExpansionPanelSubHeader>
+    </MatExpansionPanelSummary>
+    <MatExpansionPanelDetails>
+        <span>
+            Tell us your favorite memories that you've made with your dog. What would you say are your dog's favorite memories?
+        </span>
+        <br />
+        <MatTextField @bind-Value="@state.Biography.FavoriteMemory"
+                      Label="Favorite Memories"
+                      TextArea="true"
+                      Style="width: 100%"
+                      Outlined="true"
+                      TValue="string"
+                      rows="5" />
+        <br />
+        <div class="container col-md-4 inline-center-row">
+            <button type="button"
+                    class="btn btn-sm btn-primary"
+                    @onclick="() => state.ChangeExpanded(BiographyExpansion.About)">
+                Go To Previous
+            </button>
+            <button type="button"
+                    class="btn btn-sm btn-primary"
+                    @onclick="() => state.ChangeExpanded(BiographyExpansion.Food)">
+                Go To Next
+            </button>
+        </div>
+    </MatExpansionPanelDetails>
+</MatExpansionPanel>
+
+@code {
+    protected override void OnInitialized() => state.OnChange += RefreshComponent;
+    private void RefreshComponent() => StateHasChanged();
+}

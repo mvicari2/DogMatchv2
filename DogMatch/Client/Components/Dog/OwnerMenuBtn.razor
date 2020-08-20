@@ -17,45 +17,35 @@
             </MatButton>
             <MatMenu @ref="Menu" TargetForwardRef="@buttonForwardRef">
                 <MatList Style="text-align: left;">
-                    <MatListItem>
-                        <NavLink class="nav-link dropdown-item text-dark"
-                                 @onclick="() => navigate.ToProfile(DogId)"
-                                 Match="NavLinkMatch.All">
-                            <MatIcon Icon="preview" Class="icon-align" />
-                            <span class="nav-text-align">
-                                &nbsp View Profile
-                            </span>
-                        </NavLink>
+                    <MatListItem OnClick="() => navigate.ToProfile(DogId)">
+                        <MatIcon Icon="preview" Class="icon-align" />
+                        <span class="nav-text-align">
+                            &nbsp View Profile
+                        </span>
                     </MatListItem>
-                    <MatListItem>
-                        <NavLink class="nav-link dropdown-item text-dark"
-                                 @onclick="() => navigate.ToUpdateDoggo(DogId)"
-                                 Match="NavLinkMatch.All">
-                            <MatIcon Icon="list" Class="icon-align" />
-                            <span class="nav-text-align">
-                                &nbsp Update Basic Details
-                            </span>
-                        </NavLink>
+                    <MatListItem OnClick="() => navigate.ToUpdateDoggo(DogId)">
+                        <MatIcon Icon="list" Class="icon-align" />
+                        <span class="nav-text-align">
+                            &nbsp Update Basic Details
+                        </span>
                     </MatListItem>
-                    <MatListItem>
-                        <NavLink class="nav-link dropdown-item text-dark"
-                                 @onclick="() => navigate.ToTemperament(DogId)"
-                                 Match="NavLinkMatch.All">
-                            <MatIcon Icon="bar_chart" Class="icon-align" />
-                            <span class="nav-text-align">
-                                &nbsp Update Temperament Profile
-                            </span>
-                        </NavLink>
+                    <MatListItem OnClick="() => navigate.ToTemperament(DogId)">
+                        <MatIcon Icon="bar_chart" Class="icon-align" />
+                        <span class="nav-text-align">
+                            &nbsp Update Temperament Profile
+                        </span>
                     </MatListItem>
-                    <MatListItem>
-                        <NavLink class="nav-link dropdown-item text-dark"
-                                 @onclick="() => ToggleModal()"
-                                 Match="NavLinkMatch.All">
-                            <MatIcon Icon="delete_forever" Class="icon-align" />
-                            <span class="nav-text-align">
-                                &nbsp Delete Dog
-                            </span>
-                        </NavLink>
+                    <MatListItem OnClick="() => navigate.ToBiography(DogId)">
+                        <MatIcon Icon="speaker_notes" Class="icon-align" />
+                        <span class="nav-text-align">
+                            &nbsp Update Biography Profile
+                        </span>
+                    </MatListItem>
+                    <MatListItem OnClick="() => ToggleModal()">
+                        <MatIcon Icon="delete_forever" Class="icon-align" />
+                        <span class="nav-text-align">
+                            &nbsp Delete Dog
+                        </span>
                     </MatListItem>
                 </MatList>
             </MatMenu>
@@ -92,7 +82,6 @@
     [Parameter]
     public string BtnStyle { get; set; }
 
-    private string profileMenuStyle = null;
     string dogButtonId = string.Empty;
     bool modalIsOpen = false;
     ForwardRef buttonForwardRef = new ForwardRef();

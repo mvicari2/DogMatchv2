@@ -1,0 +1,35 @@
+﻿@using DogMatch.Client.Services
+@using DogMatch.Shared.Globals
+
+@inject BiographyState state
+
+<div class="d-flex flex-md-column align-items-center">
+    <b>Save and Navigate:</b>
+    <MatChipSet>
+        <MatChip LeadingIcon="preview"
+                 Label="Doggo Profile"
+                 Style="@chipStyle"
+                 @onclick="() => state.SaveAndNavigate(BioNavigate.ToProfile)" />
+        <MatChip LeadingIcon="list"
+                 Label="Basic Details"
+                 Style="@chipStyle"
+                 @onclick="() => state.SaveAndNavigate(BioNavigate.ToDetails)" />
+        <MatChip LeadingIcon="bar_chart"
+                 Label="Temperament"
+                 Style="@chipStyle"
+                 @onclick="() => state.SaveAndNavigate(BioNavigate.ToTemperament)" />
+        <MatChip LeadingIcon="person"
+                 Label="Owner's Portal"
+                 Style="@chipStyle"
+                 @onclick="() => state.SaveAndNavigate(BioNavigate.ToOwnersPortal)" />
+        <MatChip LeadingIcon="pets"
+                 Label="All Doggos"
+                 Style="@chipStyle"
+                 @onclick="() => state.SaveAndNavigate(BioNavigate.ToAllDoggos)" />
+    </MatChipSet>
+</div>
+
+@code {
+    public string chipStyle = "background-color: #0D5AA7; color: ghostwhite;"; 
+    //alternate-bg-color #479cc8
+}

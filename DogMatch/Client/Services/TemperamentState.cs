@@ -134,6 +134,9 @@ namespace DogMatch.Client.Services
                 case TemperamentDirection.Profile:
                     _navigate.ToProfile(Temperament.DogId);
                     break;
+                case TemperamentDirection.Biography:
+                    _navigate.ToBiography(Temperament.DogId);
+                    break;
             }            
 
             NotifyStateChanged();
@@ -143,7 +146,7 @@ namespace DogMatch.Client.Services
 
         #region New Temperament
         /// <summary>
-        /// Initializes new DogTemperament object in state.
+        /// Initializes new <see cref="DogTemperament"/> instance in state.
         /// </summary>        
         public void NewTemperament() => Temperament = new DogTemperament();
 

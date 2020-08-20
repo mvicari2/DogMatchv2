@@ -1,0 +1,47 @@
+﻿@using DogMatch.Client.Services
+@using DogMatch.Shared.Globals
+
+@inject BiographyState state
+
+<MatExpansionPanel Expanded="state.Expanded.AboutExpanded">
+    <MatExpansionPanelSummary @onclick="() => state.ChangeExpanded(BiographyExpansion.About)">
+        <MatExpansionPanelHeader>
+            @if (state.Expanded.AboutExpanded)
+            {
+                <MatIcon Icon="sentiment_satisfied_alt" Class="icon-align" />
+            }
+            else
+            {
+                <MatIcon Icon="pets" Class="icon-align" />
+            }
+        </MatExpansionPanelHeader>
+        <MatExpansionPanelSubHeader>
+            <b>About Your Doggo:</b>
+        </MatExpansionPanelSubHeader>
+    </MatExpansionPanelSummary>
+    <MatExpansionPanelDetails>
+        <span>
+            Tell us about your dog. The detail you provide will help other dog owners match with your dog.
+        </span>
+        <br />
+        <MatTextField @bind-Value="@state.Biography.AboutDoggo"
+                      Label="About Your Doggo"
+                      TextArea="true"
+                      Style="width: 100%;"
+                      Outlined="true"
+                      TValue="string"
+                      rows="5" />
+        <div class="container col-md-4 inline-center-row">
+            <button type="button"
+                    class="btn btn-sm btn-primary"
+                    @onclick="() => state.ChangeExpanded(BiographyExpansion.Memory)">
+                Go To Next
+            </button>
+        </div>
+    </MatExpansionPanelDetails>
+</MatExpansionPanel>
+
+@code {
+    protected override void OnInitialized() => state.OnChange += RefreshComponent;
+    private void RefreshComponent() => StateHasChanged();
+}

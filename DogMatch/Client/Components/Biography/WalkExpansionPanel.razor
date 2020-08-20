@@ -1,0 +1,52 @@
+﻿@using DogMatch.Client.Services
+@using DogMatch.Shared.Globals
+
+@inject BiographyState state
+
+<MatExpansionPanel Expanded="state.Expanded.WalkExpanded">
+    <MatExpansionPanelSummary @onclick="() => state.ChangeExpanded(BiographyExpansion.Walk)">
+        <MatExpansionPanelHeader>
+            @if (state.Expanded.WalkExpanded)
+            {
+                <MatIcon Icon="sentiment_satisfied_alt" Class="icon-align" />
+            }
+            else
+            {
+                <MatIcon Icon="pets" Class="icon-align" />
+            }
+        </MatExpansionPanelHeader>
+        <MatExpansionPanelSubHeader>
+            <b>Favorite Walk Locations:</b>
+        </MatExpansionPanelSubHeader>
+    </MatExpansionPanelSummary>
+    <MatExpansionPanelDetails>
+        <span>
+            Tell us about your dog's favorite places to walk, excersize or play. What are some of your dogs favorite outdoor recreation locations?
+        </span>
+        <br />
+        <MatTextField @bind-Value="@state.Biography.FavoriteWalkLocation"
+                      Label="Your dog's favorite place to walk"
+                      TextArea="true"
+                      Style="width: 100%;"
+                      Outlined="true"
+                      TValue="string"
+                      rows="5" />
+        <div class="container col-md-4 inline-center-row">
+            <button type="button"
+                    class="btn btn-sm btn-primary"
+                    @onclick="() => state.ChangeExpanded(BiographyExpansion.Sleep)">
+                Go To Previous
+            </button>
+            <button type="button"
+                    class="btn btn-sm btn-primary"
+                    @onclick="() => state.ChangeExpanded(BiographyExpansion.AllClosed)">
+                Close All Panels
+            </button>
+        </div>
+    </MatExpansionPanelDetails>
+</MatExpansionPanel>
+
+@code {
+    protected override void OnInitialized() => state.OnChange += RefreshComponent;
+    private void RefreshComponent() => StateHasChanged();
+}

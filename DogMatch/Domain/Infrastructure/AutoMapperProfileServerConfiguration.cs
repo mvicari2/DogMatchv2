@@ -19,27 +19,27 @@ namespace DogMatch.Domain.Infrastructure
         protected AutoMapperProfileDomainConfiguration(string profileName) : base(profileName)
         {
             CreateMap<Dog, Dogs>()
-                .ForMember(dest => dest.Id, cfg => cfg.MapFrom(src => src.Id))
-                .ForMember(dest => dest.Name, cfg => cfg.MapFrom(src => src.Name))
-                .ForMember(dest => dest.Breed, cfg => cfg.MapFrom(src => src.Breed))
-                .ForMember(dest => dest.Birthday, cfg => cfg.MapFrom(src => src.Birthday))
-                .ForMember(dest => dest.Gender, cfg => cfg.MapFrom(src => src.Gender == "female" ? 'f' : src.Gender == "male" ? 'm' : ' '))
-                .ForMember(dest => dest.Weight, cfg => cfg.MapFrom(src => src.Weight))
-                .ForMember(x => x.Owner, src => src.Ignore()) // ignore temporarily
-                .ForMember(x => x.DogProfileImage, src => src.Ignore());
+                .ForMember(d => d.Id, cfg => cfg.MapFrom(src => src.Id))
+                .ForMember(d => d.Name, cfg => cfg.MapFrom(src => src.Name))
+                .ForMember(d => d.Breed, cfg => cfg.MapFrom(src => src.Breed))
+                .ForMember(d => d.Birthday, cfg => cfg.MapFrom(src => src.Birthday))
+                .ForMember(d => d.Gender, cfg => cfg.MapFrom(src => src.Gender == "female" ? 'f' : src.Gender == "male" ? 'm' : ' '))
+                .ForMember(d => d.Weight, cfg => cfg.MapFrom(src => src.Weight))
+                .ForMember(d => d.Owner, src => src.Ignore()) // ignore temporarily
+                .ForMember(d => d.DogProfileImage, src => src.Ignore());
 
             CreateMap<Dogs, Dog>()
-                .ForMember(dest => dest.Id, cfg => cfg.MapFrom(src => src.Id))
+                .ForMember(d => d.Id, cfg => cfg.MapFrom(src => src.Id))
                 .ForMember(d => d.Name, cfg => cfg.MapFrom(src => src.Name))
-                .ForMember(dest => dest.Breed, opt => {
+                .ForMember(d => d.Breed, opt => {
                     opt.PreCondition(src => (src.Breed != null));
                     opt.MapFrom(src => src.Breed);
                 })
-                .ForMember(dest => dest.Birthday, opt => {
+                .ForMember(d => d.Birthday, opt => {
                     opt.PreCondition(src => (src.Birthday != null));
                     opt.MapFrom(src => src.Birthday);
                 })
-                .ForMember(dest => dest.Age, opt => {
+                .ForMember(d => d.Age, opt => {
                     opt.PreCondition(src => (src.Birthday != null));
                     opt.MapFrom(src => GetAge(src.Birthday));
                 })
@@ -49,15 +49,26 @@ namespace DogMatch.Domain.Infrastructure
                 .ForMember(d => d.Owner, cfg => cfg.MapFrom(src => src.Owner.UserName)); // using username for owner until collecting first/last name of user
 
             CreateMap<Temperament, DogTemperament>()
-                .ForMember(dest => dest.Id, cfg => cfg.MapFrom(src => src.Id))
+                .ForMember(d => d.Id, cfg => cfg.MapFrom(src => src.Id))
                 .ForMember(d => d.DogId, cfg => cfg.MapFrom(src => src.DogId))
                 .ForMember(d => d.DogName, cfg => cfg.MapFrom(src => src.Dog.Name))
                 .ForMember(d => d.OwnerId, cfg => cfg.MapFrom(src => src.Dog.Owner.Id))
                 .ForMember(d => d.OwnerName, cfg => cfg.MapFrom(src => src.Dog.Owner.UserName));
 
             CreateMap<DogTemperament, Temperament>()
-               .ForMember(dest => dest.Id, cfg => cfg.MapFrom(src => src.Id))
+               .ForMember(d => d.Id, cfg => cfg.MapFrom(src => src.Id))
                .ForMember(d => d.DogId, cfg => cfg.MapFrom(src => src.DogId));
+
+            CreateMap<Biography, DogBiography>()
+                .ForMember(d => d.Id, cfg => cfg.MapFrom(src => src.Id))
+                .ForMember(d => d.DogId, cfg => cfg.MapFrom(src => src.DogId))
+                .ForMember(d => d.DogName, cfg => cfg.MapFrom(src => src.Dog.Name))
+                .ForMember(d => d.OwnerId, cfg => cfg.MapFrom(src => src.Dog.Owner.Id))
+                .ForMember(d => d.OwnerName, cfg => cfg.MapFrom(src => src.Dog.Owner.UserName));
+
+            CreateMap<DogBiography, Biography>()
+                .ForMember(d => d.Id, cfg => cfg.MapFrom(src => src.Id))
+                .ForMember(d => d.DogId, cfg => cfg.MapFrom(src => src.DogId));
         }       
 
         // uses birthday datetime to return string w/current age of dog

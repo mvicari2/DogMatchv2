@@ -9,14 +9,17 @@
         TemperamentError = 5,
         DogDeleted = 6,
         DogDeleteUnauthorized = 7,
-        DogDeleteError = 8
+        DogDeleteError = 8,
+        BiographySaved = 9,
+        BiographyError = 10
     }
 
     public enum TemperamentDirection
     {
         Forward = 1,
         Back = 2,
-        Profile = 3
+        Profile = 3,
+        Biography = 4
     }
 
     public enum DeleteDogResponse
@@ -24,5 +27,25 @@
         Success = 1,
         Failed = 2,
         Unauthorized = 3
+    }
+
+    public enum BiographyExpansion
+    {
+        About = 1,
+        Memory = 2,
+        Food = 3,
+        Toy = 4,
+        Sleep = 5,
+        Walk = 6,
+        AllClosed = 7
+    }
+
+    public enum BioNavigate
+    {
+        ToProfile = 1,
+        ToDetails = 2,
+        ToTemperament = 3,
+        ToOwnersPortal = 4,
+        ToAllDoggos = 5
     }
 }

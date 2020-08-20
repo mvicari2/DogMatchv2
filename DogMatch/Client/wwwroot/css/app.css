@@ -83,6 +83,18 @@ app {
     margin-bottom: 15px;
 }
 
+/* center mat accordion col */
+.custom-accordion {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* override color of MatChip Icon*/
+.mdc-chip__icon {
+    color: ghostwhite !important;
+}
+
 .top-row {
     height: 3.5rem;
     display: flex;

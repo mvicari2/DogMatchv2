@@ -34,6 +34,13 @@ namespace DogMatch.Client.Services
             _service.NavigateTo($"/Temperament/{id}");
 
         /// <summary>
+        /// Navigates to Biography Profile page.
+        /// </summary>        
+        /// <param name="id">dog id int</param>
+        public void ToBiography(int id) =>
+            _service.NavigateTo($"/Biography/{id}");
+
+        /// <summary>
         /// Navigates to All Doggos page.
         /// </summary>        
         public void ToAllDoggos() =>

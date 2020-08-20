@@ -1,0 +1,44 @@
+﻿@page "/Biography/{id:int}"
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Components.Authorization
+@using DogMatch.Client.Services
+@using DogMatch.Client.Components.Biography
+
+@attribute [Authorize]
+@inject BiographyState state
+
+<AuthorizeView>
+    <Authorized>
+        <div class="center-align">
+            <MatH3>Biography for @state.Biography.DogName</MatH3>
+            <MatH5>
+                Please give us more details about your dog to complete the profile.
+            </MatH5>
+            <MatAccordion Class="custom-accordion col-lg-12">
+                <AboutExpansionPanel />
+                <MemoryExpansionPanel />
+                <FoodExpansionPanel />
+                <ToyExpansionPanel />
+                <SleepExpansionPanel />
+                <WalkExpansionPanel />
+            </MatAccordion>
+            <br />
+            <BioNavigator />
+            <br />
+        </div>
+    </Authorized>
+</AuthorizeView>
+
+
+@code {
+    [Parameter]
+    public int Id { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await state.GetBiography(Id);
+        state.OnChange += RefreshComponent;
+    }
+
+    private void RefreshComponent() => StateHasChanged();
+}

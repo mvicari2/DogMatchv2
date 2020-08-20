@@ -45,6 +45,12 @@ namespace DogMatch.Client.Services
                 case NotificationType.DogDeleteError:
                     DogDeleteError(dogName);
                     break;
+                case NotificationType.BiographySaved:
+                    BiographySaved(dogName);
+                    break;
+                case NotificationType.BiographyError:
+                    BiographyError(dogName);
+                    break;
             }          
         }
         #endregion Public Methods
@@ -153,6 +159,32 @@ namespace DogMatch.Client.Services
                     "Delete Failed!",
                     $"Delete failed for {dogName}, please try again.",
                     6000
+                ));
+
+        /// <summary>
+        /// Creates new <see cref="NotificationMessage"/> for Dog Biography Saved successfully,
+        /// and calls <see cref="NotificationService"/> Notify.
+        /// </summary>        
+        /// <param name="dogName">dog name <see cref="string"/></param>
+        private void BiographySaved(string dogName) =>
+            _service.Notify(
+                GetSuccessMessage(
+                    "Biography Saved!",
+                    $"Biography for {dogName} was saved successfully.",
+                    2500
+                ));
+
+        /// <summary>
+        /// Creates new <see cref="NotificationMessage"/> for Dog Biography saved error,
+        /// and calls <see cref="NotificationService"/> Notify.
+        /// </summary>        
+        /// <param name="dogName">dog name <see cref="string"/></param>
+        private void BiographyError(string dogName) =>
+            _service.Notify(
+                GetErrorMessage(
+                    "Save Failed!",
+                    $"Saving Biography failed for {dogName}, please try again.",
+                    2500
                 ));
 
         #endregion Notify Methods

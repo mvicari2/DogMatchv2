@@ -137,7 +137,7 @@ namespace DogMatch.Client.Services
 
         #region Data Methods
         /// <summary>
-        /// Initializes new Dog object dog in state.
+        /// Initializes new <see cref="Dog"/> instance dog in state.
         /// </summary>
         public void NewDoggo() => Doggo = new Dog();
 
