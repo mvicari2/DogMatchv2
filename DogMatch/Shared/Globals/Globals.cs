@@ -48,4 +48,10 @@
         ToOwnersPortal = 4,
         ToAllDoggos = 5
     }
+
+    public enum DogGenderTypes
+    {
+        female = 1,
+        male = 2
+    }
 }

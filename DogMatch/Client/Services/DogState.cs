@@ -15,14 +15,16 @@ namespace DogMatch.Client.Services
     [Authorize]
     public class DogState
     {
-        #region Properties / Variables / DI
+        #region Properties / Variables
         public Dog Doggo { get; set; }
         public IEnumerable<Dog> Doggos { get; set; }
         public IEnumerable<Dog> OwnersDogs { get; set; }
         public DateTime today = DateTime.Now;
+        public int? initialWeight = null;
         public event Action OnChange;
+        #endregion Properties / Variables
 
-        // DI
+        #region DI
         private readonly HttpClient _http;
         private readonly NavigationService _navigate;
         private readonly NotificationMsgService _notification;
@@ -33,14 +35,9 @@ namespace DogMatch.Client.Services
             _navigate = navigate;
             _notification = notification;
         }
-        #endregion Properties / Variables / DI
+        #endregion DI
 
         #region Methods / WebApi Calls
-        /// <summary>
-        /// Invokes OnChange Action to notify subscribers state has changed.
-        /// </summary>
-        private void NotifyStateChanged() => OnChange?.Invoke();
-
         /// <summary>
         /// Calls WebApi that returns all doggos and sets them into state.
         /// </summary>        
@@ -61,6 +58,10 @@ namespace DogMatch.Client.Services
         {
             NewDoggo();
             Doggo = await _http.GetFromJsonAsync<Dog>($"api/Doggo/{id}");
+
+            // set intial dog weight for MatSlider component
+            initialWeight = Doggo.Weight;
+            NotifyStateChanged();
         }
 
         /// <summary>
@@ -133,30 +134,71 @@ namespace DogMatch.Client.Services
                 _notification.DisplayMessage(NotificationType.DogDeleteUnauthorized, Doggo.Name);
             }
         }
-        #endregion Methods / WebApi Calls        
+        #endregion Methods / WebApi Calls
 
-        #region Data Methods
+        #region Property Methods
         /// <summary>
-        /// Initializes new <see cref="Dog"/> instance dog in state.
+        /// Update <see cref="Doggo"/> weight (on change)
         /// </summary>
-        public void NewDoggo() => Doggo = new Dog();
+        /// <param name="weight">Dog's weight <see cref="int"/></param>
+        public void UpdateWeight(int weight) => Doggo.Weight = weight;
+
+        /// <summary>
+        /// Update <see cref="Doggo"/> Gender (on change)
+        /// </summary>
+        /// <param name="type"></param>
+        public void UpdateGender(DogGenderTypes type)
+        {
+            switch (type)
+            {
+                case DogGenderTypes.female:
+                    Doggo.Gender = "female";
+                    break;
+                case DogGenderTypes.male:
+                    Doggo.Gender = "male";
+                    break;
+            }
+        }
+
+        /// <summary>
+        /// Update <see cref="Doggo"/> birthday (on change)
+        /// </summary>
+        /// <param name="bday">Dog's birthday <see cref="DateTime?"/></param>
+        public void UpdateBirthday(DateTime? bday)
+        {
+            GetAge(bday);
+            Doggo.Birthday = bday;
+        }
 
         /// <summary>
         /// Converts birthday <see cref="DateTime?"/> to short date string.
         /// </summary>        
         /// <param name="bday">nullable birthday DateTime</param>
         /// <returns>short DateTime string</returns>
-        public string GetBirthday(DateTime? bday) =>
-            bday.Value.ToShortDateString();
+        public string GetBirthday(DateTime? bday) => bday.Value.ToShortDateString();
+        #endregion Property Methods            
+
+        #region Internal Methods
+        /// <summary>
+        /// Invokes OnChange Action to notify subscribers state has changed.
+        /// </summary>
+        private void NotifyStateChanged() => OnChange?.Invoke();
 
         /// <summary>
         /// Sets dog.Birthday and gets current age (dog.Age) string based on birthday <see cref="DateTime?"/>.
         /// </summary>        
         /// <param name="date">birthday <see cref="DateTime?"/></param>
         /// <returns><see cref="string"/> containing current age</returns>
-        public Task GetAge(DateTime? date)
+        private Task GetAge(DateTime? date)
         {
             Doggo.Birthday = date;
+
+            if (!date.HasValue)
+            {
+                Doggo.Age = null;
+                NotifyStateChanged();
+                return Task.CompletedTask;
+            }
 
             DateTime today = DateTime.Today;
             int a = (today.Year * 100 + today.Month) * 100 + today.Day;
@@ -182,13 +224,16 @@ namespace DogMatch.Client.Services
                 Doggo.Age = "Age: " + age + " years old";
             }
 
+            NotifyStateChanged();
             return Task.CompletedTask;
         }
-        #endregion Data Methods
+        #endregion Internal Methods
 
-        #region Styles
-        public string ColStyle = "display: block; margin-left: auto; margin-right: auto;";
-        public string CardStyle = "display: block; margin-left: auto; margin-right: auto; width: 60%; margin-bottom: 20px; height:200px;";
-        #endregion Styles
+        #region Initialize Classes
+        /// <summary>
+        /// Initializes new <see cref="Dog"/> instance dog in state.
+        /// </summary>
+        public void NewDoggo() => Doggo = new Dog();
+        #endregion Initialize Classes
     }
 }

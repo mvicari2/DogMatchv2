@@ -1,0 +1,188 @@
+﻿@using System.IO
+@using Tewr.Blazor.FileReader
+@using DogMatch.Client.Services
+
+@inject DogState state
+@inject IFileReaderService fileReaderService
+
+<div class="form-group col-lg-12">
+    <MatH3>Profile Image</MatH3>
+    <br />
+    <div class="@dropClass">
+        <input type="file"
+               class="image-drop-clickable"
+               accept="image/png, image/jpeg"
+               @ref=dropTargetInput
+               @onchange="OnInputChange"
+               @ondragenter=OnDragEnter
+               @ondragleave=OnDragLeave />
+
+            @if (profileImage.Length > 0 ||
+              (state.Doggo.ProfileImage != null
+              && !state.Doggo.ProfileImage.Contains("dogmatch_paw.png")))
+            {
+                <MatOverline>
+                    Drop New Image File Here or Click to Replace Current Image.
+                </MatOverline>
+            }
+            else
+            {
+                <MatOverline>
+                    Drop Image File Here or Click to Upload.
+                </MatOverline>
+            }
+
+            @foreach (var fileInfo in FileList.Select(x => x.FileInfo))
+            {
+                <br />@fileInfo.Name
+            }
+        </div>
+        @if (imgInProgress)
+        {
+            <div class="col-lg-12">
+                <Flow Size="75px" Color="#003366" Center="true" />
+            </div>
+        }
+        else
+        {
+            <br />
+            @if (profileImage.Length > 0)
+            {
+                <MatOverline><b>Preview:</b></MatOverline>
+                <br />
+                <img src="@profileImage" style="max-height:400px;height:auto" />
+            }
+            else if (state.Doggo.ProfileImage != null)
+            {
+                if (!state.Doggo.ProfileImage.Contains("dogmatch_paw.png"))
+                {
+                    <MatOverline><b>Current Profile Image:</b></MatOverline>
+                    <br />
+                    <img src="@state.Doggo.ProfileImage"
+                         style="max-height:400px;height:auto" />
+                }
+            }
+        }
+    </div>
+
+    @code {
+        ElementReference dropTargetInput;
+        IFileReaderRef inputReference;
+        public bool imgInProgress = false;
+        public string profileImage = string.Empty;
+
+        private List<string> _dropClasses = new List<string>() { dropTargetClass };
+        string dropClass => string.Join(" ", _dropClasses);
+
+        const string dropTargetDragClass = "droptarget-drag";
+        const string dropTargetClass = "droptarget";
+
+        private class FileWithStream
+        {
+            public IFileInfo FileInfo { get; set; }
+            public AsyncDisposableStream Stream { get; set; }
+        }
+
+        List<FileWithStream> FileList { get; } = new List<FileWithStream>();
+
+        // subscribe to state changes (DogState)
+        protected override void OnInitialized() => state.OnChange += RefreshComponent;
+        private void RefreshComponent() => StateHasChanged();
+
+        /// <summary>
+        /// Create ref
+        /// </summary>
+        /// <param name="isFirstRender">Is first render <see cref="bool"/></param>
+        protected override void OnAfterRender(bool isFirstRender)
+        {
+            if (isFirstRender)
+            {
+                inputReference = fileReaderService.CreateReference(dropTargetInput);
+            }
+        }
+
+        /// <summary>
+        /// for future enhancement (click btn (or something) to remove current image)
+        /// </summary>
+        public async Task ClearClick()
+        {
+            await this.ClearAsync();
+            await this.RefreshFileList();
+        }
+
+        /// <summary>
+        /// Dispose current FileList
+        /// </summary>
+        private async Task ClearAsync()
+        {
+            foreach (var disposable in FileList.Select(x => x.Stream))
+            {
+                await disposable.DisposeAsync();
+            }
+
+            FileList.Clear();
+        }
+
+        // add/remove target css classes for drop zone area
+        public void OnDragEnter(EventArgs e) => _dropClasses.Add(dropTargetDragClass);
+        public void OnDragLeave(EventArgs e) => _dropClasses.Remove(dropTargetDragClass);
+
+        /// <summary>
+        /// Begin file processes on input change
+        /// </summary>
+        /// <param name="e"><see cref="EventArgs"/></param>
+        public async Task OnInputChange(EventArgs e)
+        {            
+            // start animation
+            imgInProgress = true;
+
+            // remove drop zone drag class
+            _dropClasses.Remove(dropTargetDragClass);
+            this.StateHasChanged();
+
+            // refresh file list and handle image (set image into state and create base64 string for preview)
+            await this.RefreshFileList();
+            await ReadFile();
+        }
+
+        /// <summary>
+        /// Updates FileList after changes
+        /// </summary>
+        private async Task RefreshFileList()
+        {
+            await this.ClearAsync();
+
+            foreach (var file in await inputReference.EnumerateFilesAsync())
+            {
+                var fileInfo = await file.ReadFileInfoAsync();
+                FileList.Add(new FileWithStream { FileInfo = fileInfo, Stream = await file.OpenReadAsync() });
+            }
+            this.StateHasChanged();
+        }
+
+        /// <summary>
+        /// Read image file, set in state, and create/set preview image base64 string
+        /// </summary>
+        public async Task ReadFile()
+        {
+            foreach (var file in await fileReaderService.CreateReference(dropTargetInput).EnumerateFilesAsync())
+            {
+                // read file info then extract extension and set into state
+                IFileInfo fileInfo = await file.ReadFileInfoAsync();
+                state.Doggo.Extension = Path.GetExtension(fileInfo.Name);
+
+                await using (MemoryStream memoryStream = await file.CreateMemoryStreamAsync(4096))
+                {
+                    // memory stream to byte array
+                    byte[] img = memoryStream.ToArray();
+
+                    // create base64 image string for image preview
+                    profileImage = $"data:image/jpg;base64,{Convert.ToBase64String(img)}";
+
+                    // set profile image into state
+                    state.Doggo.ProfileImage = profileImage;
+                }
+            }
+            imgInProgress = false; // stop animation
+        }
+    }

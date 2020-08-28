@@ -12,27 +12,31 @@
             <MatH2>Create New Doggo</MatH2>
             <form>
                 <div class="row">
-                    <RadzenCard Style="@state.CardStyle">
-
-                        <h3>Enter your dogs name to begin creating a profile</h3>
-                        <input type="text"
-                               class="form-control input-lg"
-                               id="name"
-                               placeholder="ex. Spot"
-                               @bind="@state.Doggo.Name"
-                               @bind:event="oninput">
+                    <RadzenCard class="create-dog-card">
+                        <MatOverline>
+                            <MatOverline>
+                                Enter your dogs name to begin creating a profile
+                            </MatOverline>
+                        </MatOverline>
+                        <MatTextField @bind-Value="@state.Doggo.Name"
+                                      Icon="pets"
+                                      Class="mat-text-custom"
+                                      IconTrailing="true"
+                                      PlaceHolder="Dog Name"
+                                      Outlined="true"
+                                      HelperText="Enter your Dog's Name" />
                         <br />
-                        <button type="button" class="btn btn-outline-primary" @onclick="@state.CreateDoggo">Create New Doggo</button>
+                        <button type="button"
+                                class="btn btn-primary"
+                                @onclick="@state.CreateDoggo">
+                            Create New Doggo
+                        </button>
                     </RadzenCard>
                 </div>
                 <br />
             </form>
         </div>
     </Authorized>
-    <NotAuthorized>
-        <a href="authentication/register">Register</a>
-        <a href="authentication/login">Log in</a>
-    </NotAuthorized>
 </AuthorizeView>
 
 

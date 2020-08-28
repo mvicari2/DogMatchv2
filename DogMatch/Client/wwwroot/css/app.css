@@ -95,6 +95,81 @@ app {
     color: ghostwhite !important;
 }
 
+/*MatTextField style (outlined version)*/
+.mat-text-custom {
+    width: 100%;
+    background-color: white;
+}
+
+/*clickable image drop area*/
+input.image-drop-clickable {
+    position: absolute;
+    right: 0;
+    width: 100vw;
+    height: 100%;
+    opacity: 0;
+    margin-top: -20px;
+    margin-left: -20px;
+    cursor: pointer;
+}
+
+/* center elements in column */
+.col-center-elements {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* create dog card styles */
+.create-dog-card {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    width: 60%;
+    margin-bottom: 20px;
+    height: 200px;
+}
+
+/* styles for image drop zone, file uploader */
+.droptarget {
+    display: block;
+    padding: 20px;
+    margin-bottom: 10px;
+    border: 1px dashed black;
+    border-radius: 5px;
+    position: relative;
+}
+
+.droptarget-drag {
+    border-color: orangered;
+    font-weight: bold;
+    background-color: lightcoral;
+}
+/*------------------------------*/
+
+/* footer styles */
+.footer-block {
+    display: block;
+    padding: 0px;
+    height: 20px;
+    width: 100%;
+}
+
+.footer-custom {
+    background-color: #003366;
+    border-top: 1px solid #E7E7E7;
+    border-top: 1px solid #E7E7E7;
+    text-align: center;
+    padding: 0px;
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    height: 20px;
+    width: 100%;
+    font-size: small;
+    color: white;
+}
+
 .top-row {
     height: 3.5rem;
     display: flex;

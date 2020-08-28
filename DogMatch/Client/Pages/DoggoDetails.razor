@@ -2,13 +2,11 @@
 @using Microsoft.AspNetCore.Authorization
 @using Microsoft.AspNetCore.Components.Authorization
 @using DogMatch.Client.Services
-@using System.IO
-@using Blazor.FileReader
+@using DogMatch.Client.Components.Dog.BasicDetails
 
 @attribute [Authorize]
 @inject DogState state
 @inject NavigationService navigate
-@inject IFileReaderService fileReaderService
 
 <AuthorizeView>
     <Authorized>
@@ -16,102 +14,23 @@
             <MatH3>Details for @state.Doggo.Name</MatH3>
             <MatH5>Please give us more details about your dog to complete the profile.</MatH5>
             <form>
-                <div class="row center-row">
-                    <div class="form-group col-md-4 col-md-6" style="@state.ColStyle">
-                        <label for="Breed" class="control-label">Breed</label>
-                        <input type="text"
-                               class="form-control"
-                               id="breedText"
-                               placeholder="ex. German Shepard"
-                               @bind="@state.Doggo.Breed"
-                               @bind:event="oninput">
-                    </div>
-                </div>
-                <div class="row center-row">
-                    <div class="form-group col-md-4 col-md-6" style="@state.ColStyle">
-                        <label for="Birthday" class="control-label">Birthday</label>
-                        <br />
-
-                        <RadzenDatePicker @bind-Value="@state.Doggo.Birthday"
-                                          DateFormat="d"
-                                          Change="@(args => state.GetAge(args))"
-                                          Placeholder="Click icon to pick date..." />
-                        <br />
-                        @state.Doggo.Age
-                    </div>
-                </div>
-
-                <div class="row center-row">
-                    <div class="form-group col-md-4 col-md-6" style="@state.ColStyle">
-                        <label for="Gender" class="control-label">Gender</label>
-                        <br />
-                        <MatRadioGroup @bind-Value="@state.Doggo.Gender" TValue="string">
-                            <MatRadioButton Value="@("female")"
-                                            Label="Female"
-                                            TValue="string" />
-                            <MatRadioButton Value="@("male")"
-                                            Label="Male"
-                                            TValue="string" />
-                        </MatRadioGroup>
-                    </div>
-                </div>
-                <div class="row center-row">
-                    <div class="form-group" style="@state.ColStyle">
-                        <label for="Weight" class="control-label">Weight</label><br />
-                        <RadzenSlider @bind-Value="@state.Doggo.Weight"
-                                      TValue="int"
-                                      Min="0"
-                                      Max="120"
-                                      Style="margin-bottom: 20px;" />
-                        <br />
-                        @if (state.Doggo.Weight > 119)
-                        {
-                            <span>
-                                Weight: 120+ lbs.
-                            </span>
-                        }
-                        else
-                        {
-                            <span>
-                                Weight: @state.Doggo.Weight lbs.
-                            </span>
-                        }
-                    </div>
-                </div>
+                <BreedComponent />
+                <BirthdayComponent />
+                <GenderComponent />
+                <WeightComponent />
                 <br />
-
-                <div class="form-group" style="@state.ColStyle">
-                    <h3>Profile Image</h3>
-                    <input type="file" @ref="inputTypeFileElement" @onchange="@ReadFile" />
-                    <br /><br />
-                    @if (imgInProgress)
-                    {
-                        <div class="col-lg-12">
-                            <Flow Size="75px" Color="#003366" Center="true" />
-                        </div>
-                    }
-                    else
-                    {
-                        <br />
-                        @if (profileImage.Length > 0)
-                        {
-                            <h5>Preview: </h5><br />
-                            <img src="@profileImage" style="max-height:400px;height:auto" />
-                        }
-                        else if (state.Doggo.ProfileImage != null)
-                        {
-                            if (!state.Doggo.ProfileImage.Contains("dogmatch_paw.png"))
-                            {
-                                <h5>Current Profile Image: </h5><br />
-                                <img src="@state.Doggo.ProfileImage"
-                                     style="max-height:400px;height:auto" />
-                            }
-                        }
-                    }
-                </div>
+                <ProfileImageUpload />
                 <br />
-                <button type="button" class="btn btn-outline-secondary" @onclick="@SaveAndGoToProfile">Save</button>
-                <button type="button" class="btn btn-outline-primary" @onclick="@SaveAndGoToTemperament">Save and Go To Temperament</button>
+                <button class="btn btn-secondary"
+                        @onclick="@SaveAndGoToProfile"
+                        type="button">
+                    Save
+                </button>
+                <button class="btn btn-primary"
+                        @onclick="@SaveAndGoToTemperament"
+                        type="button">
+                    Save and Go To Temperament
+                </button>
             </form>
             <br />
             <br />
@@ -123,39 +42,23 @@
 @code {
     [Parameter]
     public int Id { get; set; }
-    public ElementReference inputTypeFileElement;
-    public bool imgInProgress = false;
-    public string profileImage = string.Empty;
 
-    protected override async Task OnInitializedAsync() => await state.GetDoggo(Id);
-
-    // handle profile image
-    public async Task ReadFile()
+    protected override async Task OnInitializedAsync()
     {
-        imgInProgress = true; // animation
+        // reset initial dog weight on initialized component
+        state.initialWeight = null;
 
-        foreach (var file in await fileReaderService.CreateReference(inputTypeFileElement).EnumerateFilesAsync())
-        {
-            IFileInfo fileInfo = await file.ReadFileInfoAsync();
-            state.Doggo.Extension = Path.GetExtension(fileInfo.Name);
-
-            await using (MemoryStream memoryStream = await file.CreateMemoryStreamAsync(4096))
-            {
-                byte[] img = memoryStream.ToArray();
-                profileImage = $"data:image/jpg;base64,{Convert.ToBase64String(img)}";
-                state.Doggo.ProfileImage = profileImage;
-            }
-        }
-        imgInProgress = false;
+        // get dog
+        await state.GetDoggo(Id);
     }
 
-    public async Task SaveAndGoToProfile()
+    private async Task SaveAndGoToProfile()
     {
         await state.UpdateDoggo();
         navigate.ToProfile(state.Doggo.Id);
     }
 
-    public async Task SaveAndGoToTemperament()
+    private async Task SaveAndGoToTemperament()
     {
         await state.UpdateDoggo();
         navigate.ToTemperament(state.Doggo.Id);

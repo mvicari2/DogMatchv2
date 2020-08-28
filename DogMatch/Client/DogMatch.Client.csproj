@@ -8,15 +8,15 @@
 
   <ItemGroup>
     <PackageReference Include="BlazorPro.Spinkit" Version="1.2.0" />
-    <PackageReference Include="MatBlazor" Version="2.6.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="3.2.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Build" Version="3.2.0" PrivateAssets="all" />
-    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="3.2.0" PrivateAssets="all" />
-    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Authentication" Version="3.2.0" />
-    <PackageReference Include="Microsoft.Extensions.Http" Version="3.1.4" />
-    <PackageReference Include="Radzen.Blazor" Version="2.9.7" />
-    <PackageReference Include="System.Net.Http.Json" Version="3.2.0" />
-    <PackageReference Include="Tewr.Blazor.FileReader" Version="1.5.0.20109" />
+    <PackageReference Include="MatBlazor" Version="2.6.3-develop-016" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="3.2.1" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Build" Version="3.2.1" PrivateAssets="all" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="3.2.1" PrivateAssets="all" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Authentication" Version="3.2.1" />
+    <PackageReference Include="Microsoft.Extensions.Http" Version="3.1.7" />
+    <PackageReference Include="Radzen.Blazor" Version="2.11.13" />
+    <PackageReference Include="System.Net.Http.Json" Version="3.2.1" />
+    <PackageReference Include="Tewr.Blazor.FileReader" Version="2.0.0.20200" />
   </ItemGroup>
 
   <ItemGroup>

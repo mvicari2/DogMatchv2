@@ -27,14 +27,14 @@ else if (Dogs.Count() < 1)
         <RadzenDataList WrapItems="true"
                         AllowPaging="true"
                         Data="@Dogs"
-                        TItem="DogMatch.Shared.Models.Dog"
+                        TItem="Dog"
                         PageSize="9">
             <Template Context="dog">
-                <RadzenCard Style="width:300px;">
+                <RadzenCard Style="width:300px;max-width: 420px">
                     <img src="@dog.ProfileImage"
                          style="width:auto; height: 250px" />
-                    <div class="inline-center-row">
-                        <b>@dog.Name</b>
+                    <div class="inline-center-row" style="margin-bottom:-20px;">
+                        <MatH5>@dog.Name</MatH5>
                     </div>
                     <div class="row inline-center-row">
                         <div class="col-md-12">
@@ -46,39 +46,55 @@ else if (Dogs.Count() < 1)
                             }
                             else
                             {
-                                <button type="button"
-                                        class="btn btn-primary"
-                                        style="width: 100%"
-                                        @onclick="@(e => navigate.ToProfile(dog.Id))">
-                                    VIEW PROFILE
-                                </button>
+                                <MatThemeProvider Theme="@ViewProfileBtnTheme">
+                                    <MatButton @onclick="@(e => navigate.ToProfile(dog.Id))"
+                                               Class="btn btn-primary"
+                                               style="width: 100%"
+                                               Unelevated="true">
+                                        View Profile
+                                    </MatButton>
+                                </MatThemeProvider>
                             }
                         </div>
                     </div>
                     <div class="row center-align">
                         <div class="col-md-6">
-                            <div style="margin-top:20px">Breed:</div>
-                            <b>@dog.Breed</b>
+                            <div style="margin-top:20px">
+                                <MatOverline>Breed</MatOverline>
+                            </div>
+                            <MatSubtitle2><b>@dog.Breed</b></MatSubtitle2>
+                            <div style="margin-top:20px">
+                                <MatOverline>Gender</MatOverline>
+                            </div>
+                            <MatSubtitle2><b>@dog.Gender</b></MatSubtitle2>
                             <br />
-                            <div style="margin-top:20px">Gender:</div>
-                            <b>@dog.Gender</b>
                         </div>
                         <div class="col-md-6">
-                            <div style="margin-top:20px">Weight:</div>
-                            <b>@dog.Weight</b>
-                            <div style="margin-top:20px">Birthday/Age</div>
+                            <div style="margin-top:20px">
+                                <MatOverline>Weight</MatOverline>
+                            </div>
+                            <MatSubtitle2><b>@dog.Weight lbs</b></MatSubtitle2>
+                            <div style="margin-top:20px">
+                                <MatOverline>Birthday/Age</MatOverline>
+                            </div>
                             @if (dog.Birthday.HasValue)
                             {
-                                <b>@dog.Birthday.Value.ToShortDateString() <br /> @dog.Age</b>
+                                <MatSubtitle2>
+                                    <b>
+                                        @dog.Birthday.Value.ToShortDateString()
+                                        <br /> @dog.Age
+                                    </b>
+                                </MatSubtitle2>
                             }
                         </div>
                     </div>
                     <div class="row inline-center-row">
-                        <div>Owner</div>
-                        <b>@dog.Owner</b>
+                        <div>
+                            <MatOverline>Owner</MatOverline>
+                        </div>
+                        <MatSubtitle1><b>@dog.Owner</b></MatSubtitle1>
                     </div>
                     <br />
-
                 </RadzenCard>
             </Template>
         </RadzenDataList>
@@ -88,4 +104,9 @@ else if (Dogs.Count() < 1)
 @code {
     [Parameter]
     public IEnumerable<Dog> Dogs { get; set; }
+
+    /// <summary>
+    /// Initialize new primary btn color for MatButton
+    /// </summary>
+    MatTheme ViewProfileBtnTheme = new MatTheme() { Primary = "#275381" };
 }

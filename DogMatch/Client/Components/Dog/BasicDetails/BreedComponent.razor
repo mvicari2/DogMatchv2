@@ -1,0 +1,23 @@
+﻿@using DogMatch.Client.Services
+@inject DogState state
+
+<div class="row center-row">
+    <div class="form-group col-md-4 col-md-6 col-center-elements">
+        <MatOverline>
+            <b>Breed</b>
+        </MatOverline>
+        <MatTextField @bind-Value="@state.Doggo.Breed"
+                      Icon="pets"
+                      Class="mat-text-custom"
+                      IconTrailing="true"
+                      PlaceHolder="Dog Breed(s)"
+                      Outlined="true"
+                      HelperText="@BreedHelperText" />
+    </div>
+</div>
+
+@code {
+    protected override void OnInitialized() => state.OnChange += RefreshComponent;
+    private void RefreshComponent() => StateHasChanged();
+    private string BreedHelperText = "Enter your dog's breed(s)";
+}

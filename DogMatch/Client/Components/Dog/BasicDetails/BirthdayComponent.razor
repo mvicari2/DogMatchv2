@@ -1,0 +1,30 @@
+﻿@using DogMatch.Client.Services
+@inject DogState state
+
+<div class="row center-row">
+    <div class="form-group col-md-4 col-md-6 col-center-elements">
+        <MatOverline>
+            <b>Birthday</b>
+            @if (state.Doggo.Age != null)
+            {
+                <span>
+                    (@state.Doggo.Age)
+                </span>
+            }
+        </MatOverline>
+        <MatDatePicker ValueChanged="@(date => state.UpdateBirthday(date))"
+                       Value="state.Doggo.Birthday"
+                       TValue="DateTime?"
+                       PlaceHolder="mm/dd/yyyy"
+                       HelperText="@BdayHelperText"
+                       Outlined="true"
+                       Class="mat-text-custom"
+                       Maximum="@DateTime.Now" />
+    </div>
+</div>
+
+@code {
+    protected override void OnInitialized() => state.OnChange += RefreshComponent;
+    private void RefreshComponent() => StateHasChanged();
+    private string BdayHelperText = "Click calendar icon to select birthday or enter date";
+}
