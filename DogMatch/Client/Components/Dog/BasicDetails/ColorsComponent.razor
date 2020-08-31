@@ -1,5 +1,34 @@
-﻿<h3>ColorsComponent</h3>
+﻿@using DogMatch.Client.Services
+@using DogMatch.Shared.References
+@inject DogState state
+
+<MatOverline>
+    <b>Dog Colors </b><MatCaption>(Select All That Apply)</MatCaption>
+</MatOverline>
+<br />
+<RadzenListBox AllowFiltering="true"
+               FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+               @bind-Value="@state.Doggo.Colors"
+               Multiple="true"
+               Data="@Colors.ColorMasterList"
+               class="color-listbox" />
+<br />
+@if (state.Doggo?.Colors?.Count() > 0)
+{
+    <MatOverline>Selected Colors:</MatOverline>
+    if (state.Doggo.Colors.Count() > 8)
+    {
+        <MatCaption>@string.Join(", ", state.Doggo.Colors.Take(8)) (+ @(state.Doggo.Colors.Count() - 8) more)</MatCaption>
+    }
+    else
+    {
+        <MatCaption>@string.Join(", ", state.Doggo.Colors)</MatCaption>
+    }
+    <br />
+}
 
 @code {
-
+    protected override void OnInitialized() => state.OnChange += RefreshComponent;
+    private void RefreshComponent() => StateHasChanged();
+    private ColorsMasterList Colors = new ColorsMasterList();
 }

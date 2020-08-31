@@ -30,6 +30,7 @@ namespace DogMatch.Domain.Data.Repositories
             .AsNoTracking()
             .Include(d => d.Owner)
             .Include(d => d.DogProfileImage)
+            .Include(d => d.Colors)
             .SingleOrDefaultAsync(d => d.Id == id && d.IsDeleted != true);
 
         /// <summary>

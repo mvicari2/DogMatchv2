@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace DogMatch.Domain.Migrations
 {
-    public partial class InitialDogMatchDbConfig : Migration
+    public partial class DogMatchInitiaDbConfig : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -443,15 +443,15 @@ namespace DogMatch.Domain.Migrations
                 name: "Color",
                 columns: table => new
                 {
-                    DogId = table.Column<int>(type: "int", nullable: false),
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
+                    DogId = table.Column<int>(type: "int", nullable: false),
                     ColorString = table.Column<string>(type: "nvarchar(100)", nullable: false),
                     ColorGUID = table.Column<Guid>(nullable: false, defaultValueSql: "NEWID()")
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Color", x => x.DogId);
+                    table.PrimaryKey("PK_Color", x => x.Id);
                     table.ForeignKey(
                         name: "FK_Color_Dog",
                         column: x => x.DogId,
@@ -574,6 +574,11 @@ namespace DogMatch.Domain.Migrations
                 name: "IX_Biography_LastModifiedBy",
                 table: "Biography",
                 column: "LastModifiedBy");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Color_DogId",
+                table: "Color",
+                column: "DogId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_DeviceCodes_DeviceCode",

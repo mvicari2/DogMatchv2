@@ -155,7 +155,7 @@ namespace DogMatch.Domain.Data
                     .ValueGeneratedOnAdd()
                     .HasDefaultValueSql("NEWID()");
 
-                entity.HasKey("DogId");
+                entity.HasIndex("DogId");
 
                 entity.HasOne(e => e.Dog)
                     .WithMany(e => e.Colors)

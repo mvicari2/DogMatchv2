@@ -138,8 +138,10 @@ namespace DogMatch.Domain.Migrations
 
             modelBuilder.Entity("DogMatch.Domain.Data.Models.Color", b =>
                 {
-                    b.Property<int>("DogId")
-                        .HasColumnType("int");
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<Guid>("ColorGUID")
                         .ValueGeneratedOnAdd()
@@ -150,12 +152,12 @@ namespace DogMatch.Domain.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(100)");
 
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                    b.Property<int>("DogId")
+                        .HasColumnType("int");
 
-                    b.HasKey("DogId");
+                    b.HasKey("Id");
+
+                    b.HasIndex("DogId");
 
                     b.ToTable("Color");
                 });

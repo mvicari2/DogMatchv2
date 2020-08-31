@@ -170,6 +170,14 @@ input.image-drop-clickable {
     color: white;
 }
 
+/* color select list-box style */
+.color-listbox {
+    margin-bottom: 20px;
+    height: 200px;
+    text-align: left !important;
+    width: 350px;
+}
+
 .top-row {
     height: 3.5rem;
     display: flex;

@@ -2,20 +2,21 @@
 using DogMatch.Shared.Models;
 using DogMatch.Domain.Data.Models;
 using System;
+using System.Linq;
 
 namespace DogMatch.Domain.Infrastructure
 {
     public class AutoMapperProfileDomainConfiguration : Profile
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="AutoMapperProfileServerConfiguration"/> class. 
+        /// Initializes a new instance of configuration class
         /// </summary>
         public AutoMapperProfileDomainConfiguration() : this("DogMatch") { }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="AutoMapperProfileServerConfiguration"/> class for the given profile name. 
+        /// Initializes a new instance of configuration class
         /// </summary>
-        /// <param name="profileName">The profile name.</param>
+        /// <param name="profileName">profile name</param>
         protected AutoMapperProfileDomainConfiguration(string profileName) : base(profileName)
         {
             CreateMap<Dog, Dogs>()
@@ -24,9 +25,10 @@ namespace DogMatch.Domain.Infrastructure
                 .ForMember(d => d.Breed, cfg => cfg.MapFrom(src => src.Breed))
                 .ForMember(d => d.Birthday, cfg => cfg.MapFrom(src => src.Birthday))
                 .ForMember(d => d.Gender, cfg => cfg.MapFrom(src => src.Gender == "female" ? 'f' : src.Gender == "male" ? 'm' : ' '))
-                .ForMember(d => d.Weight, cfg => cfg.MapFrom(src => src.Weight))
-                .ForMember(d => d.Owner, src => src.Ignore()) // ignore temporarily
-                .ForMember(d => d.DogProfileImage, src => src.Ignore());
+                .ForMember(d => d.Weight, cfg => cfg.MapFrom(src => src.Weight))  
+                .ForMember(d => d.Colors, cfg => cfg.Ignore())
+                .ForMember(d => d.Owner, cfg => cfg.Ignore()) // ignore temporarily
+                .ForMember(d => d.DogProfileImage, cfg => cfg.Ignore());
 
             CreateMap<Dogs, Dog>()
                 .ForMember(d => d.Id, cfg => cfg.MapFrom(src => src.Id))
@@ -46,7 +48,14 @@ namespace DogMatch.Domain.Infrastructure
                 .ForMember(d => d.Gender, cfg => cfg.MapFrom(src => src.Gender == 'f' ? "female" : src.Gender == 'm' ? "male" : "unknown"))
                 .ForMember(d => d.Weight, cfg => cfg.MapFrom(src => src.Weight))
                 .ForMember(d => d.ProfileImage, cfg => cfg.MapFrom(src => src.DogProfileImage != null ? "/ProfileImage/" + src.DogProfileImage.Filename : "dogmatch_paw.png"))
+                .ForMember(d => d.Colors, cfg => cfg.MapFrom(src => src.Colors.Select(c => c.ColorString).ToList()))
                 .ForMember(d => d.Owner, cfg => cfg.MapFrom(src => src.Owner.UserName)); // using username for owner until collecting first/last name of user
+
+            CreateMap<string, Color>()
+                .ForMember(d => d.ColorString, cfg => cfg.MapFrom(src => src))
+                .ForMember(d => d.Id, cfg => cfg.Ignore())
+                .ForMember(d => d.DogId, cfg => cfg.Ignore())
+                .ForMember(d => d.ColorGUID, cfg => cfg.Ignore());               
 
             CreateMap<Temperament, DogTemperament>()
                 .ForMember(d => d.Id, cfg => cfg.MapFrom(src => src.Id))

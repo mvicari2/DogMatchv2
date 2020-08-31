@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DogMatch.Domain.Migrations
 {
     [DbContext(typeof(DogMatchDbContext))]
-    [Migration("20200809025639_InitialDogMatchDbConfig")]
-    partial class InitialDogMatchDbConfig
+    [Migration("20200829222351_DogMatchInitiaDbConfig")]
+    partial class DogMatchInitiaDbConfig
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -140,8 +140,10 @@ namespace DogMatch.Domain.Migrations
 
             modelBuilder.Entity("DogMatch.Domain.Data.Models.Color", b =>
                 {
-                    b.Property<int>("DogId")
-                        .HasColumnType("int");
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<Guid>("ColorGUID")
                         .ValueGeneratedOnAdd()
@@ -152,12 +154,12 @@ namespace DogMatch.Domain.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(100)");
 
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                    b.Property<int>("DogId")
+                        .HasColumnType("int");
 
-                    b.HasKey("DogId");
+                    b.HasKey("Id");
+
+                    b.HasIndex("DogId");
 
                     b.ToTable("Color");
                 });
