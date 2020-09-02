@@ -31,12 +31,7 @@ namespace DogMatch.Client.Services
         }
         #endregion Properties / Variables / DI
 
-        #region Methods / WebApi Calls 
-        /// <summary>
-        /// Invokes OnChange Action to notify subscribers state has changed.
-        /// </summary>    
-        private void NotifyStateChanged() => OnChange?.Invoke();
-
+        #region Methods / WebApi Calls
         /// <summary>
         /// Calls WebApi to get Biography for single dog.
         /// </summary>        
@@ -104,26 +99,26 @@ namespace DogMatch.Client.Services
         }
 
         /// <summary>
-        /// Saves Biography data and navigates to new page based on <see cref="BioNavigate"/> type passed by user
+        /// Saves Biography data and navigates to new page based on <see cref="Navigate"/> type passed by user
         /// </summary>
-        /// <param name="destination">the destniation page <see cref="BioNavigate"/> type</param>
-        public async Task SaveAndNavigate(BioNavigate destination)
+        /// <param name="destination">the destniation page <see cref="Navigate"/> type</param>
+        public async Task SaveAndNavigate(Navigate destination)
         {
             switch (destination)
             {
-                case BioNavigate.ToProfile:
+                case Navigate.ToProfile:
                     _navigate.ToProfile(Biography.DogId);
                     break;
-                case BioNavigate.ToDetails:
+                case Navigate.ToDetails:
                     _navigate.ToUpdateDoggo(Biography.DogId);
                     break;
-                case BioNavigate.ToTemperament:
+                case Navigate.ToTemperament:
                     _navigate.ToTemperament(Biography.DogId);
                     break;
-                case BioNavigate.ToOwnersPortal:
+                case Navigate.ToOwnersPortal:
                     _navigate.ToOwnerPortal();
                     break;
-                case BioNavigate.ToAllDoggos:
+                case Navigate.ToAllDoggos:
                     _navigate.ToAllDoggos();
                     break;
             }
@@ -132,6 +127,11 @@ namespace DogMatch.Client.Services
         #endregion Methods / WebApi Calls
 
         #region Internal Methods
+        /// <summary>
+        /// Invokes OnChange Action to notify subscribers state has changed.
+        /// </summary>    
+        private void NotifyStateChanged() => OnChange?.Invoke();
+
         /// <summary>
         /// Uses reflection to change the passed name's <see cref="bool"/> property to true and expand it's accordion panel
         /// </summary>

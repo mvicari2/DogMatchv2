@@ -1,0 +1,35 @@
+﻿@using DogMatch.Client.Services
+@inject NavigationService navigate
+
+<div class="d-flex flex-md-column align-items-center" style="margin-top: 20px">
+    <MatOverline>
+        <b>Owner Navigation:</b>
+    </MatOverline>
+    <MatChipSet>
+        <MatChip LeadingIcon="preview"
+                 Label="Basic Details"
+                 Class="custom-chip"
+                 @onclick="() => navigate.ToUpdateDoggo(DogId) " />
+        <MatChip LeadingIcon="bar_chart"
+                 Label="Temperament"
+                 Class="custom-chip"
+                 @onclick="() => navigate.ToTemperament(DogId)" />
+        <MatChip LeadingIcon="speaker_notes"
+                 Label="Biography"
+                 Class="custom-chip"
+                 @onclick="() => navigate.ToBiography(DogId)" />
+        <MatChip LeadingIcon="person"
+                 Label="Owner's Portal"
+                 Class="custom-chip"
+                 @onclick="() => navigate.ToOwnerPortal()" />
+        <MatChip LeadingIcon="pets"
+                 Label="All Doggos"
+                 Class="custom-chip"
+                 @onclick="() => navigate.ToAllDoggos()" />
+    </MatChipSet>
+</div>
+
+@code {
+    [Parameter]
+    public int DogId { get; set; }
+}

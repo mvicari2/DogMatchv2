@@ -134,6 +134,33 @@ namespace DogMatch.Client.Services
                 _notification.DisplayMessage(NotificationType.DogDeleteUnauthorized, Doggo.Name);
             }
         }
+
+        /// <summary>
+        /// Saves Doggo data and navigates to new page based on <see cref="Navigate"/> type passed by user
+        /// </summary>
+        /// <param name="destination">the destniation page <see cref="Navigate"/> type</param>
+        public async Task SaveAndNavigate(Navigate destination)
+        {
+            switch (destination)
+            {
+                case Navigate.ToProfile:
+                    _navigate.ToProfile(Doggo.Id);
+                    break;                
+                case Navigate.ToTemperament:
+                    _navigate.ToTemperament(Doggo.Id);
+                    break;
+                case Navigate.ToBiography:
+                    _navigate.ToBiography(Doggo.Id);
+                    break;
+                case Navigate.ToOwnersPortal:
+                    _navigate.ToOwnerPortal();
+                    break;
+                case Navigate.ToAllDoggos:
+                    _navigate.ToAllDoggos();
+                    break;
+            }
+            await UpdateDoggo();
+        }
         #endregion Methods / WebApi Calls
 
         #region Property Methods
@@ -168,14 +195,7 @@ namespace DogMatch.Client.Services
         {
             GetAge(bday);
             Doggo.Birthday = bday;
-        }
-
-        /// <summary>
-        /// Converts birthday <see cref="DateTime?"/> to short date string.
-        /// </summary>        
-        /// <param name="bday">nullable birthday DateTime</param>
-        /// <returns>short DateTime string</returns>
-        public string GetBirthday(DateTime? bday) => bday.Value.ToShortDateString();
+        }        
         #endregion Property Methods            
 
         #region Internal Methods

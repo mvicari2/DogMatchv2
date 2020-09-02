@@ -1,0 +1,60 @@
+﻿@using DogMatch.Client.Services
+@inject DogProfileState state
+
+<AuthorizeView>
+    <Authorized>
+        <div class="center-align">
+            <MatThemeProvider Theme="@OwnerMenuTheme">
+                <MatButton OnClick="@ToggleModal"
+                           Unelevated="true"
+                           Class="btn btn-primary"
+                           Style="color: ghostwhite;">
+                    Delete Doggo
+                    <MatIcon Icon="delete_forever" Style="color: ghostwhite" />
+                </MatButton>
+            </MatThemeProvider>
+        </div>
+
+        <MatDialog @bind-IsOpen="@modalIsOpen">
+            <MatDialogTitle>Delete Doggo?</MatDialogTitle>
+            <MatDialogContent>
+                <span>
+                    Are you sure you want to delete the entire profile for <b>@DogName</b>?
+                    <br />
+                    Deletion is permanent and cannot be undone.
+                </span>
+                <div class="row inline-center-row">
+                    <button class="btn btn-danger button-margin"
+                            @onclick="() => DeleteConfirmed(context.User.Identity.Name)">
+                        Yes, Delete @DogName
+                    </button>
+                    <button class="btn btn-success button-margin"
+                            @onclick="@(() => ToggleModal())">
+                        No, Cancel Delete
+                    </button>
+                </div>
+            </MatDialogContent>
+        </MatDialog>
+    </Authorized>
+</AuthorizeView>
+
+@code {
+    [Parameter]
+    public int DogId { get; set; }
+    [Parameter]
+    public string DogName { get; set; }
+    bool modalIsOpen = false;
+
+    void ToggleModal() => modalIsOpen = !modalIsOpen;
+
+    private async Task DeleteConfirmed(string currentUser)
+    {
+        modalIsOpen = false;
+        await state.DeleteDog(DogId, currentUser);
+    }
+
+    /// <summary>
+    /// Initialize new color scheme for MatButton
+    /// </summary>
+    MatTheme OwnerMenuTheme = new MatTheme() { Primary = "#b30000" };
+}

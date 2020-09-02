@@ -142,14 +142,40 @@ namespace DogMatch.Client.Services
             NotifyStateChanged();
             await UpdateTemperament();
         }
+
+        /// <summary>
+        /// Saves Temperament data and navigates to new page based on <see cref="Navigate"/> type passed by user
+        /// </summary>
+        /// <param name="destination">the destniation page <see cref="Navigate"/> type</param>
+        public async Task SaveAndNavigate(Navigate destination)
+        {
+            switch (destination)
+            {
+                case Navigate.ToProfile:
+                    _navigate.ToProfile(Temperament.DogId);
+                    break;
+                case Navigate.ToDetails:
+                    _navigate.ToUpdateDoggo(Temperament.DogId);
+                    break;
+                case Navigate.ToBiography:
+                    _navigate.ToBiography(Temperament.DogId);
+                    break;
+                case Navigate.ToOwnersPortal:
+                    _navigate.ToOwnerPortal();
+                    break;
+                case Navigate.ToAllDoggos:
+                    _navigate.ToAllDoggos();
+                    break;
+            }
+            await UpdateTemperament();
+        }
         #endregion Methods / WebApi Calls
 
-        #region New Temperament
+        #region Initialize New Temperament
         /// <summary>
         /// Initializes new <see cref="DogTemperament"/> instance in state.
         /// </summary>        
         public void NewTemperament() => Temperament = new DogTemperament();
-
-        #endregion New Temperament
+        #endregion Initialize New Temperament
     }
 }

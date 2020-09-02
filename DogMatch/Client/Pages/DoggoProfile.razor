@@ -1,11 +1,10 @@
 ﻿@page "/DoggoProfile/{id:int}"
 @using Microsoft.AspNetCore.Authorization
-@using Microsoft.AspNetCore.Components.WebAssembly.Authentication
-@using Microsoft.AspNetCore.Components.Authorization
 @using DogMatch.Client.Services
+@using DogMatch.Client.Components.DogProfile
 
 @attribute [Authorize]
-@inject DogState state
+@inject DogProfileState state
 
 <MatH2>@state.Doggo.Name</MatH2>
 <br />
@@ -34,16 +33,17 @@
             <div style="margin-top:20px">Weight:</div>
             <b>@state.Doggo.Weight</b>
             <div style="margin-top:20px">Birthday/Age</div>
-            @if (state.Doggo.Birthday.HasValue)
-            {
-                <b>@state.GetBirthday(state.Doggo.Birthday) - @state.Doggo.Age</b>
-            }
-
+            <b>@state.Doggo.Birthday?.ToShortDateString() - @state.Doggo.Age</b>
             <div style="margin-top:20px">Owner</div>
             <b>@state.Doggo.Owner</b>
         </div>
     </div>
 </RadzenCard>
+<br />
+<ProfileNavigator DogId="state.Doggo.Id" />
+<br />
+<DeleteProfile DogId="state.Doggo.Id" DogName="@state.Doggo.Name"/>
+<br />
 
 @code {
     [Parameter]

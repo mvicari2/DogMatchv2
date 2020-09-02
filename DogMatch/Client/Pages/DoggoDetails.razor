@@ -2,6 +2,7 @@
 @using Microsoft.AspNetCore.Authorization
 @using Microsoft.AspNetCore.Components.Authorization
 @using DogMatch.Client.Services
+@using DogMatch.Client.Components.Dog
 @using DogMatch.Client.Components.Dog.BasicDetails
 
 @attribute [Authorize]
@@ -33,6 +34,8 @@
                         type="button">
                     Save and Go To Temperament
                 </button>
+                <br />
+                <DogNavigator />
             </form>
             <br />
             <br />

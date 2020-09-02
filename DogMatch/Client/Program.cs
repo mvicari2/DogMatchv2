@@ -27,6 +27,7 @@ namespace DogMatch.Client
             builder.Services.AddFileReaderService(options => options.UseWasmSharedBuffer = true);
 
             builder.Services.AddSingleton<DogState>();
+            builder.Services.AddSingleton<DogProfileState>();
             builder.Services.AddSingleton<TemperamentState>();
             builder.Services.AddSingleton<BiographyState>();
             builder.Services.AddSingleton<NotificationService>();

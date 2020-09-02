@@ -40,13 +40,14 @@
         AllClosed = 7
     }
 
-    public enum BioNavigate
+    public enum Navigate
     {
         ToProfile = 1,
         ToDetails = 2,
         ToTemperament = 3,
-        ToOwnersPortal = 4,
-        ToAllDoggos = 5
+        ToBiography = 4,
+        ToOwnersPortal = 5,
+        ToAllDoggos = 6
     }
 
     public enum DogGenderTypes
