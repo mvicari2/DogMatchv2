@@ -1,0 +1,55 @@
+﻿@using DogMatch.Client.Services
+@inject DogProfileState state
+
+<RadzenCard Style="width:90%;margin-bottom: 20px;">
+    <div class="row">
+        <div class="col-md-6">
+            <img src="@state.Doggo.ProfileImage" 
+                 class="profile-page-image" />
+            <br />
+            <div style="margin-top:20px">
+                <MatOverline>Name</MatOverline>
+            </div>
+            <MatSubtitle2>
+                <b>@state.Doggo.Name</b>
+            </MatSubtitle2>
+            <div style="margin-top:20px">
+                <MatOverline>Breed</MatOverline>
+            </div>
+            <MatSubtitle2>
+                <b>@state.Doggo.Breed</b>
+            </MatSubtitle2>
+        </div>
+        <div class="col-md-6">
+            <div style="margin-top:20px">
+                <MatOverline>Gender</MatOverline>
+            </div>
+            <MatSubtitle2>
+                <b>@state.Doggo.Gender</b>
+            </MatSubtitle2>
+            <div style="margin-top:20px">
+                <MatOverline>Weight</MatOverline>
+            </div>
+            <MatSubtitle2>
+                <b>@state.Doggo.Weight lbs</b>
+            </MatSubtitle2>
+            <div style="margin-top:20px">
+                <MatOverline>Birthday - Age</MatOverline>
+            </div>
+            <MatSubtitle2>
+                <b>@state.Doggo.Birthday?.ToShortDateString() - @state.Doggo.Age</b>
+            </MatSubtitle2>
+            <div style="margin-top:20px">
+                <MatOverline>Owner</MatOverline>
+            </div>
+            <MatSubtitle2>
+                <b>@state.Doggo.Owner</b>
+            </MatSubtitle2>
+        </div>
+    </div>
+</RadzenCard>
+
+@code {
+    protected override void OnInitialized() => state.OnChange += RefreshComponent;
+    private void RefreshComponent() => StateHasChanged();
+}

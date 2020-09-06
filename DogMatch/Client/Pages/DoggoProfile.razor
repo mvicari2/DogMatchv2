@@ -6,44 +6,29 @@
 @attribute [Authorize]
 @inject DogProfileState state
 
-<MatH2>@state.Doggo.Name</MatH2>
-<br />
+<AuthorizeView>
+    <Authorized>
+        <MatH2>@state.Doggo.Name</MatH2>
+        <br />
 
-@if (state.Doggo == null)
-{
-    <div class="col-lg-12">
-        <Flow Size="200px" Color="#003366" Center="true" />
-    </div>
-}
+        @if (state.Doggo == null)
+        {
+            <div class="col-lg-12">
+                <Flow Size="200px" Color="#003366" Center="true" />
+            </div>
+        }
 
-<RadzenCard Style="width:90%;margin-bottom: 20px;">
-    <div class="row">
-        <div class="col-md-6">
-            <img src="@state.Doggo.ProfileImage" style="max-width:200px;height:auto" />
+        <DogCard />
+
+        @if (state.Doggo.Owner == context.User.Identity.Name)
+        {
+            <ProfileNavigator DogId="state.Doggo.Id" />
             <br />
-            <div>Name:</div>
-            <b>@state.Doggo.Name</b>
-            <div style="margin-top:20px">Breed:</div>
-            <b>@state.Doggo.Breed</b>
-
-        </div>
-        <div class="col-md-6">
-            <div>Gender:</div>
-            <b>@state.Doggo.Gender</b>
-            <div style="margin-top:20px">Weight:</div>
-            <b>@state.Doggo.Weight</b>
-            <div style="margin-top:20px">Birthday/Age</div>
-            <b>@state.Doggo.Birthday?.ToShortDateString() - @state.Doggo.Age</b>
-            <div style="margin-top:20px">Owner</div>
-            <b>@state.Doggo.Owner</b>
-        </div>
-    </div>
-</RadzenCard>
-<br />
-<ProfileNavigator DogId="state.Doggo.Id" />
-<br />
-<DeleteProfile DogId="state.Doggo.Id" DogName="@state.Doggo.Name"/>
-<br />
+            <DeleteProfile DogId="state.Doggo.Id" DogName="@state.Doggo.Name" />
+        }
+        <br />
+    </Authorized>
+</AuthorizeView>
 
 @code {
     [Parameter]

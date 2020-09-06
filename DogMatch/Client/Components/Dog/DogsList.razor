@@ -28,7 +28,8 @@ else if (Dogs.Count() < 1)
                         AllowPaging="true"
                         Data="@Dogs"
                         TItem="Dog"
-                        PageSize="9">
+                        PageSize="9"
+                        class="custom-paginator-bottom">
             <Template Context="dog">
                 <RadzenCard Style="width:300px;max-width: 420px">
                     <img src="@dog.ProfileImage"
@@ -62,42 +63,48 @@ else if (Dogs.Count() < 1)
                             <div style="margin-top:20px">
                                 <MatOverline>Breed</MatOverline>
                             </div>
-                            <MatSubtitle2><b>@dog.Breed</b></MatSubtitle2>
+                            <MatSubtitle2>
+                                <b>@dog.Breed</b>
+                            </MatSubtitle2>
                             <div style="margin-top:20px">
                                 <MatOverline>Gender</MatOverline>
                             </div>
-                            <MatSubtitle2><b>@dog.Gender</b></MatSubtitle2>
+                            <MatSubtitle2>
+                                <b>@dog.Gender</b>
+                            </MatSubtitle2>
                             <br />
                         </div>
                         <div class="col-md-6">
                             <div style="margin-top:20px">
                                 <MatOverline>Weight</MatOverline>
                             </div>
-                            <MatSubtitle2><b>@dog.Weight lbs</b></MatSubtitle2>
+                            <MatSubtitle2>
+                                <b>@dog.Weight lbs</b>
+                            </MatSubtitle2>
                             <div style="margin-top:20px">
                                 <MatOverline>Birthday/Age</MatOverline>
                             </div>
-                            @if (dog.Birthday.HasValue)
-                            {
-                                <MatSubtitle2>
-                                    <b>
-                                        @dog.Birthday.Value.ToShortDateString()
-                                        <br /> @dog.Age
-                                    </b>
-                                </MatSubtitle2>
-                            }
+                            <MatSubtitle2>
+                                <b>
+                                    @dog.Birthday?.ToShortDateString()
+                                    <br /> @dog.Age
+                                </b>
+                            </MatSubtitle2>
                         </div>
                     </div>
                     <div class="row inline-center-row">
                         <div>
                             <MatOverline>Owner</MatOverline>
                         </div>
-                        <MatSubtitle1><b>@dog.Owner</b></MatSubtitle1>
+                        <MatSubtitle1>
+                            <b>@dog.Owner</b>
+                        </MatSubtitle1>
                     </div>
                     <br />
                 </RadzenCard>
             </Template>
         </RadzenDataList>
+        <br /><br />
     </Authorized>
 </AuthorizeView>
 

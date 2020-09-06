@@ -30,6 +30,17 @@ app {
     display: none !important;
 }
 
+/* make position fixed for Radzen paginator bottom for dog lists */
+.custom-paginator-bottom .ui-paginator-bottom {
+    padding: 4px;
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 20px; /* ensure it's above the footer */
+    width: 99vw;
+    border-top: 2px solid ghostwhite;
+}
+
 /* hide ban (clear) rating icon in Radzen Rating component */
 .custom-rating .pi-ban {
     display: none !important;
@@ -157,8 +168,7 @@ input.image-drop-clickable {
 
 .footer-custom {
     background-color: #003366;
-    border-top: 1px solid #E7E7E7;
-    border-top: 1px solid #E7E7E7;
+    border-top: 1px solid #E7E7E7;    
     text-align: center;
     padding: 0px;
     position: fixed;
@@ -188,6 +198,13 @@ input.image-drop-clickable {
         background-color: #1174d6 !important;
     }
 
+/* dog profile image for actual dog profile page */
+.profile-page-image {
+    max-width: 200px;
+    height: auto;
+    max-height: 300px;
+}
+
 .top-row {
     height: 3.5rem;
     display: flex;
@@ -214,6 +231,7 @@ input.image-drop-clickable {
             text-overflow: ellipsis;
         }
 
+/* keeping sidebar menu styles for now in case I want to change back to sidebar navigation */
 .sidebar {
     background-image: linear-gradient(180deg, rgb(5, 39, 103) 0%, #3a0647 70%);
 }
