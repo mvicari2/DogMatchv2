@@ -11,14 +11,15 @@
                        RefBack="@buttonForwardRef"
                        Unelevated="true"
                        Class="btn btn-primary"
-                       Style="@BtnStyle">
+                       Style="@BtnStyle"
+                       Id="@dogButtonId">
                 Owner Portal
                 <MatIcon Icon="expand_more" />
             </MatButton>
             <MatMenu @ref="Menu" TargetForwardRef="@buttonForwardRef">
                 <MatList Style="text-align: left;">
                     <MatListItem OnClick="() => navigate.ToProfile(DogId)">
-                        <MatIcon Icon="preview" Class="icon-align" />
+                        <MatIcon Icon="visibility" Class="icon-align" />
                         <span class="nav-text-align">
                             &nbsp View Profile
                         </span>

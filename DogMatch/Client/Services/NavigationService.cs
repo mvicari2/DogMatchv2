@@ -44,19 +44,19 @@ namespace DogMatch.Client.Services
         /// Navigates to All Doggos page.
         /// </summary>        
         public void ToAllDoggos() =>
-            _service.NavigateTo("/AllDoggos/");
+            _service.NavigateTo("/AllDoggos");
 
         /// <summary>
         /// Navigates to Create Doggo page.
         /// </summary>        
         public void ToCreateDoggo() =>
-            _service.NavigateTo("/CreateDoggo/");
+            _service.NavigateTo("/CreateDoggo");
 
         /// <summary>
         /// Navigates to Owner Portal.
         /// </summary>        
         public void ToOwnerPortal() =>
-            _service.NavigateTo("/OwnerPortal/");
+            _service.NavigateTo("/OwnerPortal");
 
         /// <summary>
         /// Navigates to Login page.

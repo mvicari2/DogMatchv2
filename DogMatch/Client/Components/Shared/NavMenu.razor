@@ -16,7 +16,8 @@
             </span>
         </NavLink>
         <button class="navbar-toggler"
-                @onclick="ToggleNavMenu"
+                @onclick="() => ToggleNavMenu(false)"
+                @onfocusout="() => ToggleNavMenu(true)"
                 type="button"
                 data-toggle="collapse"
                 data-target=".navbar-collapse"
@@ -27,36 +28,37 @@
         </button>
         <div class="@NavMenuCssClass" @onclick="CollapseNavMenu">
             <ul class="navbar-nav flex-grow-1">
-                <li class="nav-item px-3">
-                    <NavLink class="nav-link"
-                             href="/AllDoggos"
-                             Match="NavLinkMatch.All">
-                        <span class="oi oi-list-rich"
-                              aria-hidden="true">
-                        </span>
-                        All Doggos
-                    </NavLink>
-                </li>
                 <AuthorizeView>
                     <Authorized>
                         <li class="nav-item px-3">
                             <NavLink class="nav-link"
-                                     href="CreateDoggo"
+                                     href="/AllDoggos"
                                      Match="NavLinkMatch.All">
-                                <span class="oi oi-plus"
-                                      aria-hidden="true">
+                                <MatIcon Icon="apps" Class="icon-align" />
+                                <span class="nav-text-align">
+                                    All Doggos
                                 </span>
-                                Create Doggo
+
+                            </NavLink>
+                        </li>
+                        <li class="nav-item px-3">
+                            <NavLink class="nav-link"
+                                     href="CreateDoggo"
+                                     Match="NavLinkMatch.Prefix">
+                                <MatIcon Icon="add" Class="icon-align" />
+                                <span class="nav-text-align">
+                                    Create Doggo
+                                </span>
                             </NavLink>
                         </li>
                         <li class="nav-item px-3">
                             <NavLink class="nav-link"
                                      href="OwnerPortal"
-                                     Match="NavLinkMatch.All">
-                                <span class="oi oi-list-rich"
-                                      aria-hidden="true">
+                                     Match="NavLinkMatch.Prefix">
+                                <MatIcon Icon="widgets" Class="icon-align" />
+                                <span class="nav-text-align">
+                                    Owner Portal
                                 </span>
-                                Owner Portal
                             </NavLink>
                         </li>
                     </Authorized>
@@ -69,22 +71,24 @@
                             <li class="nav-item px-3">
                                 <NavLink class="nav-link"
                                          href="authentication/profile"
-                                         Match="NavLinkMatch.All">
+                                         Match="NavLinkMatch.Prefix">
                                     <span class="oi oi-person"
-                                          aria-hidden="true">
+                                          aria-hidden="true"
+                                          style="margin-left:2px;">
                                     </span>
-                                    Profile
+                                    &nbsp; Profile
                                 </NavLink>
                             </li>
                             <li class="nav-item px-3">
                                 <NavLink class="nav-link"
                                          @onclick="BeginSignOut"
-                                         Match="NavLinkMatch.All"
+                                         Match="NavLinkMatch.Prefix"
                                          href="#">
                                     <span class="oi oi-account-logout"
-                                          aria-hidden="true">
+                                          aria-hidden="true" 
+                                          style="margin-left:2px">
                                     </span>
-                                    Log Out
+                                    &nbsp; Log Out
                                 </NavLink>
                             </li>
                         </Authorized>
@@ -92,7 +96,7 @@
                             <li class="nav-item px-3">
                                 <NavLink class="nav-link"
                                          href="authentication/register"
-                                         Match="NavLinkMatch.All">
+                                         Match="NavLinkMatch.Prefix">
                                     <span class="oi oi-clipboard"
                                           aria-hidden="true">
                                     </span>
@@ -102,7 +106,7 @@
                             <li class="nav-item px-3">
                                 <NavLink class="nav-link"
                                          href="authentication/login"
-                                         Match="NavLinkMatch.All">
+                                         Match="NavLinkMatch.Prefix">
                                     <span class="oi oi-account-login"
                                           aria-hidden="true">
                                     </span>
@@ -112,80 +116,81 @@
                         </NotAuthorized>
                     </AuthorizeView>
                 }
-                else
-                {
-                    <li class="nav-item px-3" style="position: absolute; right: 0;">
-                        <div class="dropdown">
-                            <button class="btn btn-secondary btn-sm dropdown-toggle"
-                                    @onclick="toggleProfileMenu"
-                                    type="button"
-                                    id="dropdownMenuButton"
-                                    data-toggle="dropdown"
-                                    aria-haspopup="true"
-                                    aria-expanded="@expandedState">
-                                <AuthorizeView>
-                                    <Authorized>
-                                        <span class="oi oi-person" aria-hidden="true"></span>
-                                        @if (context.User.Identity.Name == null || context.User.Identity.ToString().Length < 0)
-                                        {
-                                            <span>Profile</span>
-                                        }
-                                        else
-                                        {
-                                            @context.User.Identity.Name
-                                        }
-                                    </Authorized>
-                                    <NotAuthorized>
-                                        Login/Register
-                                    </NotAuthorized>
-                                </AuthorizeView>
-                            </button>
-                            <div class="dropdown-menu @profileMenuStyle"
-                                 aria-labelledby="dropdownMenuButton">
-                                <AuthorizeView>
-                                    <Authorized>
-                                        <NavLink class="nav-link dropdown-item text-dark"
-                                                 href="authentication/profile"
-                                                 Match="NavLinkMatch.All">
-                                            <span class="oi oi-person"
-                                                  aria-hidden="true">
-                                            </span>
-                                            &nbsp Profile
-                                        </NavLink>
-                                        <NavLink class="nav-link dropdown-item text-dark"
-                                                 @onclick="BeginSignOut"
-                                                 href="#"
-                                                 Match="NavLinkMatch.All">
-                                            <span class="oi oi-account-logout"
-                                                  aria-hidden="true">
-                                            </span>
-                                            &nbsp Log Out
-                                        </NavLink>
-                                    </Authorized>
-                                    <NotAuthorized>
-                                        <NavLink class="nav-link dropdown-item text-dark"
-                                                 href="authentication/register"
-                                                 Match="NavLinkMatch.All">
-                                            <span class="oi oi-clipboard"
-                                                  aria-hidden="true">
-                                            </span>
-                                            &nbsp Register
-                                        </NavLink>
-                                        <NavLink class="nav-link dropdown-item text-dark"
-                                                 href="authentication/login"
-                                                 Match="NavLinkMatch.All">
-                                            <span class="oi oi-account-login"
-                                                  aria-hidden="true">
-                                            </span>
-                                            &nbsp Login
-                                        </NavLink>
-                                    </NotAuthorized>
-                                </AuthorizeView>
-                            </div>
-                        </div>
-                    </li>
-                }
             </ul>
+
+            @if (collapseNavMenu)
+            {
+                <div class="dropdown" style="position: absolute; right: 25px;">
+                    <button class="btn btn-secondary btn-sm dropdown-toggle"
+                            @onclick="() => ToggleProfileMenu(false)"
+                            @onfocusout="() => ToggleProfileMenu(true)"
+                            type="button"
+                            id="dropdownMenuButton"
+                            data-toggle="dropdown"
+                            aria-haspopup="true"
+                            aria-expanded="@expandedState"
+                            style="background-color:#367385;">
+                        <AuthorizeView>
+                            <Authorized>
+                                <span class="oi oi-person" aria-hidden="true"></span>
+                                @if (context.User.Identity.Name == null || context.User.Identity.ToString().Length < 0)
+                                {
+                                    <span>Profile</span>
+                                }
+                                else
+                                {
+                                    @context.User.Identity.Name
+                                }
+                            </Authorized>
+                            <NotAuthorized>
+                                Login/Register
+                            </NotAuthorized>
+                        </AuthorizeView>
+                    </button>
+                    <div class="dropdown-menu @profileMenuStyle"
+                         aria-labelledby="dropdownMenuButton">
+                        <AuthorizeView>
+                            <Authorized>
+                                <NavLink class="nav-link dropdown-item text-dark"
+                                         href="authentication/profile"
+                                         Match="NavLinkMatch.Prefix">
+                                    <span class="oi oi-person"
+                                          aria-hidden="true">
+                                    </span>
+                                    &nbsp Profile
+                                </NavLink>
+                                <NavLink class="nav-link dropdown-item text-dark"
+                                         @onclick="BeginSignOut"
+                                         href="#"
+                                         Match="NavLinkMatch.Prefix">
+                                    <span class="oi oi-account-logout"
+                                          aria-hidden="true">
+                                    </span>
+                                    &nbsp Log Out
+                                </NavLink>
+                            </Authorized>
+                            <NotAuthorized>
+                                <NavLink class="nav-link dropdown-item text-dark"
+                                         href="authentication/register"
+                                         Match="NavLinkMatch.Prefix">
+                                    <span class="oi oi-clipboard"
+                                          aria-hidden="true">
+                                    </span>
+                                    &nbsp Register
+                                </NavLink>
+                                <NavLink class="nav-link dropdown-item text-dark"
+                                         href="authentication/login"
+                                         Match="NavLinkMatch.Prefix">
+                                    <span class="oi oi-account-login"
+                                          aria-hidden="true">
+                                    </span>
+                                    &nbsp Login
+                                </NavLink>
+                            </NotAuthorized>
+                        </AuthorizeView>
+                    </div>
+                </div>
+            }
         </div>
     </div>
 </nav>
@@ -195,22 +200,53 @@
     private string profileMenuStyle = null;
     bool collapseNavMenu = true;
 
-    private void toggleProfileMenu()
+    /// <summary>
+    /// Toggles the expanded state of the user profile menu button dropdown
+    /// </summary>
+    /// <param name="outFocus"><see cref="bool"/> is true if toggling due to out focus event</param>
+    private async Task ToggleProfileMenu(bool outFocus)
     {
-        expandedState = !expandedState;
-        profileMenuStyle = expandedState ? "show" : null;
+        if (outFocus)
+        {
+            // delay execution when out focus toggling to allow link clicking
+            await Task.Delay(400);
+            expandedState = false;
+            profileMenuStyle = null;
+        }
+        else
+        {
+            expandedState = !expandedState;
+            profileMenuStyle = expandedState ? "show" : null;
+        }
     }
 
-    void ToggleNavMenu()
+    /// <summary>
+    /// Toggles the collapsed state of the main nav menu dropdown
+    /// </summary>
+    /// <param name="outFocus"><see cref="bool"/> is true if toggling due to out focus event</param>
+    private async Task ToggleNavMenu(bool outFocus)
     {
-        collapseNavMenu = !collapseNavMenu;
+        if (outFocus)
+        {
+            // delay execution when out focus toggling to allow link clicking
+            await Task.Delay(400);
+            collapseNavMenu = true;
+        }
+        else
+        {
+            collapseNavMenu = !collapseNavMenu;
+        }
     }
 
-    void CollapseNavMenu()
-    {
-        collapseNavMenu = true;
-    }
+    /// <summary>
+    /// Directly collapses main nav menu by setting collapseNavMenu = true
+    /// </summary>
+    void CollapseNavMenu() => collapseNavMenu = true;
 
+    /// <summary>
+    /// Sets sign out state and navigates to logout
+    /// </summary>
+    /// <param name="args"><see cref="MouseEventArgs"/> arguments for mouse event</param>
     private async Task BeginSignOut(MouseEventArgs args)
     {
         await SignOutManager.SetSignOutState();
@@ -218,8 +254,8 @@
     }
 
     #region Styles
-    private string NavMenuCssClass => collapseNavMenu ? "collapse navbar-collapse d-sm-inline-flex flex-sm-row-reverse" : "navbar-collapse d-sm-inline-flex flex-sm-row-reverse";
-    private string NavClass = "navbar navbar-expand-md navbar-toggleable-md navbar-dark border-bottom box-shadow mb-3 fixed-top";
+    private string NavMenuCssClass => collapseNavMenu ? "collapse navbar-collapse d-lg-inline-flex flex-lg-row-reverse" : "navbar-collapse d-lg-inline-flex flex-lg-row-reverse";
+    private string NavClass = "navbar navbar-expand-lg navbar-toggleable-lg navbar-dark border-bottom box-shadow mb-3 fixed-top";
     private string NavStyle = "background-color: #273652";
     #endregion Styles
 }

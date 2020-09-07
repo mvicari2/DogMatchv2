@@ -35,9 +35,7 @@
 
         // route user to All Doggos if authenticated
         if (authenticationState.User.Identity.IsAuthenticated)
-        {
             navigate.ToAllDoggos();
-        }
     }
 
     private void Login() => navigate.ToLogin();

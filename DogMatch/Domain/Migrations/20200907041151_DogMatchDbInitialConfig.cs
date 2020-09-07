@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace DogMatch.Domain.Migrations
 {
-    public partial class DogMatchInitiaDbConfig : Migration
+    public partial class DogMatchDbInitialConfig : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -301,7 +301,7 @@ namespace DogMatch.Domain.Migrations
                     LikesToys = table.Column<int>(type: "int", nullable: true),
                     LikesTreats = table.Column<int>(type: "int", nullable: true),
                     AthleticLevel = table.Column<int>(type: "int", nullable: true),
-                    LikesExcersize = table.Column<int>(type: "int", nullable: true),
+                    LikesExercise = table.Column<int>(type: "int", nullable: true),
                     TrainingLevel = table.Column<int>(type: "int", nullable: true),
                     Trainability = table.Column<int>(type: "int", nullable: true),
                     Stubbornness = table.Column<int>(type: "int", nullable: true),

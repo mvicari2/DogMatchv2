@@ -386,7 +386,7 @@ namespace DogMatch.Domain.Data
                     .HasColumnType("int");
                 entity.Property(e => e.AthleticLevel)
                     .HasColumnType("int");
-                entity.Property(e => e.LikesExcersize)
+                entity.Property(e => e.LikesExercise)
                     .HasColumnType("int");
                 entity.Property(e => e.TrainingLevel)
                     .HasColumnType("int");

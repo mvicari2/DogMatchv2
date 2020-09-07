@@ -481,7 +481,7 @@ namespace DogMatch.Domain.Migrations
                     b.Property<string>("LastModifiedBy")
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<int?>("LikesExcersize")
+                    b.Property<int?>("LikesExercise")
                         .HasColumnType("int");
 
                     b.Property<int?>("LikesPlayingDogs")

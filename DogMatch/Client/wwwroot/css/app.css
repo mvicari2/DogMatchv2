@@ -358,9 +358,11 @@ input.image-drop-clickable {
         padding-right: 1.5rem !important;
     }
 
-    .navbar-toggler {
+    /* hiding toggler at this width causes issues with vertical nav (navbar-expand-lg), 
+       but saving for potential future return to sidebar nav */
+    /*.navbar-toggler {
         display: none;
-    }
+    }*/
 
     .sidebar .collapse {
         /* Never collapse the sidebar for wide screens */

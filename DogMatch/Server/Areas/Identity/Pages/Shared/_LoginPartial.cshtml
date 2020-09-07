@@ -13,7 +13,7 @@
     }
 }
 
-<nav class="navbar navbar-expand-md navbar-toggleable-md navbar-dark border-bottom box-shadow mb-3"
+<nav class="navbar navbar-expand-lg navbar-toggleable-lg navbar-dark border-bottom box-shadow mb-3"
      style="background-color: #273652">
     <div class="container">
         <a class="navbar-brand" href="/">DogMatch</a>
@@ -27,40 +27,45 @@
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav mr-auto">
-                <li class="nav-item">
-                    <a class="nav-link text-light" href="/AllDoggos">
-                        <span class="oi oi-list-rich"
-                              aria-hidden="true">
-                        </span>
-                        All Doggos
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link text-light"
-                       href="/MyDoggos">
-                        <span class="oi oi-list-rich"
-                              aria-hidden="true">
-                        </span>
-                        My Doggos
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link text-light"
-                       href="/CreateDoggo">
-                        <span class="oi oi-plus"
-                              aria-hidden="true">
-                        </span>
-                        Create Doggo
-                    </a>
-                </li>
+                @if (SignInManager.IsSignedIn(User))
+                {
+                    <li class="nav-item">
+                        <a class="nav-link text-light" href="/AllDoggos">
+                            <span class="oi oi-list-rich"
+                                  aria-hidden="true">
+                            </span>
+                            All Doggos
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-light"
+                           href="/CreateDoggo">
+                            <span class="oi oi-plus"
+                                  aria-hidden="true">
+                            </span>
+                            Create Doggo
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-light"
+                           href="/OwnerPortal">
+                            <span class="oi oi-list-rich"
+                                  aria-hidden="true">
+                            </span>
+                            Owner Portal
+                        </a>
+                    </li>
+                }
             </ul>
 
             <div class="dropdown">
                 <button class="btn btn-secondary btn-sm dropdown-toggle"
-                        type="button" id="dropdownMenuButton"
+                        type="button" 
+                        id="dropdownMenuButton"
                         data-toggle="dropdown"
                         aria-haspopup="true"
-                        aria-expanded="false">
+                        aria-expanded="false"
+                        style="background-color:#367385;">
                     @if (SignInManager.IsSignedIn(User))
                     {
                         @User.Identity.Name

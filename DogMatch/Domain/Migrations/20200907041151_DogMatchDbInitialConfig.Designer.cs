@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DogMatch.Domain.Migrations
 {
     [DbContext(typeof(DogMatchDbContext))]
-    [Migration("20200829222351_DogMatchInitiaDbConfig")]
-    partial class DogMatchInitiaDbConfig
+    [Migration("20200907041151_DogMatchDbInitialConfig")]
+    partial class DogMatchDbInitialConfig
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -483,7 +483,7 @@ namespace DogMatch.Domain.Migrations
                     b.Property<string>("LastModifiedBy")
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<int?>("LikesExcersize")
+                    b.Property<int?>("LikesExercise")
                         .HasColumnType("int");
 
                     b.Property<int?>("LikesPlayingDogs")

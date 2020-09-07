@@ -24,7 +24,7 @@
         public int? LikesToys { get; set; }
         public int? LikesTreats { get; set; }
         public int? AthleticLevel { get; set; }
-        public int? LikesExcersize { get; set; }
+        public int? LikesExercise { get; set; }
         public int? TrainingLevel { get; set; }
         public int? Trainability { get; set; }
         public int? Stubbornness { get; set; }
