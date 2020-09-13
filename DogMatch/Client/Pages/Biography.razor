@@ -9,23 +9,32 @@
 
 <AuthorizeView>
     <Authorized>
-        <div class="center-align">
-            <MatH3>Biography for @state.Biography.DogName</MatH3>
-            <MatH5>
-                Please give us more details about your dog to complete the profile.
-            </MatH5>
-            <MatAccordion Class="custom-accordion col-lg-12">
-                <AboutExpansionPanel />
-                <MemoryExpansionPanel />
-                <FoodExpansionPanel />
-                <ToyExpansionPanel />
-                <SleepExpansionPanel />
-                <WalkExpansionPanel />
-            </MatAccordion>
-            <br />
-            <BioNavigator />
-            <br />
-        </div>
+        @if (!state.isAuthorized)
+        {
+            <div class="col-lg-12">
+                <Flow Size="200px" Color="#003366" Center="true" />
+            </div>
+        }
+        else
+        {
+            <div class="center-align">
+                <MatH3>Biography for @state.Biography.DogName</MatH3>
+                <MatH5>
+                    Please give us more details about your dog to complete the profile.
+                </MatH5>
+                <MatAccordion Class="custom-accordion col-lg-12">
+                    <AboutExpansionPanel />
+                    <MemoryExpansionPanel />
+                    <FoodExpansionPanel />
+                    <ToyExpansionPanel />
+                    <SleepExpansionPanel />
+                    <WalkExpansionPanel />
+                </MatAccordion>
+                <br />
+                <BioNavigator />
+                <br />
+            </div>
+        }
     </Authorized>
 </AuthorizeView>
 
@@ -36,8 +45,11 @@
 
     protected override async Task OnInitializedAsync()
     {
-        await state.GetBiography(Id);
+        // assume user is not authorized (non-owner) until WebApi results confirm authorization
+        state.isAuthorized = false;
+
         state.OnChange += RefreshComponent;
+        await state.GetBiography(Id);
     }
 
     private void RefreshComponent() => StateHasChanged();

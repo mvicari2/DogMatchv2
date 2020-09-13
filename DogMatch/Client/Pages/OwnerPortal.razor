@@ -23,8 +23,8 @@
 @code {
     protected override async Task OnInitializedAsync()
     {
-        await state.GetOwnersDoggos();
         state.OnChange += RefreshComponent;
+        await state.GetOwnersDoggos();
     }
 
     private void RefreshComponent() => StateHasChanged();

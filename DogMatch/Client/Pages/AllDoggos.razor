@@ -17,8 +17,8 @@
 @code {
     protected override async Task OnInitializedAsync()
     {
-        await state.GetAllDoggos();
         state.OnChange += RefreshComponent;
+        await state.GetAllDoggos();
     }
 
     private void RefreshComponent() => StateHasChanged();

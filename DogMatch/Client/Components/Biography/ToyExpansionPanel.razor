@@ -4,7 +4,7 @@
 @inject BiographyState state
 
 <MatExpansionPanel Expanded="state.Expanded.ToyExpanded">
-    <MatExpansionPanelSummary @onclick="() => state.ChangeExpanded(BiographyExpansion.Toy)">
+    <MatExpansionPanelSummary @onclick="() => state.ChangeExpanded(BiographyExpansion.Toy, true)">
         <MatExpansionPanelHeader>
             @if (state.Expanded.ToyExpanded)
             {

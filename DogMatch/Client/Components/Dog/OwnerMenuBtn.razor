@@ -62,7 +62,7 @@
                 </span>
                 <div class="row inline-center-row">
                     <button class="btn btn-danger button-margin"
-                            @onclick="() => DeleteConfirmed(context.User.Identity.Name)">
+                            @onclick="() => DeleteConfirmed()">
                         Yes, Delete @DogName
                     </button>
                     <button class="btn btn-success button-margin"
@@ -92,10 +92,10 @@
     public void OpenOwnerMenu(MouseEventArgs e) => this.Menu.OpenAsync();
     void ToggleModal() => modalIsOpen = !modalIsOpen;
 
-    private async Task DeleteConfirmed(string currentUser)
+    private async Task DeleteConfirmed()
     {
         modalIsOpen = false;
-        await state.DeleteDog(DogId, currentUser);
+        await state.DeleteDog(DogId, DogName);
     }
 
     /// <summary>

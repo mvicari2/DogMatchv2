@@ -12,26 +12,51 @@ namespace DogMatch.Server.Controllers.API
     [ApiController]
     public class BiographyController : ControllerBase
     {
+        #region DI
         private readonly IBiographyService _service;
+        private readonly IUserService _userService;
 
-        public BiographyController(IBiographyService service) =>
+        public BiographyController(IBiographyService service, IUserService userService)
+        {
             _service = service;
+            _userService = userService;
+        }
+        #endregion DI
 
 
         #region WebApi Methods
         // GET api/Biography/{id}
         [HttpGet("{id}")]
-        public async Task<DogBiography> Get(int id)
+        public async Task<ActionResult<DogBiography>> Get(int id)
         {
+            string requestUser = GetUserId();
             DogBiography bio = await _service.GetDogBiography(id);
 
             if (bio != null)
             {
-                return bio;
+                // ensure user requesting biography is the dog's owner
+                if (requestUser == bio.OwnerId)
+                {
+                    return Ok(bio);
+                }
+                else
+                {
+                    return Unauthorized();
+                }
             }
             else // create new dog biography if it does not yet exist
             {
-                return await _service.CreateBiography(id, GetUserId());
+                // ensure that user attempting to create new biography is dog owner
+                string ownerId = await _userService.GetOwnerIdByDogId(id);
+
+                if (ownerId == requestUser)
+                {
+                    return Ok(await _service.CreateBiography(id, requestUser));
+                }
+                else
+                {
+                    return Unauthorized();
+                }                
             }
         }
 
@@ -40,19 +65,29 @@ namespace DogMatch.Server.Controllers.API
         public async Task<IActionResult> Put(int id, DogBiography bio)
         {
             if (id != bio.DogId)
-            {
                 return BadRequest();
-            }
 
-            bool success = await _service.UpdateBiography(bio, GetUserId());
+            // ensure user attempting to update biography is the dog owner
+            string dogOwnerId = await _userService.GetOwnerIdByDogId(bio.DogId);
+            string requestUser = GetUserId();
 
-            if (success)
+            if (dogOwnerId == requestUser)
             {
-                return Ok();
+                bool success = await _service.UpdateBiography(bio, requestUser);
+
+                if (success)
+                {
+                    return Ok();
+                }
+                else
+                {
+                    return NotFound();
+                }
             }
             else
             {
-                return NotFound();
+                // unauthorized: user attempting to update dog is not the owner
+                return Unauthorized();
             }
         }
         #endregion WebApi Methods
@@ -60,7 +95,6 @@ namespace DogMatch.Server.Controllers.API
         #region Internal
         private string GetUserId() =>
             User.FindFirstValue(ClaimTypes.NameIdentifier);
-
         #endregion Internal
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Net;
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Reflection;
@@ -13,12 +14,14 @@ namespace DogMatch.Client.Services
     /// </summary>   
     public class TemperamentState
     {
-        #region Properties / Variables / DI
+        #region Properties / Variables
         public DogTemperament Temperament { get; set; }
         public event Action OnChange;
-        public int tabIndex;        
+        public int tabIndex;
+        public bool isAuthorized = false;
+        #endregion Properties / Variables
 
-        // DI
+        #region DI
         private readonly HttpClient _http;
         private readonly NavigationService _navigate;
         private readonly NotificationMsgService _notification;
@@ -29,7 +32,7 @@ namespace DogMatch.Client.Services
             _navigate = navigate;
             _notification = notification;
         }
-        #endregion Properties / Variables / DI
+        #endregion DI
 
         #region Methods / WebApi Calls 
         /// <summary>
@@ -45,28 +48,54 @@ namespace DogMatch.Client.Services
         {
             tabIndex = 0;
             NewTemperament();
-            Temperament = await _http.GetFromJsonAsync<DogTemperament>($"api/Temperament/{id}");
 
-            if (Temperament != null)
+            // get dog's temperament
+            HttpResponseMessage response = await _http.GetAsync($"api/Temperament/{id}");
+
+            if (response.IsSuccessStatusCode)
             {
-                NotifyStateChanged();
+                // set biography instance into state
+                Temperament = await response.Content.ReadFromJsonAsync<DogTemperament>();
+
+                // user is authorized to edit temperament
+                isAuthorized = true;
             }
+            else if (response.StatusCode == HttpStatusCode.Unauthorized)
+            {
+                // user is not authorized to edit this biography (likely not owner)
+                _notification.DisplayMessage(NotificationType.NotAuthorizedOwnerEditError);
+                _navigate.ToAllDoggos();
+                return;
+            }
+
+            // notify subscribers state has changed
+            if (Temperament != null)
+                NotifyStateChanged();
         }
 
         /// <summary>
         /// Calls WebApi to update Temperament for single dog.
         /// </summary>        
-        public async Task UpdateTemperament()
+        public async Task<bool> UpdateTemperament()
         {
             HttpResponseMessage response = await _http.PutAsJsonAsync($"api/Temperament/{Temperament.DogId}", Temperament);
 
             if (response.IsSuccessStatusCode)
             {
                 _notification.DisplayMessage(NotificationType.TemperamentSaved, Temperament.DogName);
+                return true;
+            }
+            else if (response.StatusCode == HttpStatusCode.Unauthorized)
+            {
+                // user is not authorized to update dog biography (likely not owner)
+                _notification.DisplayMessage(NotificationType.NotAuthorizedOwnerEditError);
+                _navigate.ToAllDoggos();
+                return false;
             }
             else
             {
                 _notification.DisplayMessage(NotificationType.TemperamentError, Temperament.DogName);
+                return false;
             }
         }
 
@@ -149,25 +178,30 @@ namespace DogMatch.Client.Services
         /// <param name="destination">the destniation page <see cref="Navigate"/> type</param>
         public async Task SaveAndNavigate(Navigate destination)
         {
-            switch (destination)
+            bool success = await UpdateTemperament();
+            
+            // navigate to destination if temperament saved successfully
+            if (success)
             {
-                case Navigate.ToProfile:
-                    _navigate.ToProfile(Temperament.DogId);
-                    break;
-                case Navigate.ToDetails:
-                    _navigate.ToUpdateDoggo(Temperament.DogId);
-                    break;
-                case Navigate.ToBiography:
-                    _navigate.ToBiography(Temperament.DogId);
-                    break;
-                case Navigate.ToOwnersPortal:
-                    _navigate.ToOwnerPortal();
-                    break;
-                case Navigate.ToAllDoggos:
-                    _navigate.ToAllDoggos();
-                    break;
-            }
-            await UpdateTemperament();
+                switch (destination)
+                {
+                    case Navigate.ToProfile:
+                        _navigate.ToProfile(Temperament.DogId);
+                        break;
+                    case Navigate.ToDetails:
+                        _navigate.ToUpdateDoggo(Temperament.DogId);
+                        break;
+                    case Navigate.ToBiography:
+                        _navigate.ToBiography(Temperament.DogId);
+                        break;
+                    case Navigate.ToOwnersPortal:
+                        _navigate.ToOwnerPortal();
+                        break;
+                    case Navigate.ToAllDoggos:
+                        _navigate.ToAllDoggos();
+                        break;
+                }
+            }                        
         }
         #endregion Methods / WebApi Calls
 

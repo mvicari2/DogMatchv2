@@ -4,6 +4,7 @@
 @using DogMatch.Client.Services
 @using DogMatch.Client.Components.Dog
 @using DogMatch.Client.Components.Dog.BasicDetails
+@using DogMatch.Shared.Globals
 
 @attribute [Authorize]
 @inject DogState state
@@ -11,35 +12,44 @@
 
 <AuthorizeView>
     <Authorized>
-        <div class="center-align">
-            <MatH3>Details for @state.Doggo.Name</MatH3>
-            <MatH5>Please give us more details about your dog to complete the profile.</MatH5>
-            <form>
-                <BreedComponent />
-                <BirthdayComponent />
-                <GenderComponent />
-                <WeightComponent />
-                <br />
-                <ColorsComponent />
-                <br />
-                <ProfileImageUpload />
-                <br />
-                <button class="btn btn-secondary"
-                        @onclick="@SaveAndGoToProfile"
-                        type="button">
-                    Save
-                </button>
-                <button class="btn btn-primary"
-                        @onclick="@SaveAndGoToTemperament"
-                        type="button">
-                    Save and Go To Temperament
-                </button>
-                <br />
-                <DogNavigator />
-            </form>
+        @if (!state.isAuthorized)
+        {
             <br />
-            <br />
-        </div>
+            <div class="col-lg-12">
+                <Flow Size="200px" Color="#003366" Center="true" />
+            </div>
+        }
+        else
+        {
+            <div class="center-align">
+                <MatH3>Details for @state.Doggo.Name</MatH3>
+                <MatH5>Please give us more details about your dog to complete the profile.</MatH5>
+                <form>
+                    <BreedComponent />
+                    <BirthdayComponent />
+                    <GenderComponent />
+                    <WeightComponent />
+                    <br />
+                    <ColorsComponent />
+                    <br />
+                    <ProfileImageUpload />
+                    <br />
+                    <button class="btn btn-secondary"
+                            @onclick="() => state.UpdateDoggo(context.User.Identity.Name)"
+                            type="button">
+                        Save
+                    </button>
+                    <button class="btn btn-primary"
+                            @onclick="() => state.SaveAndNavigate(Navigate.ToTemperament, context.User.Identity.Name)"
+                            type="button">
+                        Save and Go To Temperament
+                    </button>
+                    <br />
+                    <DogNavigator />
+                </form>
+                <br /><br />
+            </div>
+        }
     </Authorized>
 </AuthorizeView>
 
@@ -47,25 +57,20 @@
 @code {
     [Parameter]
     public int Id { get; set; }
+    [CascadingParameter]
+    private Task<AuthenticationState> AuthenticationStateTask { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
-        // reset initial dog weight on initialized component
+        // assume user is not authorized (non-owner) until WebApi results confirm authorization
+        state.isAuthorized = false;
+
+        // reset initial dog weight on initialized
         state.initialWeight = null;
 
+        AuthenticationState authenticationState = await AuthenticationStateTask;
+
         // get dog
-        await state.GetDoggo(Id);
-    }
-
-    private async Task SaveAndGoToProfile()
-    {
-        await state.UpdateDoggo();
-        navigate.ToProfile(state.Doggo.Id);
-    }
-
-    private async Task SaveAndGoToTemperament()
-    {
-        await state.UpdateDoggo();
-        navigate.ToTemperament(state.Doggo.Id);
+        await state.GetDoggo(Id, authenticationState.User.Identity.Name);
     }
 }

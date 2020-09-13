@@ -11,7 +11,8 @@
         DogDeleteUnauthorized = 7,
         DogDeleteError = 8,
         BiographySaved = 9,
-        BiographyError = 10
+        BiographyError = 10,
+        NotAuthorizedOwnerEditError = 11
     }
 
     public enum TemperamentDirection

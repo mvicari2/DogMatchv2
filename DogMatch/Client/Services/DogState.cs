@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Net;
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
@@ -21,6 +22,7 @@ namespace DogMatch.Client.Services
         public IEnumerable<Dog> OwnersDogs { get; set; }
         public DateTime today = DateTime.Now;
         public int? initialWeight = null;
+        public bool isAuthorized = false;
         public event Action OnChange;
         #endregion Properties / Variables
 
@@ -54,13 +56,23 @@ namespace DogMatch.Client.Services
         /// Calls WebApi to get single dog and set dog into state.
         /// </summary>        
         /// <param name="id">Dog Id integer</param>
-        public async Task GetDoggo(int id)
+        /// <param name="requestUser">User Id <see cref="string"/> for user requesting doggo</param>
+        public async Task GetDoggo(int id, string requestUser)
         {
             NewDoggo();
             Doggo = await _http.GetFromJsonAsync<Dog>($"api/Doggo/{id}");
 
-            // set intial dog weight for MatSlider component
+            // ensure user trying to edit dog is dog owner
+            if (Doggo.Owner != requestUser)
+            {
+                _notification.DisplayMessage(NotificationType.NotAuthorizedOwnerEditError);
+                _navigate.ToAllDoggos();
+                return;
+            }
+
+            // set intial dog weight for MatSlider component and authorized editor bool
             initialWeight = Doggo.Weight;
+            isAuthorized = true;
             NotifyStateChanged();
         }
 
@@ -78,18 +90,40 @@ namespace DogMatch.Client.Services
 
         /// <summary>
         /// Calls WebApi to update single dog.
-        /// </summary>        
-        public async Task UpdateDoggo()
+        /// </summary>
+        /// <param name="requestUser">User Id <see cref="string"/> for user updating dog</param>
+        /// <returns><see cref="bool"/> for successful response from WebApi</returns>      
+        public async Task<bool> UpdateDoggo(string requestUser)
         {
-            HttpResponseMessage response = await _http.PutAsJsonAsync($"api/Doggo/{Doggo.Id}", Doggo);
-
-            if (response.IsSuccessStatusCode)
+            // ensure user updating dog is dog owner (also checks on server)
+            if (Doggo.Owner == requestUser)
             {
-                _notification.DisplayMessage(NotificationType.DogUpdated, Doggo.Name);
+                HttpResponseMessage response = await _http.PutAsJsonAsync($"api/Doggo/{Doggo.Id}", Doggo);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    _notification.DisplayMessage(NotificationType.DogUpdated, Doggo.Name);
+                    return true;
+                }
+                else if (response.StatusCode == HttpStatusCode.Unauthorized)
+                {
+                    // user not authorized to update dog
+                    _notification.DisplayMessage(NotificationType.NotAuthorizedOwnerEditError);
+                    _navigate.ToAllDoggos();
+                    return false;
+                }
+                else
+                {
+                    _notification.DisplayMessage(NotificationType.DogUpdateError, Doggo.Name);
+                    return false;
+                }
             }
             else
             {
-                _notification.DisplayMessage(NotificationType.DogUpdateError, Doggo.Name);
+                // user not authorized to update dog
+                _notification.DisplayMessage(NotificationType.NotAuthorizedOwnerEditError);
+                _navigate.ToAllDoggos();
+                return false;
             }
         }
 
@@ -97,41 +131,28 @@ namespace DogMatch.Client.Services
         /// Calls WebApi to delete single dog by dog Id, refreshes doggos
         /// </summary>
         /// <param name="dogId">Dog Id <see cref="int"/></param>
-        /// <param name="currentUser">Current Username <see cref="string"/></param>
-        public async Task DeleteDog(int dogId, string currentUser)
+        /// <param name="dogName">Current Username <see cref="string"/></param>
+        public async Task DeleteDog(int dogId, string dogName)
         {
-            // get Dog
-            Dog doggo = await _http.GetFromJsonAsync<Dog>($"api/Doggo/{dogId}");
+            HttpResponseMessage response = await _http.DeleteAsync($"api/Doggo/{dogId}");
 
-            // soft delete dog if request user is owner
-            if (doggo.Owner == currentUser)
+            if (response.IsSuccessStatusCode)
             {
-                HttpResponseMessage response = await _http.DeleteAsync($"api/Doggo/{dogId}");
-                DeleteDogResponse delResponse = await response.Content.ReadFromJsonAsync<DeleteDogResponse>();
+                _notification.DisplayMessage(NotificationType.DogDeleted, dogName);
 
-                if (delResponse == DeleteDogResponse.Success)
-                {
-                    _notification.DisplayMessage(NotificationType.DogDeleted, doggo.Name);
-
-                    // refresh all doggogs and notify subscriber state has changed
-                    await GetAllDoggos();
-                    NotifyStateChanged();
-                }
-                else if (delResponse == DeleteDogResponse.Unauthorized)
-                {
-                    // service delcares user unathorized to make delete request (non-owner)
-                    _notification.DisplayMessage(NotificationType.DogDeleteUnauthorized, Doggo.Name);
-                }
-                else
-                {
-                    // failed response
-                    _notification.DisplayMessage(NotificationType.DogDeleteError, doggo.Name);
-                }
+                // refresh all doggogs and notify subscribers state has changed
+                await GetAllDoggos();
+                NotifyStateChanged();
+            }
+            else if (response.StatusCode == HttpStatusCode.Unauthorized)
+            {
+                // user unauthorized to make delete request (likely non-owner)
+                _notification.DisplayMessage(NotificationType.DogDeleteUnauthorized, dogName);
             }
             else
             {
-                // user not authorization to delete dog (non-owner)
-                _notification.DisplayMessage(NotificationType.DogDeleteUnauthorized, Doggo.Name);
+                // failure response
+                _notification.DisplayMessage(NotificationType.DogDeleteError, dogName);
             }
         }
 
@@ -139,27 +160,32 @@ namespace DogMatch.Client.Services
         /// Saves Doggo data and navigates to new page based on <see cref="Navigate"/> type passed by user
         /// </summary>
         /// <param name="destination">the destniation page <see cref="Navigate"/> type</param>
-        public async Task SaveAndNavigate(Navigate destination)
+        /// <param name="requestUser">Request user name string</param>
+        public async Task SaveAndNavigate(Navigate destination, string requestUser)
         {
-            switch (destination)
+            bool success = await UpdateDoggo(requestUser);
+
+            if (success)
             {
-                case Navigate.ToProfile:
-                    _navigate.ToProfile(Doggo.Id);
-                    break;                
-                case Navigate.ToTemperament:
-                    _navigate.ToTemperament(Doggo.Id);
-                    break;
-                case Navigate.ToBiography:
-                    _navigate.ToBiography(Doggo.Id);
-                    break;
-                case Navigate.ToOwnersPortal:
-                    _navigate.ToOwnerPortal();
-                    break;
-                case Navigate.ToAllDoggos:
-                    _navigate.ToAllDoggos();
-                    break;
+                switch (destination)
+                {
+                    case Navigate.ToProfile:
+                        _navigate.ToProfile(Doggo.Id);
+                        break;
+                    case Navigate.ToTemperament:
+                        _navigate.ToTemperament(Doggo.Id);
+                        break;
+                    case Navigate.ToBiography:
+                        _navigate.ToBiography(Doggo.Id);
+                        break;
+                    case Navigate.ToOwnersPortal:
+                        _navigate.ToOwnerPortal();
+                        break;
+                    case Navigate.ToAllDoggos:
+                        _navigate.ToAllDoggos();
+                        break;
+                }
             }
-            await UpdateDoggo();
         }
         #endregion Methods / WebApi Calls
 
@@ -195,7 +221,7 @@ namespace DogMatch.Client.Services
         {
             GetAge(bday);
             Doggo.Birthday = bday;
-        }        
+        }
         #endregion Property Methods            
 
         #region Internal Methods

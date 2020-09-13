@@ -17,7 +17,7 @@ namespace DogMatch.Client.Services
         /// </summary>        
         /// <param name="type"><see cref="NotificationType"/> type</param>
         /// <param name="dogName">dog name string</param>
-        public void DisplayMessage(NotificationType type, string dogName)
+        public void DisplayMessage(NotificationType type, string dogName = null)
         {
             switch (type)
             {
@@ -50,6 +50,9 @@ namespace DogMatch.Client.Services
                     break;
                 case NotificationType.BiographyError:
                     BiographyError(dogName);
+                    break;
+                case NotificationType.NotAuthorizedOwnerEditError:
+                    NotAuthorizedOwnerEditError();
                     break;
             }          
         }
@@ -142,10 +145,10 @@ namespace DogMatch.Client.Services
         /// <param name="dogName">dog name <see cref="string"/></param>
         private void DogDeleteUnauthorized(string dogName) =>
             _service.Notify(
-                GetWarningMessage(
-                    "Unauthorized!",
+                GetErrorMessage(
+                    "Unauthorized",
                     $"You must be the dog's owner to delete profile for {dogName}.",
-                    6500
+                    7500
                 ));
 
         /// <summary>
@@ -185,6 +188,18 @@ namespace DogMatch.Client.Services
                     "Save Failed!",
                     $"Saving Biography failed for {dogName}, please try again.",
                     2500
+                ));
+
+        /// <summary>
+        /// Creates new <see cref="NotificationMessage"/> for Dog Biography saved error,
+        /// and calls <see cref="NotificationService"/> Notify.
+        /// </summary>        
+        private void NotAuthorizedOwnerEditError() =>
+            _service.Notify(
+                GetErrorMessage(
+                    "Access Denied",
+                    $"You do not have permissions to edit this dog, or you are not the dog's owner.",
+                    10000
                 ));
 
         #endregion Notify Methods

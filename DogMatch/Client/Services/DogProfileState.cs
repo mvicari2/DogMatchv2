@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Net;
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
@@ -36,8 +36,8 @@ namespace DogMatch.Client.Services
         #region Methods / WebApi Calls
         /// <summary>
         /// Calls WebApi to get single dog and set dog into state.
-        /// </summary>        
-        /// <param name="id">Dog Id integer</param>
+        /// </summary>
+        /// <param name="id">Dog Id <see cref="int"/></param>
         public async Task GetDoggo(int id)
         {
             NewDoggo();
@@ -46,41 +46,29 @@ namespace DogMatch.Client.Services
         }       
 
         /// <summary>
-        /// Calls WebApi to delete single dog by dog Id, refreshes doggos
+        /// Calls WebApi to delete single dog by dog Id, navigates to All Doggos if successful
         /// </summary>
-        /// <param name="dogId">Dog Id <see cref="int"/></param>
-        /// <param name="currentUser">Current Username <see cref="string"/></param>
-        public async Task DeleteDog(int dogId, string currentUser)
+        /// <param name="dogId">Dog Id <see cref="int"/> for dog to be deleted</param>
+        /// <param name="dogName">Dog name string for dog to be deleted<see cref="string"/></param>
+        public async Task DeleteDog(int dogId, string dogName)
         {
-            // get Dog
-            Dog doggo = await _http.GetFromJsonAsync<Dog>($"api/Doggo/{dogId}");
+            HttpResponseMessage response = await _http.DeleteAsync($"api/Doggo/{dogId}");
 
-            // soft delete dog if request user is owner
-            if (doggo.Owner == currentUser)
+            if (response.IsSuccessStatusCode)
             {
-                HttpResponseMessage response = await _http.DeleteAsync($"api/Doggo/{dogId}");
-                DeleteDogResponse delResponse = await response.Content.ReadFromJsonAsync<DeleteDogResponse>();
-
-                if (delResponse == DeleteDogResponse.Success)
-                {
-                    _notification.DisplayMessage(NotificationType.DogDeleted, doggo.Name);
-                    _navigate.ToAllDoggos();
-                }
-                else if (delResponse == DeleteDogResponse.Unauthorized)
-                {
-                    // service delcares user unathorized to make delete request (non-owner)
-                    _notification.DisplayMessage(NotificationType.DogDeleteUnauthorized, Doggo.Name);
-                }
-                else
-                {
-                    // failed response
-                    _notification.DisplayMessage(NotificationType.DogDeleteError, doggo.Name);
-                }
+                _notification.DisplayMessage(NotificationType.DogDeleted, dogName);
+                _navigate.ToAllDoggos();
+            }
+            else if (response.StatusCode == HttpStatusCode.Unauthorized)
+            {
+                // user unauthorized to make delete request (likely non-owner)
+                _notification.DisplayMessage(NotificationType.DogDeleteUnauthorized, dogName);
+                _navigate.ToAllDoggos();
             }
             else
             {
-                // user not authorization to delete dog (non-owner)
-                _notification.DisplayMessage(NotificationType.DogDeleteUnauthorized, Doggo.Name);
+                // failure response
+                _notification.DisplayMessage(NotificationType.DogDeleteError, dogName);
             }
         }        
         #endregion Methods / WebApi Calls

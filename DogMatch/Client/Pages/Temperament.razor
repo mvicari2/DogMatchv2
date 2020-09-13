@@ -7,21 +7,29 @@
 @attribute [Authorize]
 @inject TemperamentState state
 
-<AuthorizeView>
-    <Authorized>
-        <div style="text-align:center !important">
-            <MatH3>Temperament for @state.Temperament.DogName</MatH3>
-            <MatH5>Please give us more details about your dog to complete the profile.</MatH5>
-            <TemperamentStepper />
-            <br /><br />
-            <StepperBtnNav />
-            <br /><br />
-            <TemperamentNavigator />
-            <br />
-        </div>
-    </Authorized>
-</AuthorizeView>
-
+@if (!state.isAuthorized)
+{
+    <div class="col-lg-12">
+        <Flow Size="200px" Color="#003366" Center="true" />
+    </div>
+}
+else
+{
+    <AuthorizeView>
+        <Authorized>
+            <div class="center-align">
+                <MatH3>Temperament for @state.Temperament.DogName</MatH3>
+                <MatH5>Please give us more details about your dog to complete the profile.</MatH5>
+                <TemperamentStepper />
+                <br /><br />
+                <StepperBtnNav />
+                <br /><br />
+                <TemperamentNavigator />
+                <br />
+            </div>
+        </Authorized>
+    </AuthorizeView>
+}
 
 @code {
     [Parameter]
@@ -29,8 +37,11 @@
 
     protected override async Task OnInitializedAsync()
     {
-        await state.GetTemperament(Id);
+        // assume user is not authorized (non-owner) until WebApi results confirm authorization
+        state.isAuthorized = false;
+
         state.OnChange += RefreshComponent;
+        await state.GetTemperament(Id);
     }
 
     private void RefreshComponent() => StateHasChanged();

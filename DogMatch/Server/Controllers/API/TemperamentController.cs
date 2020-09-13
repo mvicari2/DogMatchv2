@@ -12,26 +12,50 @@ namespace DogMatch.Server.Controllers.API
     [ApiController]
     public class TemperamentController : ControllerBase
     {
+        #region DI
         private readonly ITemperamentService _service;
+        private readonly IUserService _userService;
 
-        public TemperamentController(ITemperamentService service) =>        
+        public TemperamentController(ITemperamentService service, IUserService userService)
+        {
             _service = service;
-        
+            _userService = userService;
+        }
+        #endregion DI
 
         #region WebApi Methods
         // GET api/Temperament/{id}
         [HttpGet("{id}")]
-        public async Task<DogTemperament> Get(int id)
+        public async Task<ActionResult<DogTemperament>> Get(int id)
         {
-            DogTemperament temperament = await _service.GetDogTemperament(id);
+            string requestUser = GetUserId();
+            DogTemperament temperament = await _service.GetDogTemperament(id);            
 
             if (temperament != null)
             {
-                return temperament;
+                // ensure user requesting temperament is the dog's owner
+                if (requestUser == temperament.OwnerId)
+                {
+                    return Ok(temperament);
+                }
+                else
+                {
+                    return Unauthorized();
+                }
             }
-            else // create new temperament
+            else // create new dog temperament if it does not yet exist
             {
-                return await _service.CreateTemperament(id, GetUserId());
+                // ensure that user attempting to create new temperament is dog owner
+                string ownerId = await _userService.GetOwnerIdByDogId(id);
+
+                if (ownerId == requestUser)
+                {
+                    return Ok(await _service.CreateTemperament(id, requestUser));
+                }
+                else
+                {
+                    return Unauthorized();
+                }                
             }
         }
 
@@ -40,19 +64,29 @@ namespace DogMatch.Server.Controllers.API
         public async Task<IActionResult> Put(int id, DogTemperament temperament)
         {
             if (id != temperament.DogId)
-            {
                 return BadRequest();
-            }
 
-            bool success = await _service.UpdateTemperament(temperament, GetUserId());
+            // ensure user attempting to update temperament is the dog owner
+            string dogOwnerId = await _userService.GetOwnerIdByDogId(temperament.DogId);
+            string requestUser = GetUserId();
 
-            if (success)
+            if (dogOwnerId == requestUser)
             {
-                return Ok();
+                bool success = await _service.UpdateTemperament(temperament, requestUser);
+
+                if (success)
+                {
+                    return Ok();
+                }
+                else
+                {
+                    return NotFound();
+                }
             }
             else
             {
-                return NotFound();
+                // unauthorized: user attempting to update dog is not the owner
+                return Unauthorized();
             }
         }
         #endregion WebApi Methods
@@ -60,7 +94,6 @@ namespace DogMatch.Server.Controllers.API
         #region Internal
         private string GetUserId() =>
             User.FindFirstValue(ClaimTypes.NameIdentifier);
-
         #endregion Internal
     }
 }
