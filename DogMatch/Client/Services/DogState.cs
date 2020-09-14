@@ -22,7 +22,7 @@ namespace DogMatch.Client.Services
         public IEnumerable<Dog> OwnersDogs { get; set; }
         public DateTime today = DateTime.Now;
         public int? initialWeight = null;
-        public bool isAuthorized = false;
+        public bool loading = false;
         public event Action OnChange;
         #endregion Properties / Variables
 
@@ -72,7 +72,7 @@ namespace DogMatch.Client.Services
 
             // set intial dog weight for MatSlider component and authorized editor bool
             initialWeight = Doggo.Weight;
-            isAuthorized = true;
+            loading = false; 
             NotifyStateChanged();
         }
 
@@ -95,6 +95,9 @@ namespace DogMatch.Client.Services
         /// <returns><see cref="bool"/> for successful response from WebApi</returns>      
         public async Task<bool> UpdateDoggo(string requestUser)
         {
+            // show loading animation while updating dog
+            loading = true;
+
             // ensure user updating dog is dog owner (also checks on server)
             if (Doggo.Owner == requestUser)
             {
@@ -103,6 +106,7 @@ namespace DogMatch.Client.Services
                 if (response.IsSuccessStatusCode)
                 {
                     _notification.DisplayMessage(NotificationType.DogUpdated, Doggo.Name);
+                    loading = false;
                     return true;
                 }
                 else if (response.StatusCode == HttpStatusCode.Unauthorized)

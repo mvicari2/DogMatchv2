@@ -12,7 +12,7 @@
 
 <AuthorizeView>
     <Authorized>
-        @if (!state.isAuthorized)
+        @if (state.loading)
         {
             <br />
             <div class="col-lg-12">
@@ -62,8 +62,8 @@
 
     protected override async Task OnInitializedAsync()
     {
-        // assume user is not authorized (non-owner) until WebApi results confirm authorization
-        state.isAuthorized = false;
+        // assume user is not authorized (non-owner) until WebApi results confirm authorization, show loading animation
+        state.loading = true;
 
         // reset initial dog weight on initialized
         state.initialWeight = null;

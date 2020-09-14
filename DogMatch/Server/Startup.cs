@@ -59,6 +59,7 @@ namespace DogMatch.Server
             services.AddScoped<IBiographyRepository, BiographyRepository>();
             services.AddScoped<IColorRepository, ColorRepository>();
             services.AddScoped<IUserRepository, UserRepository>();
+            services.AddScoped<IDogImagesRepository, DogImagesRepository>();
 
             var mappingConfig = new MapperConfiguration(mc =>
             {
