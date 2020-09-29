@@ -12,7 +12,10 @@
         DogDeleteError = 8,
         BiographySaved = 9,
         BiographyError = 10,
-        NotAuthorizedOwnerEditError = 11
+        NotAuthorizedOwnerEditError = 11,
+        DogAlbumSaved = 12,
+        DogAlbumError = 13,
+        DogAlbumExcessImages = 14
     }
 
     public enum TemperamentDirection
@@ -47,8 +50,9 @@
         ToDetails = 2,
         ToTemperament = 3,
         ToBiography = 4,
-        ToOwnersPortal = 5,
-        ToAllDoggos = 6
+        ToDogAlbum = 5,
+        ToOwnersPortal = 6,
+        ToAllDoggos = 7
     }
 
     public enum DogGenderTypes

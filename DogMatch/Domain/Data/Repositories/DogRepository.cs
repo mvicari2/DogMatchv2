@@ -3,6 +3,8 @@ using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Data;
+using Microsoft.Extensions.Logging;
 
 namespace DogMatch.Domain.Data.Repositories
 {
@@ -11,11 +13,13 @@ namespace DogMatch.Domain.Data.Repositories
         #region DI
         private readonly DogMatchDbContext _context;
         private readonly DbSet<Dogs> _dbSet;
+        private readonly ILogger<DogRepository> _logger;
 
-        public DogRepository(DogMatchDbContext context)
+        public DogRepository(DogMatchDbContext context, ILogger<DogRepository> logger)
         {
             _context = context;
             _dbSet = context.Set<Dogs>();
+            _logger = logger;
         }
         #endregion DI
 
@@ -59,6 +63,29 @@ namespace DogMatch.Domain.Data.Repositories
             .ToListAsync();
 
         /// <summary>
+        /// Finds single <see cref="Dogs"/> entity and includes all active, non-deleted Dog Album Images (<see cref="DogImages"/>)
+        /// </summary>
+        /// <param name="id">Dog Id <see cref="int"/></param>
+        /// <returns>Single <see cref="Dogs"/> entity object instance with album images</returns>
+        public async Task<Dogs> FindDogWithAlbumImagesById(int id)
+        {
+            Dogs dog = await _dbSet
+                .AsNoTracking()
+                // lambda within include not available in efcore 3.x, but will be in efcore 5.0 (saving for future upgrade)
+                //.Include(d => d.AlbumImages.Where(a => !(a.IsDeleted ?? false)
+                //    && !(a.IsProfileImage ?? false)))
+                .Include(d => d.AlbumImages)
+                .SingleOrDefaultAsync(d => d.Id == id && d.IsDeleted != true);
+
+            // for now (until efcore 5), filter separately for active/non-deleted album images
+            dog.AlbumImages = dog.AlbumImages
+                .Where(i => !(i.IsProfileImage ?? false) && !(i.IsDeleted ?? false))
+                .ToList();
+
+            return dog;
+        }
+
+        /// <summary>
         /// Writes new, single <see cref="Dogs"/> entity to database.
         /// </summary>        
         /// <param name="dog"><see cref="Dogs"/> entity object</param>
@@ -83,20 +110,20 @@ namespace DogMatch.Domain.Data.Repositories
             {
                 await _context.SaveChangesAsync();
             }
-            catch (DbUpdateConcurrencyException)
+            catch (DbUpdateConcurrencyException ex)
             {
                 if (!DogExists(dog.Id))
                 {
-                    return false;
+                    _logger.LogError(ex, "Saving updated Dog Entity, Dog doesn't exist.");           
                 }
                 else
                 {
-                    throw;
+                    _logger.LogError(ex, "Db Update Concurrency Exception while saving updated Dog entity.");                    
                 }
+                return false;
             }
-
             return true;
-        }        
+        }
         #endregion Repository Methods
 
         #region Internal

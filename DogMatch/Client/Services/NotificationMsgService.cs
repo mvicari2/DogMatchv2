@@ -54,11 +54,20 @@ namespace DogMatch.Client.Services
                 case NotificationType.NotAuthorizedOwnerEditError:
                     NotAuthorizedOwnerEditError();
                     break;
-            }          
+                case NotificationType.DogAlbumSaved:
+                    DogAlbumSaved(dogName);
+                    break;
+                case NotificationType.DogAlbumError:
+                    DogAlbumError(dogName);
+                    break;
+                case NotificationType.DogAlbumExcessImages:
+                    DogAlbumExcessImages();
+                    break;
+            }
         }
         #endregion Public Methods
 
-        #region Notify Methods
+        #region Notify Methods (Internal)
         /// <summary>
         /// Creates new <see cref="NotificationMessage"/> for Temperament Error,
         /// and calls <see cref="NotificationService"/> Notify.
@@ -202,7 +211,44 @@ namespace DogMatch.Client.Services
                     10000
                 ));
 
-        #endregion Notify Methods
+        /// <summary>
+        /// Creates new <see cref="NotificationMessage"/> for Dog Album Saved successfully,
+        /// and calls <see cref="NotificationService"/> Notify.
+        /// </summary>        
+        /// <param name="dogName">dog name <see cref="string"/></param> 
+        private void DogAlbumSaved(string dogName) =>
+            _service.Notify(
+                GetSuccessMessage(
+                    "Dog Album Saved!",
+                    $"Dog Album for {dogName} was saved successfully.",
+                    10000
+                ));
+
+        /// <summary>
+        /// Creates new <see cref="NotificationMessage"/> for Dog Album saved error,
+        /// and calls <see cref="NotificationService"/> Notify.
+        /// </summary>        
+        /// <param name="dogName">dog name <see cref="string"/></param>     
+        private void DogAlbumError(string dogName) =>
+            _service.Notify(
+                GetErrorMessage(
+                    "Save Failed!",
+                    $"Saving Dog Album for {dogName} failed, please try again.",
+                    10000
+                ));
+
+        /// <summary>
+        /// Creates new <see cref="NotificationMessage"/> for user attempting to upload more dog album images than allowed,
+        /// and calls <see cref="NotificationService"/> Notify.
+        /// </summary>           
+        private void DogAlbumExcessImages() =>
+            _service.Notify(
+                GetWarningMessage(
+                    "Uploaded more than 12 Images",
+                    $"Some Images were not saved, please remove images before adding additonal.",
+                    10000
+                ));
+        #endregion Notify Methods (Internal)
 
         #region Toaster Notification Messages
         /// <summary>
@@ -213,7 +259,7 @@ namespace DogMatch.Client.Services
         /// <param name="duration">message duration in ms</param>
         /// <returns>new Error <see cref="NotificationMessage"/></returns>
         private NotificationMessage GetErrorMessage(string title, string body, int duration)
-        {            
+        {
             return new NotificationMessage()
             {
                 Severity = NotificationSeverity.Error,

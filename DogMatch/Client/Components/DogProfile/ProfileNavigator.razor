@@ -1,10 +1,11 @@
 ﻿@using DogMatch.Client.Services
 @inject NavigationService navigate
 
-<div class="d-flex flex-md-column align-items-center" style="margin-top: 20px">
-    <MatOverline>
-        <b>Owner Navigation:</b>
-    </MatOverline>
+<MatOverline>
+    <b>Owner Navigation:</b>
+</MatOverline>
+
+<div class="d-flex flex-md-column align-items-center">
     <MatChipSet>
         <MatChip LeadingIcon="list"
                  Label="Basic Details"
@@ -18,6 +19,10 @@
                  Label="Biography"
                  Class="custom-chip"
                  @onclick="() => navigate.ToBiography(DogId)" />
+        <MatChip LeadingIcon="add_photo_alternate"
+                 Label="Dog Album"
+                 Class="custom-chip"
+                 @onclick="() => navigate.ToDogAlbum(DogId)" />
         <MatChip LeadingIcon="person"
                  Label="Owner's Portal"
                  Class="custom-chip"

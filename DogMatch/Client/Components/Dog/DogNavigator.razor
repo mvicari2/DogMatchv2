@@ -5,31 +5,36 @@
 
 <AuthorizeView>
     <Authorized>
+        <MatOverline Class="center-align">
+            <b>Or Save and Navigate:</b>
+        </MatOverline>
+
         <div class="d-flex flex-md-column align-items-center" style="margin-top: 20px">
-            <MatOverline>
-                <b>Save and Navigate:</b>
-            </MatOverline>
             <MatChipSet>
                 <MatChip LeadingIcon="visibility"
-                            Label="Doggo Profile"
-                            Class="custom-chip"
-                            @onclick="() => state.SaveAndNavigate(Navigate.ToProfile, context.User.Identity.Name)" />
+                         Label="Doggo Profile"
+                         Class="custom-chip"
+                         @onclick="() => state.SaveAndNavigate(Navigate.ToProfile, context.User.Identity.Name)" />
                 <MatChip LeadingIcon="bar_chart"
-                            Label="Temperament"
-                            Class="custom-chip"
-                            @onclick="() => state.SaveAndNavigate(Navigate.ToTemperament, context.User.Identity.Name)" />
+                         Label="Temperament"
+                         Class="custom-chip"
+                         @onclick="() => state.SaveAndNavigate(Navigate.ToTemperament, context.User.Identity.Name)" />
                 <MatChip LeadingIcon="speaker_notes"
-                            Label="Biography"
-                            Class="custom-chip"
-                            @onclick="() => state.SaveAndNavigate(Navigate.ToBiography, context.User.Identity.Name)" />
+                         Label="Biography"
+                         Class="custom-chip"
+                         @onclick="() => state.SaveAndNavigate(Navigate.ToBiography, context.User.Identity.Name)" />
+                <MatChip LeadingIcon="add_photo_alternate"
+                         Label="Dog Album"
+                         Class="custom-chip"
+                         @onclick="() => state.SaveAndNavigate(Navigate.ToDogAlbum, context.User.Identity.Name)" />
                 <MatChip LeadingIcon="person"
-                            Label="Owner's Portal"
-                            Class="custom-chip"
-                            @onclick="() => state.SaveAndNavigate(Navigate.ToOwnersPortal, context.User.Identity.Name)" />
+                         Label="Owner's Portal"
+                         Class="custom-chip"
+                         @onclick="() => state.SaveAndNavigate(Navigate.ToOwnersPortal, context.User.Identity.Name)" />
                 <MatChip LeadingIcon="pets"
-                            Label="All Doggos"
-                            Class="custom-chip"
-                            @onclick="() => state.SaveAndNavigate(Navigate.ToAllDoggos, context.User.Identity.Name)" />
+                         Label="All Doggos"
+                         Class="custom-chip"
+                         @onclick="() => state.SaveAndNavigate(Navigate.ToAllDoggos, context.User.Identity.Name)" />
             </MatChipSet>
         </div>
     </Authorized>

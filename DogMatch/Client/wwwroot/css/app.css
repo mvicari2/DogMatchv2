@@ -205,6 +205,33 @@ input.image-drop-clickable {
     max-height: 300px;
 }
 
+/* dog album preview Styles */
+.album-preview-card {
+    max-width: 300px;
+    max-height: 350px;
+    display: inline-flex;
+    overflow: hidden;
+    text-align: center;
+}
+
+.img-preview-container {
+    width: 100%;
+    margin: 7px 0 7px 0;
+    overflow: hidden;
+    height: 200px;
+    text-align: center;
+}
+
+img.album-preview-img {
+    max-height: 200px;
+}
+/*--------------------------*/
+
+.margin-ten-top-bottom {
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
 .top-row {
     height: 3.5rem;
     display: flex;

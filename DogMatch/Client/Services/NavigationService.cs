@@ -15,30 +15,37 @@ namespace DogMatch.Client.Services
         /// <summary>
         /// Navigates to dog profile page.
         /// </summary>        
-        /// <param name="id">dog id int</param>
+        /// <param name="id">dog id <see cref="int"/></param>
         public void ToProfile(int id) =>
             _service.NavigateTo($"/DoggoProfile/{id}");
 
         /// <summary>
         /// Navigates to Doggo Details update page.
         /// </summary>        
-        /// <param name="id">dog id int</param>
+        /// <param name="id">dog id <see cref="int"/></param>
         public void ToUpdateDoggo(int id) =>
             _service.NavigateTo($"/DoggoDetails/{id}");
 
         /// <summary>
         /// Navigates to Temperament Profile page.
         /// </summary>        
-        /// <param name="id">dog id int</param>
+        /// <param name="id">dog id <see cref="int"/></param>
         public void ToTemperament(int id) =>
             _service.NavigateTo($"/Temperament/{id}");
 
         /// <summary>
         /// Navigates to Biography Profile page.
         /// </summary>        
-        /// <param name="id">dog id int</param>
+        /// <param name="id">dog id <see cref="int"/></param>
         public void ToBiography(int id) =>
             _service.NavigateTo($"/Biography/{id}");
+
+        /// <summary>
+        /// Navigates to Dog Album Images Upload page.
+        /// </summary>        
+        /// <param name="id">dog id <see cref="int"/></param>
+        public void ToDogAlbum(int id, bool forceLoad = false) =>
+            _service.NavigateTo($"/DogAlbum/{id}", forceLoad);
 
         /// <summary>
         /// Navigates to All Doggos page.

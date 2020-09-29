@@ -27,6 +27,13 @@ namespace DogMatch.Domain.Data.Repositories
         Task<IEnumerable<Dogs>> FindDogsByOwner(string userId);
 
         /// <summary>
+        /// Finds single <see cref="Dogs"/> entity and includes all active, non-deleted Dog Album Images (<see cref="DogImages"/>)
+        /// </summary>
+        /// <param name="id">Dog Id <see cref="int"/></param>
+        /// <returns>Single <see cref="Dogs"/> entity object instance with album images</returns>
+        Task<Dogs> FindDogWithAlbumImagesById(int id);
+
+        /// <summary>
         /// Writes new, single <see cref="Dogs"/> entity to database.
         /// </summary>        
         /// <param name="dog"><see cref="Dogs"/> entity object</param>

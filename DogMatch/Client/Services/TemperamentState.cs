@@ -194,6 +194,9 @@ namespace DogMatch.Client.Services
                     case Navigate.ToBiography:
                         _navigate.ToBiography(Temperament.DogId);
                         break;
+                    case Navigate.ToDogAlbum:
+                        _navigate.ToDogAlbum(Temperament.DogId);
+                        break;
                     case Navigate.ToOwnersPortal:
                         _navigate.ToOwnerPortal();
                         break;

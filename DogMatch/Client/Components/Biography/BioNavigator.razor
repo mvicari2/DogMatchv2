@@ -3,10 +3,11 @@
 
 @inject BiographyState state
 
-<div class="d-flex flex-md-column align-items-center">
-    <MatOverline>
-        <b>Save and Navigate:</b>
-    </MatOverline>
+<MatOverline Class="center-align">
+    <b>Or Save and Navigate:</b>
+</MatOverline>
+
+<div class="d-flex flex-md-column align-items-center">    
     <MatChipSet>
         <MatChip LeadingIcon="visibility"
                  Label="Doggo Profile"
@@ -20,6 +21,10 @@
                  Label="Temperament"
                  Class="custom-chip"
                  @onclick="() => state.SaveAndNavigate(Navigate.ToTemperament)" />
+        <MatChip LeadingIcon="add_photo_alternate"
+                 Label="Dog Album"
+                 Class="custom-chip"
+                 @onclick="() => state.SaveAndNavigate(Navigate.ToDogAlbum)" />
         <MatChip LeadingIcon="person"
                  Label="Owner's Portal"
                  Class="custom-chip"

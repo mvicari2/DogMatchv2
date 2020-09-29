@@ -12,6 +12,7 @@ using AutoMapper;
 using DogMatch.Domain.Infrastructure;
 using Microsoft.Extensions.FileProviders;
 using DogMatch.Domain.Data.Repositories;
+using System;
 
 namespace DogMatch.Server
 {
@@ -32,16 +33,31 @@ namespace DogMatch.Server
 
             services.AddDbContext<DogMatchDbContext>(options =>
                 options.UseSqlServer(
-                    Configuration.GetConnectionString("DefaultConnection")));
+                    Configuration.GetConnectionString("DefaultConnection")), ServiceLifetime.Transient);
 
-            services.AddDefaultIdentity<DogMatchUser>(options => options.SignIn.RequireConfirmedAccount = true)
-                .AddEntityFrameworkStores<DogMatchDbContext>();
+            services.AddDefaultIdentity<DogMatchUser>(options =>
+            {
+                options.SignIn.RequireConfirmedAccount = false;
+                options.SignIn.RequireConfirmedEmail = false;                
+            })          
+            .AddEntityFrameworkStores<DogMatchDbContext>();
 
             services.AddIdentityServer()
                 .AddApiAuthorization<DogMatchUser, DogMatchDbContext>();
 
             services.AddAuthentication()
                 .AddIdentityServerJwt();
+
+            services.AddDistributedMemoryCache();
+
+            services.AddSession(options =>
+            {
+                options.IdleTimeout = TimeSpan.FromHours(12);
+                options.Cookie.HttpOnly = true;
+                options.Cookie.IsEssential = true;
+                options.Cookie.IsEssential = true;
+                options.Cookie.Name = "DogMatch_Session";                
+            });
 
             services.AddControllersWithViews();
             services.AddRazorPages();
@@ -89,8 +105,9 @@ namespace DogMatch.Server
             app.UseHttpsRedirection();
             app.UseBlazorFrameworkFiles();
             app.UseStaticFiles();
-
+            
             app.UseRouting();
+            app.UseSession(); // must call after UseRouting, before UseEndpoints           
 
             app.UseIdentityServer();
             app.UseAuthentication();
@@ -102,16 +119,19 @@ namespace DogMatch.Server
                 endpoints.MapControllers();
                 endpoints.MapFallbackToFile("index.html");
             });
-
-            //app.UseStaticFiles(new StaticFileOptions
-            //{
-            //    FileProvider = new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), "Images/ProfileImages")),
-            //    RequestPath = "/ProfileImage"
-            //});
+            
+            // use static files for profile images
             app.UseStaticFiles(new StaticFileOptions
             {
                 FileProvider = new PhysicalFileProvider(Configuration.GetValue<string>("FilePaths:ProfileImageDir")),
                 RequestPath = "/ProfileImage"
+            });
+
+            // use static files for album images
+            app.UseStaticFiles(new StaticFileOptions
+            {
+                FileProvider = new PhysicalFileProvider(Configuration.GetValue<string>("FilePaths:AlbumImageDir")),
+                RequestPath = "/AlbumImage"
             });
         }
     }

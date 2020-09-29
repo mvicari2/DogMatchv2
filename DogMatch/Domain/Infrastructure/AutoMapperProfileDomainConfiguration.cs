@@ -78,6 +78,12 @@ namespace DogMatch.Domain.Infrastructure
             CreateMap<DogBiography, Biography>()
                 .ForMember(d => d.Id, cfg => cfg.MapFrom(src => src.Id))
                 .ForMember(d => d.DogId, cfg => cfg.MapFrom(src => src.DogId));
+
+            CreateMap<DogImages, AlbumImage>()
+                .ForMember(d => d.Id, cfg => cfg.MapFrom(src => src.Id))
+                .ForMember(d => d.ImageString, cfg => cfg.MapFrom(src => "/AlbumImage/" + src.Filename))
+                .ForMember(d => d.Extension, cfg => cfg.Ignore())
+                .ForMember(d => d.Delete, cfg => cfg.MapFrom(src => false));
         }       
 
         // uses birthday datetime to return string w/current age of dog

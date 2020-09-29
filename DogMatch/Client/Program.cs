@@ -30,6 +30,7 @@ namespace DogMatch.Client
             builder.Services.AddSingleton<DogProfileState>();
             builder.Services.AddSingleton<TemperamentState>();
             builder.Services.AddSingleton<BiographyState>();
+            builder.Services.AddSingleton<DogAlbumState>();
             builder.Services.AddSingleton<NotificationService>();
             builder.Services.AddSingleton<NotificationMsgService>();
             builder.Services.AddSingleton<NavigationService>();

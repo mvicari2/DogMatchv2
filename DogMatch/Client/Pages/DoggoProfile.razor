@@ -22,9 +22,11 @@
 
         @if (state.Doggo.Owner == context.User.Identity.Name)
         {
-            <ProfileNavigator DogId="state.Doggo.Id" />
-            <br />
-            <DeleteProfile DogId="state.Doggo.Id" DogName="@state.Doggo.Name" />
+            <div class="center-align">
+                <ProfileNavigator DogId="state.Doggo.Id" />
+                <br />
+                <DeleteProfile DogId="state.Doggo.Id" DogName="@state.Doggo.Name" />
+            </div>
         }
         <br />
     </Authorized>

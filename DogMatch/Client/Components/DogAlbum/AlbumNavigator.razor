@@ -1,13 +1,13 @@
 ﻿@using DogMatch.Client.Services
 @using DogMatch.Shared.Globals
 
-@inject TemperamentState state
+@inject DogAlbumState state
 
 <MatOverline Class="center-align">
     <b>Or Save and Navigate:</b>
 </MatOverline>
 
-<div class="d-flex flex-md-column align-items-center">    
+<div class="d-flex flex-md-column align-items-center">
     <MatChipSet>
         <MatChip LeadingIcon="visibility"
                  Label="Doggo Profile"
@@ -17,14 +17,14 @@
                  Label="Basic Details"
                  Class="custom-chip"
                  @onclick="() => state.SaveAndNavigate(Navigate.ToDetails)" />
+        <MatChip LeadingIcon="bar_chart"
+                 Label="Temperament"
+                 Class="custom-chip"
+                 @onclick="() => state.SaveAndNavigate(Navigate.ToTemperament)" />
         <MatChip LeadingIcon="speaker_notes"
                  Label="Biography"
                  Class="custom-chip"
                  @onclick="() => state.SaveAndNavigate(Navigate.ToBiography)" />
-        <MatChip LeadingIcon="add_photo_alternate"
-                 Label="Dog Album"
-                 Class="custom-chip"
-                 @onclick="() => state.SaveAndNavigate(Navigate.ToDogAlbum)" />
         <MatChip LeadingIcon="person"
                  Label="Owner's Portal"
                  Class="custom-chip"

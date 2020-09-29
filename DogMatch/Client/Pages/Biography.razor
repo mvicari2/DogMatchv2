@@ -3,6 +3,7 @@
 @using Microsoft.AspNetCore.Components.Authorization
 @using DogMatch.Client.Services
 @using DogMatch.Client.Components.Biography
+@using Shared.Globals 
 
 @attribute [Authorize]
 @inject BiographyState state
@@ -31,6 +32,14 @@
                     <WalkExpansionPanel />
                 </MatAccordion>
                 <br />
+
+                <button type="button"
+                        class="btn btn-primary"
+                        @onclick="@(args => state.SaveAndNavigate(Navigate.ToDogAlbum))">
+                    Save and Next to Dog Album
+                </button>
+                <br />
+
                 <BioNavigator />
                 <br />
             </div>

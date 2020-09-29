@@ -1,0 +1,121 @@
+﻿@using System.IO
+@using Tewr.Blazor.FileReader
+@using DogMatch.Client.Services
+@using DogMatch.Shared.Models 
+
+@inject DogAlbumState state
+@inject IFileReaderService fileReaderService
+
+<div class="form-group col-lg-12">
+    @if (state.Album.Images.Where(i => !(i.Delete ?? false)).Count() < 12)
+    {
+        <div class="@dropClass">
+            <input type="file"
+                   class="image-drop-clickable"
+                   accept="image/png, image/jpeg"
+                   multiple
+                   @ref=dropTargetInput
+                   @onchange="OnInputChange"
+                   @ondragenter=OnDragEnter
+                   @ondragleave=OnDragLeave />
+            <MatOverline>
+                Drop New Image Files Here or Click to Upload. <br />
+                @state.Album.Images.Where(i => !(i.Delete ?? false)).Count() / 12 Images Uploaded
+            </MatOverline>
+        </div>
+    }
+
+    @if (imgInProgress)
+    {
+        <div class="col-lg-12">
+            <Flow Size="140px" Color="#003366" Center="true" />
+        </div>
+    }
+</div>
+
+@code {
+    #region Variables
+    ElementReference dropTargetInput;
+    private bool imgInProgress = false;
+
+    private List<string> _dropClasses = new List<string>() { dropTargetClass };
+    private string dropClass => string.Join(" ", _dropClasses);
+
+    const string dropTargetDragClass = "droptarget-drag";
+    const string dropTargetClass = "droptarget";
+    #endregion Variables
+
+    #region Methods
+    // subscribe to state changes (DogAlbumState)
+    protected override void OnInitialized() => state.OnChange += RefreshComponent;
+    private void RefreshComponent() => StateHasChanged();
+
+    // add/remove target css classes for drop zone area
+    public void OnDragEnter(EventArgs e) => _dropClasses.Add(dropTargetDragClass);
+    public void OnDragLeave(EventArgs e) => _dropClasses.Remove(dropTargetDragClass);
+
+    /// <summary>
+    /// File drop area change (images selected), begin file handling
+    /// </summary>
+    /// <param name="e"><see cref="EventArgs"/></param>
+    public async Task OnInputChange(EventArgs e)
+    {
+        // show animation
+        imgInProgress = true;
+
+        // remove drop zone drag class
+        _dropClasses.Remove(dropTargetDragClass);
+        this.StateHasChanged();
+
+        // read files, set images into state, convert to base64 strings for preview        
+        await ReadFiles();
+
+        // hide animation
+        imgInProgress = false;
+    }
+
+    /// <summary>
+    /// Read image files, set them in state, and create/set preview image base64 strings
+    /// </summary>
+    public async Task ReadFiles()
+    {
+        bool overImageCountLimit = false;
+
+        // create ref, iterate over enumerated files
+        foreach (var file in await fileReaderService.CreateReference(dropTargetInput).EnumerateFilesAsync())
+        {
+            // only add image if total non-deleted image count is less than 12
+            if (state.Album.Images.Where(i => !(i.Delete ?? false)).Count() < 12)
+            {
+                // read file info
+                IFileInfo fileInfo = await file.ReadFileInfoAsync();
+
+                await using (MemoryStream memoryStream = await file.CreateMemoryStreamAsync(4096))
+                {
+                    // memory stream to byte array
+                    byte[] img = memoryStream.ToArray();
+
+                    // add new image to image list (covert to base64 string)
+                    state.Album.Images.Add(new AlbumImage()
+                    {
+                        Id = 0,
+                        ImageString = $"data:image/jpg;base64,{Convert.ToBase64String(img)}",
+                        Extension = Path.GetExtension(fileInfo.Name)
+                    });
+                }
+            }
+            else
+            {
+                // set bool for over image count limit
+                overImageCountLimit = true;
+            }
+        }
+        // alert other subscribers that state has changed
+        state.NotifyStateChanged();
+
+        // display notification if over image count limit
+        if (overImageCountLimit)
+            state.AlertOverImageLimit();
+    }
+    #endregion Methods
+}

@@ -1,5 +1,7 @@
 ﻿using DogMatch.Domain.Data.Models;
 using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace DogMatch.Domain.Data.Repositories
@@ -29,6 +31,35 @@ namespace DogMatch.Domain.Data.Repositories
             await _context.SaveChangesAsync();
 
             return image;
+        }
+
+        /// <summary>
+        /// Save new <see cref="DogImages"/> entities by adding range from passed <see cref="IEnumerable{DogImages}"/>
+        /// </summary>
+        /// <param name="images"><see cref="IEnumerable{DogImages}"/> images to save</param>
+        public async Task SaveDogAlbumImages(IEnumerable<DogImages> images)
+        {
+            await _dbSet.AddRangeAsync(images);
+            await _context.SaveChangesAsync();
+        }
+        
+        /// <summary>
+        /// Soft Deleted Dog Images by Range using List of Dog Image Id's
+        /// </summary>
+        /// <param name="imageIdList"><see cref="IEnumerable{int}"/> Enumerated Dog Image Id's to soft delete</param>
+        public async Task SoftDeleteImageRange(IEnumerable<int> imageIdList)
+        {
+            // find dog image entities using id list
+            IEnumerable<DogImages> images = await _dbSet
+                .Where(i => imageIdList.Contains(i.Id))
+                .ToListAsync();
+
+            // set entities as deleted (soft delete)
+            foreach (var image in images)
+                image.IsDeleted = true;
+
+            // save
+            await _context.SaveChangesAsync();
         }
         #endregion Public Repository Methods
     }

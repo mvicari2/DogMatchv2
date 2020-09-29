@@ -1,0 +1,78 @@
+﻿@using DogMatch.Client.Services
+@using DogMatch.Shared.Models
+
+@inject DogAlbumState state
+
+@if (state.Album.Images.Where(i => !(i.Delete ?? false)).Count() < 1)
+{
+    <MatOverline>
+        <b>No Album Images Uploaded Yet, Drop New Images Above</b>
+    </MatOverline>
+}
+else
+{
+    <MatOverline>
+        <b>Album Preview</b><br />
+        @state.Album.Images.Where(i => !(i.Delete ?? false)).Count() / 12 Images Uploaded
+    </MatOverline>
+    <div>
+        <button class="btn btn-warning btn-sm margin-ten-top-bottom"
+                @onclick="() => state.RemoveAllImagesFromAlbum()"
+                type="button">
+            Remove All Images
+        </button>
+    </div>
+
+    <RadzenDataList WrapItems="true"
+                    AllowPaging="false"
+                    Data="@state.Album.Images"
+                    TItem="AlbumImage">
+        <Template Context="image">
+            @{
+                // set index for this iteration only, component index is useless for remove btn (index acts as count in that case)
+                int iteration = index;
+            }
+            @if (!(image.Delete ?? false))
+            {
+                <RadzenCard class="album-preview-card">
+                    @if (image.Id == 0)
+                    {
+                        <MatCaption Style="color:dodgerblue">
+                            Unsaved
+                        </MatCaption>
+                    }
+                    else
+                    {
+                        <MatCaption Style="color:green">
+                            Saved
+                        </MatCaption>
+                    }
+
+                    <div class="img-preview-container">
+                        <img class="album-preview-img" src="@image.ImageString" />
+                    </div>
+
+                    <button type="button"
+                            class="btn btn-warning btn-sm"
+                            @onclick="() => state.RemoveImageFromAlbum(iteration)">
+                        Remove
+                    </button>
+                </RadzenCard>
+            }
+            @{index++;}
+        </Template>
+    </RadzenDataList>
+    <br />
+}
+
+@code {
+    public int index = 0;
+    protected override void OnInitialized() => state.OnChange += RefreshComponent;
+
+    private void RefreshComponent()
+    {
+        // reset index on refresh (else new lowest index starts at previous highest index)
+        index = 0;
+        StateHasChanged();
+    }
+}

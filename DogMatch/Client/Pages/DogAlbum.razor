@@ -1,0 +1,81 @@
+﻿@page "/DogAlbum/{id:int}"
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Components.Authorization
+@using DogMatch.Client.Services
+@using DogMatch.Client.Components.DogAlbum
+
+@attribute [Authorize]
+@inject DogAlbumState state
+
+<AuthorizeView>
+    <Authorized>
+        @if (state.loading)
+        {
+            <br />
+            <div class="col-lg-12 center-align">
+                @if (state.uploadInProgress)
+                {
+                    <MatOverline Style="color:#003366;">
+                        <b>Uploading Images... Please Wait...</b>
+                    </MatOverline>
+                }
+                <Flow Size="200px" Color="#003366" Center="true" />
+            </div>
+        }
+        else
+        {
+            <div class="center-align">
+                <MatH3>Album for @state.Album.DogName</MatH3>
+                <MatH5>
+                    Add up to 12 images to your dog's photo album.
+                </MatH5>
+
+                @if (state.Album.Images.Where(i => !(i.Delete ?? false)).Count() < 13)
+                {
+                    <AlbumUploader />
+                }
+                <AlbumPreview />
+                <br />
+                <button class="btn btn-primary"
+                        @onclick="() => SubmitAlbum()"
+                        type="button">
+                    Save Album
+                </button>
+                <br />
+                <AlbumNavigator />
+            </div>
+        }
+        <br /><br />
+    </Authorized>
+</AuthorizeView>
+
+
+@code {
+    [Parameter]
+    public int Id { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        // assume user is not authorized (non-owner) until WebApi results confirm authorization, show loading animation
+        state.loading = true;
+
+        // subscribe to state changes from DogAlbumService
+        state.OnChange += RefreshComponent;
+
+        // get dog album
+        await state.GetDogAlbumImages(Id);
+    }
+
+    private void RefreshComponent() => StateHasChanged();
+
+    public async Task SubmitAlbum()
+    {
+        // show loading animation during upload, refresh component
+        state.loading = state.uploadInProgress = true;
+        StateHasChanged();
+
+        // delay update by 100ms until loading animation starts (else animation won't fire)
+        await Task.Delay(100);
+        await state.UpdateAlbumImages(true);
+    }
+}
