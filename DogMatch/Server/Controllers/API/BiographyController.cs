@@ -4,6 +4,7 @@ using DogMatch.Domain.Services;
 using DogMatch.Shared.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 
 namespace DogMatch.Server.Controllers.API
 {
@@ -15,11 +16,13 @@ namespace DogMatch.Server.Controllers.API
         #region DI
         private readonly IBiographyService _service;
         private readonly IUserService _userService;
+        private readonly ILogger<BiographyController> _logger;
 
-        public BiographyController(IBiographyService service, IUserService userService)
+        public BiographyController(IBiographyService service, IUserService userService, ILogger<BiographyController> logger)
         {
             _service = service;
             _userService = userService;
+            _logger = logger;
         }
         #endregion DI
 
@@ -34,29 +37,24 @@ namespace DogMatch.Server.Controllers.API
 
             if (bio != null)
             {
-                // ensure user requesting biography is the dog's owner
-                if (requestUser == bio.OwnerId)
-                {
+                // return bio if user requesting biography is the dog's owner
+                if (requestUser == bio.OwnerId)                
                     return Ok(bio);
-                }
                 else
-                {
+                    _logger.LogWarning($"Request user ({requestUser}) does not have the permission (non-owner) to get dog biography for dog Id: {bio.DogId}");
                     return Unauthorized();
-                }
+                
             }
             else // create new dog biography if it does not yet exist
-            {
-                // ensure that user attempting to create new biography is dog owner
+            {                
                 string ownerId = await _userService.GetOwnerIdByDogId(id);
 
-                if (ownerId == requestUser)
-                {
+                // create and return new biography if requester is dog owner
+                if (ownerId == requestUser)                
                     return Ok(await _service.CreateBiography(id, requestUser));
-                }
                 else
-                {
+                    _logger.LogWarning($"Request user ({requestUser}) does not have the permission (non-owner) to create new biography for dog owned by {ownerId}");
                     return Unauthorized();
-                }                
             }
         }
 
@@ -75,18 +73,17 @@ namespace DogMatch.Server.Controllers.API
             {
                 bool success = await _service.UpdateBiography(bio, requestUser);
 
-                if (success)
-                {
+                if (success)                
                     return Ok();
-                }
                 else
-                {
-                    return NotFound();
-                }
+                    _logger.LogError($"Failed to save Biography for {bio.DogId} by {requestUser}");
+                    return BadRequest();                
             }
             else
             {
                 // unauthorized: user attempting to update dog is not the owner
+                _logger.LogWarning($"Request user ({requestUser}) does not have permission (non-owner) to update dog biography for dog id {bio.DogId}");
+
                 return Unauthorized();
             }
         }

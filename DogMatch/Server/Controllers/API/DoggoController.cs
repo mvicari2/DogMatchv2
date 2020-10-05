@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
 using DogMatch.Domain.Services;
 using DogMatch.Shared.Globals;
+using Microsoft.Extensions.Logging;
 
 namespace DogMatch.Server.Controllers
 {
@@ -17,11 +18,13 @@ namespace DogMatch.Server.Controllers
         #region DI
         private readonly IDogService _service;
         private readonly IUserService _userService;
+        private readonly ILogger<DoggoController> _logger;
 
-        public DoggoController(IDogService service, IUserService userService)
+        public DoggoController(IDogService service, IUserService userService, ILogger<DoggoController> logger)
         {
             _service = service;
             _userService = userService;
+            _logger = logger;
         }
         #endregion DI
 
@@ -59,17 +62,16 @@ namespace DogMatch.Server.Controllers
                 bool success = await _service.UpdateDog(id, dog, requestUser);
 
                 if (success)
-                {
                     return Ok();
-                }
                 else
-                {
-                    return NotFound();
-                }
+                    _logger.LogError($"Failed to save Dog, id {dog.Id} by {requestUser}");
+                    return BadRequest();                
             }
             else
             {
                 // unauthorized: user attempting to update dog is not the owner
+                _logger.LogWarning($"Request user ({requestUser}) does not have permission (non-owner) to update dog basic details for dog id {dog.Id}");
+
                 return Unauthorized();
             }                     
         }
@@ -89,11 +91,17 @@ namespace DogMatch.Server.Controllers
             {
                 case DeleteDogResponse.Success:
                     return Ok();
+
                 case DeleteDogResponse.Unauthorized:
-                    return Unauthorized();                    
+                    _logger.LogWarning($"Request user ({GetUserId()}) does not have permission (non-owner) to delete dog id {id}");
+                    return Unauthorized();
+
                 case DeleteDogResponse.Failed:
+                    _logger.LogWarning($"Dog delete requested by {GetUserId()} failed for dog id {id}");
                     return NotFound();
+
                 default:
+                    _logger.LogWarning($"Dog delete requested by {GetUserId()} failed for dog id {id}");
                     return NotFound();                    
             }
         }

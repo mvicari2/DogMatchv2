@@ -34,16 +34,23 @@ namespace DogMatch.Server.Controllers.API
         {
             // ensure user making request for dog album is actual dog owner
             string ownerId = await _userService.GetOwnerIdByDogId(id);
+            string requestUser = GetUserId();
 
-            if (ownerId != GetUserId())
+
+            if (ownerId != requestUser)
+            {
+                // unauthorized: user attempting to get dog is not the owner
+                _logger.LogWarning($"Request user ({requestUser}) does not have permission (non-owner) to update dog album for dog id {id}");
+
                 return Unauthorized();
+            }
 
             DogAlbumImages album = await _service.GetDogAlbumImages(id);
 
-            if (album == null)
+            if (album != null)
+                return Ok(album);
+            else
                 return NotFound();
-
-            return Ok(album);
         }
 
         // PUT api/DogAlbum/{id}
@@ -61,14 +68,17 @@ namespace DogMatch.Server.Controllers.API
             {
                 bool success = await _service.UpdateDogAlbumImages(album, requestUser);
 
-                if (!success)
+                if (success)
+                    return Ok();
+                else
+                    _logger.LogError($"Failed to save Dog Album for dog id {album.DogId} by {requestUser}");
                     return BadRequest();
-                    
-                return Ok();
             }
             else
             {
                 // unauthorized: user attempting to update dog is not the owner
+                _logger.LogWarning($"Request user ({requestUser}) does not have permission (non-owner) to update dog album for dog id {album.DogId}");
+
                 return Unauthorized();
             }
         }

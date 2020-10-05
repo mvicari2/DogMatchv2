@@ -81,8 +81,6 @@ namespace DogMatch.Domain.Services
                     if (imageIdsToDelete.Count > 0)
                         await _repository.SoftDeleteImageRange(imageIdsToDelete);
 
-                    _logger.LogInformation("Image Service Updated Dog Album Images Successfully");
-
                     return true;
                 }
                 catch (Exception ex)
@@ -148,10 +146,13 @@ namespace DogMatch.Domain.Services
             {
                 // write byte array to disk
                 File.WriteAllBytes(_config.GetValue<string>(isProfileImage ? "FilePaths:ProfileImageDir" : "FilePaths:AlbumImageDir") + filename, imgBytes);
+                _logger.LogTrace($"Image {filename} was written to disk successfully.");
+
                 return filename;
             }
-            catch
+            catch (Exception ex)
             {
+                _logger.LogError(ex, $"Image Service error while writing image to disk in SaveImageToDisk method, file was not written to disk. Filename: {filename}");
                 return string.Empty;
             }            
         }

@@ -22,13 +22,9 @@ namespace DogMatch.Server.Controllers.API
         #region Owners API
         // GET: api/Owners 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Dog>>> Get()
-        {
-            IEnumerable<Dog> dogs = await _service.GetDogsByOwner(GetUserId());
-            return Ok(dogs);
-        }
+        public async Task<ActionResult<IEnumerable<Dog>>> Get() =>
+            Ok(await _service.GetDogsByOwner(GetUserId()));
         #endregion Owners API
-
 
         #region Internal 
         private string GetUserId() =>

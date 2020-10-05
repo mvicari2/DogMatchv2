@@ -33,7 +33,7 @@ namespace DogMatch.Server
 
             services.AddDbContext<DogMatchDbContext>(options =>
                 options.UseSqlServer(
-                    Configuration.GetConnectionString("DefaultConnection")), ServiceLifetime.Transient);
+                    Configuration.GetConnectionString("DefaultConnection")));
 
             services.AddDefaultIdentity<DogMatchUser>(options =>
             {

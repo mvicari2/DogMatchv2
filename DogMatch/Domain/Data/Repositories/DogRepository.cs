@@ -94,6 +94,8 @@ namespace DogMatch.Domain.Data.Repositories
         {
             _dbSet.Add(dog);
             await _context.SaveChangesAsync();
+            _logger.LogTrace($"New Dog {dog.Id} created by {dog.CreatedBy}");
+
             return dog;
         }
 
@@ -109,20 +111,17 @@ namespace DogMatch.Domain.Data.Repositories
             try
             {
                 await _context.SaveChangesAsync();
+                return true;
             }
             catch (DbUpdateConcurrencyException ex)
             {
                 if (!DogExists(dog.Id))
-                {
-                    _logger.LogError(ex, "Saving updated Dog Entity, Dog doesn't exist.");           
-                }
+                    _logger.LogError(ex, $"Failed saving updated Dog entity, Dog doesn't exist (attempted dog id {dog.Id}).");
                 else
-                {
-                    _logger.LogError(ex, "Db Update Concurrency Exception while saving updated Dog entity.");                    
-                }
+                    _logger.LogError(ex, $"Db Update Concurrency Exception while saving updated Dog entity for dog id {dog.Id}.");                    
+                
                 return false;
-            }
-            return true;
+            }            
         }
         #endregion Repository Methods
 

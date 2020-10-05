@@ -26,10 +26,10 @@ namespace DogMatch.Domain.Services
         /// </summary>        
         /// <param name="dogId">Dog Id <see cref="int"/></param>
         /// <returns>The found (mapped) <see cref="DogBiography"/> instance if it exists</returns>
-        public async Task<DogBiography> GetDogBiography(int dogId)
-        {
-            return _mapper.Map<DogBiography>(await _repository.FindBiography(dogId));
-        }
+        public async Task<DogBiography> GetDogBiography(int dogId) => 
+            _mapper.Map<DogBiography>(
+                await _repository.FindBiography(dogId)
+            );
 
         /// <summary>
         /// Creates new single <see cref="Biography"/>
@@ -49,7 +49,9 @@ namespace DogMatch.Domain.Services
                 LastModifiedBy = userId
             };
 
-            return _mapper.Map<DogBiography>(await _repository.CreateNewBiography(bio));
+            return _mapper.Map<DogBiography>(
+                await _repository.CreateNewBiography(bio)
+            );
         }
 
         /// <summary>
@@ -71,13 +73,9 @@ namespace DogMatch.Domain.Services
             bool updated = await _repository.SaveBiography(bioEntity);
 
             if (updated)
-            {
                 return true;
-            }
             else
-            {
                 return false;
-            }
         }
         #endregion Service Methods
     }   

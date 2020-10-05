@@ -25,7 +25,7 @@ namespace DogMatch.Domain.Data.Repositories
         /// <param name="colors"><see cref="IEnumerable{Color}"/> colors to save</param>
         public async Task SaveColors(IEnumerable<Color> colors)
         {
-            await _dbSet.AddRangeAsync(colors);
+            _dbSet.AddRange(colors);
             await _context.SaveChangesAsync();
         }
 

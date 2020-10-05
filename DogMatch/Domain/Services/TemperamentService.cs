@@ -24,11 +24,10 @@ namespace DogMatch.Domain.Services
         /// </summary>        
         /// <param name="dogId">Dog Id integer</param>
         /// <returns>The found (mapped) <see cref="DogTemperament"/> instance if it exists</returns>
-        public async Task<DogTemperament> GetDogTemperament(int dogId)
-        {
-            Temperament temperamentEntity = await _repository.FindTemperament(dogId);
-            return _mapper.Map<DogTemperament>(temperamentEntity);            
-        }
+        public async Task<DogTemperament> GetDogTemperament(int dogId) =>
+            _mapper.Map<DogTemperament>(
+                await _repository.FindTemperament(dogId)
+            );
 
         /// <summary>
         /// Creates new single <see cref="Temperament"/>
@@ -46,10 +45,11 @@ namespace DogMatch.Domain.Services
                 LastModified = now,
                 CreatedBy = userId,
                 LastModifiedBy = userId
-            };            
+            };
 
-            Temperament newEntity = await _repository.CreateNewTemperament(temperamentEntity);
-            return _mapper.Map<DogTemperament>(newEntity);
+            return _mapper.Map<DogTemperament>(
+                await _repository.CreateNewTemperament(temperamentEntity)
+            );
         }
 
         /// <summary>
@@ -64,20 +64,16 @@ namespace DogMatch.Domain.Services
         {
             Temperament temperamentEntity = await _repository.FindTemperament(temperament.DogId);
             _mapper.Map(temperament, temperamentEntity);
-            
-            temperamentEntity.LastModified = DateTime.Now;           
+
+            temperamentEntity.LastModified = DateTime.Now;
             temperamentEntity.LastModifiedBy = userId;
 
             bool updated = await _repository.SaveTemperament(temperamentEntity);
 
             if (updated)
-            {
                 return true;
-            }
             else
-            {
                 return false;
-            }
         }
         #endregion Service Methods
     }

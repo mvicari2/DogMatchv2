@@ -1,5 +1,6 @@
 ﻿using DogMatch.Domain.Data.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -10,11 +11,13 @@ namespace DogMatch.Domain.Data.Repositories
         #region DI
         private readonly DogMatchDbContext _context;
         private readonly DbSet<Biography> _dbSet;
+        private readonly ILogger<BiographyRepository> _logger;
 
-        public BiographyRepository(DogMatchDbContext context)
+        public BiographyRepository(DogMatchDbContext context, ILogger<BiographyRepository> logger)
         {
             _context = context;
             _dbSet = context.Set<Biography>();
+            _logger = logger;
         }
         #endregion DI
 
@@ -49,7 +52,7 @@ namespace DogMatch.Domain.Data.Repositories
         public async Task<Biography> CreateNewBiography(Biography bio)
         {
             _dbSet.Add(bio);
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync();            
 
             // include Dog and Owner relationship
             bio.Dog = await _context.Dogs
@@ -73,20 +76,17 @@ namespace DogMatch.Domain.Data.Repositories
             try
             {
                 await _context.SaveChangesAsync();
+                return true;
             }
-            catch (DbUpdateConcurrencyException)
+            catch (DbUpdateConcurrencyException ex)
             {
                 if (!BiographyExists(bio.Id))
-                {
-                    return false;
-                }
+                    _logger.LogError(ex, $"Failed saving updated Dog Biography entity, record doesn't exist (attempted Biography id: {bio.Id}).");
                 else
-                {
-                    throw;
-                }
-            }
+                    _logger.LogError(ex, $"Db Update Concurrency Exception while saving updated Dog Biography for Biography id {bio.Id}.");  
 
-            return true;
+                return false;
+            }            
         }
         #endregion Repository Methods
 
@@ -97,7 +97,7 @@ namespace DogMatch.Domain.Data.Repositories
         /// <param name="id">Biography Id</param>
         /// <returns>bool, true if Biography exists.</returns>
         private bool BiographyExists(int id) =>
-            _dbSet.Any(t => t.Id == id);
+            _dbSet.Any(b => b.Id == id);
 
         #endregion Internal
     }

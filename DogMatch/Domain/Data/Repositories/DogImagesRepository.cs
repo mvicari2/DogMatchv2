@@ -39,7 +39,7 @@ namespace DogMatch.Domain.Data.Repositories
         /// <param name="images"><see cref="IEnumerable{DogImages}"/> images to save</param>
         public async Task SaveDogAlbumImages(IEnumerable<DogImages> images)
         {
-            await _dbSet.AddRangeAsync(images);
+            _dbSet.AddRange(images);
             await _context.SaveChangesAsync();
         }
         

@@ -4,6 +4,7 @@ using DogMatch.Shared.Models;
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
 using DogMatch.Domain.Services;
+using Microsoft.Extensions.Logging;
 
 namespace DogMatch.Server.Controllers.API
 {
@@ -15,11 +16,13 @@ namespace DogMatch.Server.Controllers.API
         #region DI
         private readonly ITemperamentService _service;
         private readonly IUserService _userService;
+        private readonly ILogger<TemperamentController> _logger;
 
-        public TemperamentController(ITemperamentService service, IUserService userService)
+        public TemperamentController(ITemperamentService service, IUserService userService, ILogger<TemperamentController> logger)
         {
             _service = service;
             _userService = userService;
+            _logger = logger;
         }
         #endregion DI
 
@@ -34,28 +37,22 @@ namespace DogMatch.Server.Controllers.API
             if (temperament != null)
             {
                 // ensure user requesting temperament is the dog's owner
-                if (requestUser == temperament.OwnerId)
-                {
+                if (requestUser == temperament.OwnerId)                
                     return Ok(temperament);
-                }
                 else
-                {
+                    _logger.LogWarning($"Request user ({requestUser}) does not have permission (non-owner) to get dog temperament for dog id {temperament.DogId} owned by {temperament.OwnerId}");
                     return Unauthorized();
-                }
             }
             else // create new dog temperament if it does not yet exist
-            {
-                // ensure that user attempting to create new temperament is dog owner
+            {                
                 string ownerId = await _userService.GetOwnerIdByDogId(id);
 
+                // create and return new temperament if requester is dog owner
                 if (ownerId == requestUser)
-                {
                     return Ok(await _service.CreateTemperament(id, requestUser));
-                }
                 else
-                {
+                    _logger.LogWarning($"Request user ({requestUser}) does not have permission (non-owner) to create new dog temperament for dog owned by {ownerId}");
                     return Unauthorized();
-                }                
             }
         }
 
@@ -75,17 +72,15 @@ namespace DogMatch.Server.Controllers.API
                 bool success = await _service.UpdateTemperament(temperament, requestUser);
 
                 if (success)
-                {
                     return Ok();
-                }
                 else
-                {
-                    return NotFound();
-                }
+                    _logger.LogError($"Failed to save Temperament for {temperament.DogId} by {requestUser}");
+                    return BadRequest();
             }
             else
             {
-                // unauthorized: user attempting to update dog is not the owner
+                // unauthorized: user attempting to update temperament is not the owner
+                _logger.LogWarning($"Request user ({requestUser}) does not have the permission (non-owner) to update dog temperament for dog id {temperament.DogId} owned by {dogOwnerId}");
                 return Unauthorized();
             }
         }

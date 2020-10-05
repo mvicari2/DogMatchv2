@@ -1,5 +1,6 @@
 ﻿using DogMatch.Domain.Data.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -10,11 +11,13 @@ namespace DogMatch.Domain.Data.Repositories
         #region DI
         private readonly DogMatchDbContext _context;
         private readonly DbSet<Temperament> _dbSet;
+        private readonly ILogger<TemperamentRepository> _logger;
 
-        public TemperamentRepository(DogMatchDbContext context)
+        public TemperamentRepository(DogMatchDbContext context, ILogger<TemperamentRepository> logger)
         {
             _context = context;
             _dbSet = context.Set<Temperament>();
+            _logger = logger;
         }
         #endregion DI
 
@@ -73,20 +76,17 @@ namespace DogMatch.Domain.Data.Repositories
             try
             {
                 await _context.SaveChangesAsync();
+                return true;
             }
-            catch (DbUpdateConcurrencyException)
+            catch (DbUpdateConcurrencyException ex)
             {
                 if (!TemperamentExists(temperament.Id))
-                {
-                    return false;
-                }
+                    _logger.LogError(ex, $"Failed saving updated Dog Temperament entity, record doesn't exist (attempted Temperament id: {temperament.Id}).");
                 else
-                {
-                    throw;
-                }
-            }
+                    _logger.LogError(ex, $"Db Update Concurrency Exception while saving updated Dog Temperament for Temperament id {temperament.Id}.");
 
-            return true;
+                return false;
+            }            
         }
         #endregion Repository Methods
 
