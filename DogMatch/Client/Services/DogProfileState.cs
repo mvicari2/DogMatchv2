@@ -16,7 +16,7 @@ namespace DogMatch.Client.Services
     public class DogProfileState
     {
         #region Properties / Variables
-        public Dog Doggo { get; set; }
+        public DogProfile Profile { get; set; }
         public event Action OnChange;
         #endregion Properties / Variables
 
@@ -40,8 +40,8 @@ namespace DogMatch.Client.Services
         /// <param name="id">Dog Id <see cref="int"/></param>
         public async Task GetDoggo(int id)
         {
-            NewDoggo();
-            Doggo = await _http.GetFromJsonAsync<Dog>($"api/Doggo/{id}");
+            NewProfile();
+            Profile = await _http.GetFromJsonAsync<DogProfile>($"api/DogProfile/{id}");
             NotifyStateChanged();
         }       
 
@@ -84,7 +84,7 @@ namespace DogMatch.Client.Services
         /// <summary>
         /// Initializes new <see cref="Dog"/> instance dog in state.
         /// </summary>
-        public void NewDoggo() => Doggo = new Dog();
+        public void NewProfile() => Profile = new DogProfile();
         #endregion Initialize Classes
     }
 }

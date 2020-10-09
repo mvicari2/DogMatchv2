@@ -38,6 +38,33 @@ namespace DogMatch.Domain.Data.Repositories
             .SingleOrDefaultAsync(d => d.Id == id && d.IsDeleted != true);
 
         /// <summary>
+        /// Find single <see cref="Dogs"/> entity with navigation properties for Owner, Profile Image, Colors, Biography, Temperament and Album Images included
+        /// </summary>
+        /// <param name="id">Dog Id <see cref="int"/></param>
+        /// <returns>Single <see cref="Dogs"/> entity for full profile</returns>
+        public async Task<Dogs> FindFullDogProfileById(int id)
+        {
+            var dog = await _dbSet
+                .AsNoTracking()
+                .Include(d => d.Owner)
+                .Include(d => d.DogProfileImage)
+                .Include(d => d.Colors)
+                .Include(d => d.Biography)
+                .Include(d => d.Temperament)
+                .SingleOrDefaultAsync(d => d.Id == id && d.IsDeleted != true);
+
+            // for now (until efcore 5 / lambdas within include), get album images separately for active/non-deleted album images
+            dog.AlbumImages = _context.DogImages
+                .AsNoTracking()
+                .Where(i => i.DogId == id && 
+                    !(i.IsProfileImage ?? false) && 
+                    !(i.IsDeleted ?? false))
+                .ToList();
+
+            return dog;
+        }
+
+        /// <summary>
         /// Finds all active (non-deleted) Dogs
         /// </summary>        
         /// <returns><see cref="IEnumerable{Dogs}" /><see cref="Dogs"/> All active Dogs</returns>
@@ -74,12 +101,14 @@ namespace DogMatch.Domain.Data.Repositories
                 // lambda within include not available in efcore 3.x, but will be in efcore 5.0 (saving for future upgrade)
                 //.Include(d => d.AlbumImages.Where(a => !(a.IsDeleted ?? false)
                 //    && !(a.IsProfileImage ?? false)))
-                .Include(d => d.AlbumImages)
                 .SingleOrDefaultAsync(d => d.Id == id && d.IsDeleted != true);
 
-            // for now (until efcore 5), filter separately for active/non-deleted album images
-            dog.AlbumImages = dog.AlbumImages
-                .Where(i => !(i.IsProfileImage ?? false) && !(i.IsDeleted ?? false))
+            // for now (until efcore 5), get album images separately for active/non-deleted album images
+            dog.AlbumImages = _context.DogImages
+                .AsNoTracking()
+                .Where(i => i.DogId == id && 
+                    !(i.IsProfileImage ?? false) && 
+                    !(i.IsDeleted ?? false))
                 .ToList();
 
             return dog;
@@ -118,10 +147,10 @@ namespace DogMatch.Domain.Data.Repositories
                 if (!DogExists(dog.Id))
                     _logger.LogError(ex, $"Failed saving updated Dog entity, Dog doesn't exist (attempted dog id {dog.Id}).");
                 else
-                    _logger.LogError(ex, $"Db Update Concurrency Exception while saving updated Dog entity for dog id {dog.Id}.");                    
-                
+                    _logger.LogError(ex, $"Db Update Concurrency Exception while saving updated Dog entity for dog id {dog.Id}.");
+
                 return false;
-            }            
+            }
         }
         #endregion Repository Methods
 

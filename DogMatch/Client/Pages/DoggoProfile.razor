@@ -8,25 +8,27 @@
 
 <AuthorizeView>
     <Authorized>
-        <MatH2>@state.Doggo.Name</MatH2>
+        <MatH2>@state.Profile?.Dog?.Name</MatH2>
         <br />
 
-        @if (state.Doggo == null)
+        @if (state.Profile?.Dog == null)
         {
             <div class="col-lg-12">
                 <Flow Size="200px" Color="#003366" Center="true" />
             </div>
         }
-
-        <DogCard />
-
-        @if (state.Doggo.Owner == context.User.Identity.Name)
+        else
         {
-            <div class="center-align">
-                <ProfileNavigator DogId="state.Doggo.Id" />
-                <br />
-                <DeleteProfile DogId="state.Doggo.Id" DogName="@state.Doggo.Name" />
-            </div>
+            <DogCard />
+
+            @if (state.Profile?.Dog?.Owner == context.User.Identity.Name)
+            {
+                <div class="center-align">
+                    <ProfileNavigator DogId="state.Profile?.Dog?.Id ?? 0" />
+                    <br />
+                    <DeleteProfile DogId="state.Profile?.Dog?.Id ?? 0" DogName="@state.Profile?.Dog?.Name" />
+                </div>
+            }
         }
         <br />
     </Authorized>

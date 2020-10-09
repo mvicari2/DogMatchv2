@@ -14,6 +14,13 @@ namespace DogMatch.Domain.Data.Repositories
         Task<Dogs> FindDogById(int id);
 
         /// <summary>
+        /// Find single <see cref="Dogs"/> entity with navigation properties for Owner, Profile Image, Colors, Biography, Temperament and Album Images included
+        /// </summary>
+        /// <param name="id">Dog Id <see cref="int"/></param>
+        /// <returns>Single <see cref="Dogs"/> entity for full profile</returns>
+        Task<Dogs> FindFullDogProfileById(int id);
+
+        /// <summary>
         /// Finds all active (non-deleted) Dogs
         /// </summary>        
         /// <returns><see cref="IEnumerable{Dogs}" /><see cref="Dogs"/> All active Dogs</returns>

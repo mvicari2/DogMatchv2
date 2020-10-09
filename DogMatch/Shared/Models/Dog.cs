@@ -15,8 +15,6 @@ namespace DogMatch.Shared.Models
         public string ProfileImage { get; set; }
         public string Extension { get; set; }
         public string Owner { get; set; }
-        public IEnumerable<string> Colors { get; set; }
-
-        
+        public IEnumerable<string> Colors { get; set; }        
     }
 }

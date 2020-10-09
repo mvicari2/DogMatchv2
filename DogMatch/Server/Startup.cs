@@ -68,6 +68,7 @@ namespace DogMatch.Server
             services.AddScoped<ITemperamentService, TemperamentService>();
             services.AddScoped<IBiographyService, BiographyService>();
             services.AddScoped<IUserService, UserService>();
+            services.AddScoped<IDogProfileService, DogProfileService>();
 
             // scoped repositories
             services.AddScoped<IDogRepository, DogRepository>();            
