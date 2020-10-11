@@ -32,6 +32,10 @@ namespace DogMatch.Domain.Services
         {
             Dogs dog = await _dogRepository.FindFullDogProfileById(id);
 
+            // if dog doesn't exist, return null
+            if (dog == null)
+                return null;
+
             // initialize dog profile and map dog's basic details and album images
             DogProfile dogProfile = new DogProfile()
             {
@@ -130,7 +134,7 @@ namespace DogMatch.Domain.Services
         /// </summary>
         /// <param name="t"><see cref="Temperament"/> entity object</param>
         /// <returns><see cref="TemperamentScore[]"/> array of generated temperament scores and labels</returns>
-        private TemperamentScore[] GetTemperamentScores(Temperament t)
+        private IEnumerable<TemperamentScore> GetTemperamentScores(Temperament t)
         {
             return new TemperamentScore[]
             {

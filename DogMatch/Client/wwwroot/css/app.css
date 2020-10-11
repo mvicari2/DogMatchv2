@@ -46,6 +46,11 @@ app {
     display: none !important;
 }
 
+/* resize radzen graph text */
+.rz-tick-text{    
+    font-size: x-small;
+}
+
 /* ---- align icons and nav text ----- */
 /* for icons: */
 .icon-align {
@@ -351,6 +356,15 @@ img.album-preview-img {
 
 @media (max-width: 767.98px) {
     .main .top-row:not(.auth) {
+        display: none;
+    }
+
+    /* hide graph text and tick when viewport is small */
+    .rz-tick-text {
+        display: none;
+    }
+
+    .rz-tick {
         display: none;
     }
 

@@ -15,7 +15,9 @@
         NotAuthorizedOwnerEditError = 11,
         DogAlbumSaved = 12,
         DogAlbumError = 13,
-        DogAlbumExcessImages = 14
+        DogAlbumExcessImages = 14,
+        DogNotFound = 15,
+        GeneralError = 16
     }
 
     public enum TemperamentDirection

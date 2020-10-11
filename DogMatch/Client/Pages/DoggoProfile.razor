@@ -20,15 +20,26 @@
         else
         {
             <DogCard />
+            <div class="center-align">
+                @if (state.Profile?.Dog?.Owner == context.User.Identity.Name)
+                {
+                    <div class="center-row">
+                        <ProfileNavigator DogId="state.Profile?.Dog?.Id ?? 0" />
+                    </div>
+                }
 
-            @if (state.Profile?.Dog?.Owner == context.User.Identity.Name)
-            {
-                <div class="center-align">
-                    <ProfileNavigator DogId="state.Profile?.Dog?.Id ?? 0" />
-                    <br />
-                    <DeleteProfile DogId="state.Profile?.Dog?.Id ?? 0" DogName="@state.Profile?.Dog?.Name" />
-                </div>
-            }
+                <MatDivider Padded="true" Class="margin-ten-top-bottom" />
+                <TemperamentGraph />
+                <MatDivider Padded="true" Class="margin-ten-top-bottom" />
+
+                @if (state.Profile?.Dog?.Owner == context.User.Identity.Name)
+                {
+                    <div class="center-row margin-ten-top-bottom">
+                        <DeleteProfile DogId="state.Profile?.Dog?.Id ?? 0"
+                                       DogName="@state.Profile?.Dog?.Name" />
+                    </div>
+                }
+            </div>
         }
         <br />
     </Authorized>
@@ -38,5 +49,11 @@
     [Parameter]
     public int Id { get; set; }
 
-    protected override async Task OnInitializedAsync() => await state.GetDoggo(Id);
+    protected override async Task OnInitializedAsync()
+    {
+        state.OnChange += RefreshComponent;
+        await state.GetDoggo(Id);
+    }
+
+    private void RefreshComponent() => StateHasChanged();
 }

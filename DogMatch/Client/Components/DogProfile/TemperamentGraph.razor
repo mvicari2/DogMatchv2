@@ -1,0 +1,72 @@
+﻿@using DogMatch.Client.Services
+
+@inject DogProfileState state
+@inject NavigationService navigate
+
+<AuthorizeView>
+    <Authorized>
+        @if (state.Profile.HasTemperament)
+        {
+            <div>
+                <MatH5 Style="margin-top:20px;">
+                    Temperament and Personality
+                </MatH5>
+                <div class="row justify-content-center">
+                    <div class="col-sm-8">
+                        <MatCaption>
+                            The 13 categories below reflect the temperament and personality of
+                            this dog and are based on the results of temperament profile survey.
+                            The results of the full survey are used to find similar dog matches.
+                            Mouse over or click each catagory to see exact scores.
+                        </MatCaption>
+                    </div>
+                </div>
+                <div style="width:100%;">
+                    <RadzenChart Style="height:400px;">
+                        <RadzenColumnSeries Data="@state.Profile.TemperamentScores"
+                                            CategoryProperty="ScoreLabel"
+                                            Title="Score"
+                                            LineType="LineType.Dashed"
+                                            ValueProperty="ScoreValue" />
+                        <RadzenColumnOptions Radius="5" />
+                        <RadzenValueAxis Max="100" Min="0" Step="10">
+                            <RadzenGridLines Visible="true" />
+                            <RadzenAxisTitle Text="Ratings Score (out of 100)" />
+                        </RadzenValueAxis>
+                        <RadzenLegend Visible="false" />
+                    </RadzenChart>
+                </div>
+            </div>
+        }
+        else
+        {
+            <div class="center-align">
+                @if (state.Profile.Dog.Owner == context.User.Identity.Name)
+                {
+                    <MatOverline>
+                        Temperament Profile not completed for @state.Profile.Dog.Name,
+                        Cannot Display Scores.
+                        <br />
+                        <button class="btn btn-primary"
+                                type="button"
+                                @onclick="() => navigate.ToTemperament(state.Profile.Dog.Id)">
+                            Complete Temperament Profile Now
+                        </button>
+                    </MatOverline>
+                }
+                else
+                {
+                    <MatOverline>
+                        User Has Not Completed Temperament Profile, Ratings Scores Unavailable.
+                    </MatOverline>
+                }
+            </div>
+            <br />
+        }
+    </Authorized>
+</AuthorizeView>
+
+@code {
+    protected override void OnInitialized() => state.OnChange += RefreshComponent;
+    private void RefreshComponent() => StateHasChanged();
+}

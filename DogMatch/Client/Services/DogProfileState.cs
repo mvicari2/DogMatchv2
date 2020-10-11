@@ -41,8 +41,33 @@ namespace DogMatch.Client.Services
         public async Task GetDoggo(int id)
         {
             NewProfile();
-            Profile = await _http.GetFromJsonAsync<DogProfile>($"api/DogProfile/{id}");
-            NotifyStateChanged();
+
+            // call WebApi to get dog's full profile
+            HttpResponseMessage response = await _http.GetAsync($"api/DogProfile/{id}");
+
+            if (response.IsSuccessStatusCode)
+            {
+                // set dog profile instance into state
+                Profile = await response.Content.ReadFromJsonAsync<DogProfile>();
+                NotifyStateChanged();
+            }
+            else if (response.StatusCode == HttpStatusCode.NotFound)
+            {
+                // dog not found / does not exist
+                _notification.DisplayMessage(NotificationType.DogNotFound, "Dog Profile");
+                _navigate.ToAllDoggos();
+                return;
+            }
+            else
+            {
+                // general error message
+                _notification.DisplayMessage(
+                    NotificationType.GeneralError,
+                    "There was an error getting dog's profile."
+                );
+                _navigate.ToAllDoggos();
+                return;
+            }
         }       
 
         /// <summary>

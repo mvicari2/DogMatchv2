@@ -16,52 +16,58 @@ namespace DogMatch.Client.Services
         /// Displays <see cref="NotificationMessage"/>.
         /// </summary>        
         /// <param name="type"><see cref="NotificationType"/> type</param>
-        /// <param name="dogName">dog name string</param>
-        public void DisplayMessage(NotificationType type, string dogName = null)
+        /// <param name="argStr"><see cref="string"/> argument to pass to notificaton methods</param>
+        public void DisplayMessage(NotificationType type, string argStr = null)
         {
             switch (type)
             {
                 case NotificationType.TemperamentSaved:
-                    TemperamentSaved(dogName);
+                    TemperamentSaved(argStr);
                     break;
                 case NotificationType.TemperamentError:
-                    TemperamentError(dogName);
+                    TemperamentError(argStr);
                     break;
                 case NotificationType.DogCreated:
-                    DogCreated(dogName);
+                    DogCreated(argStr);
                     break;
                 case NotificationType.DogUpdated:
-                    DogUpdated(dogName);
+                    DogUpdated(argStr);
                     break;
                 case NotificationType.DogUpdateError:
-                    DogUpdateError(dogName);
+                    DogUpdateError(argStr);
                     break;
                 case NotificationType.DogDeleted:
-                    DogDeleted(dogName);
+                    DogDeleted(argStr);
                     break;
                 case NotificationType.DogDeleteUnauthorized:
-                    DogDeleteUnauthorized(dogName);
+                    DogDeleteUnauthorized(argStr);
                     break;
                 case NotificationType.DogDeleteError:
-                    DogDeleteError(dogName);
+                    DogDeleteError(argStr);
                     break;
                 case NotificationType.BiographySaved:
-                    BiographySaved(dogName);
+                    BiographySaved(argStr);
                     break;
                 case NotificationType.BiographyError:
-                    BiographyError(dogName);
+                    BiographyError(argStr);
                     break;
                 case NotificationType.NotAuthorizedOwnerEditError:
                     NotAuthorizedOwnerEditError();
                     break;
                 case NotificationType.DogAlbumSaved:
-                    DogAlbumSaved(dogName);
+                    DogAlbumSaved(argStr);
                     break;
                 case NotificationType.DogAlbumError:
-                    DogAlbumError(dogName);
+                    DogAlbumError(argStr);
                     break;
                 case NotificationType.DogAlbumExcessImages:
                     DogAlbumExcessImages();
+                    break;
+                case NotificationType.DogNotFound:
+                    DogNotFound(argStr);
+                    break;
+                case NotificationType.GeneralError:
+                    GeneralError(argStr);
                     break;
             }
         }
@@ -247,6 +253,32 @@ namespace DogMatch.Client.Services
                     "Uploaded more than 12 Images",
                     $"Some Images were not saved, please remove images before adding additonal.",
                     10000
+                ));
+
+        /// <summary>
+        /// Creates new <see cref="NotificationMessage"/> for Dog Not Found,
+        /// and calls <see cref="NotificationService"/> Notify.
+        /// </summary>        
+        /// <param name="action">page or action <see cref="string"/> called when dog not found</param>
+        private void DogNotFound(string action) =>
+            _service.Notify(
+                GetErrorMessage(
+                    "Dog Not Found",
+                    $"Dog does not exist or could not be found while getting {action}",
+                    8500
+                ));
+
+        /// <summary>
+        /// Creates new <see cref="NotificationMessage"/> for a general error with passed message,
+        /// and calls <see cref="NotificationService"/> Notify.
+        /// </summary>        
+        /// <param name="message">action or message <see cref="string"/> to add to error message</param>
+        private void GeneralError(string message = null) =>
+            _service.Notify(
+                GetErrorMessage(
+                    "Error!",
+                    $"{message}",
+                    7000
                 ));
         #endregion Notify Methods (Internal)
 

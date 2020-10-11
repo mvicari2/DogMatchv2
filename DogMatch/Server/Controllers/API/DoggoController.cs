@@ -43,7 +43,11 @@ namespace DogMatch.Server.Controllers
             if (dog == null)
                 return NotFound();
 
-            return dog;
+            // return dog if requester is dog owner, else return unauthorized
+            if (dog.OwnerId == GetUserId())
+                return Ok(dog);
+            else
+                return Unauthorized();            
         }
 
         // PUT: api/Doggo/{id}

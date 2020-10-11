@@ -7,7 +7,7 @@ namespace DogMatch.Shared.Models
         public Dog Dog { get; set; }        
         public DogBiography Bio { get; set; }
         public IEnumerable<AlbumImage> AlbumImages { get; set; }
-        public TemperamentScore[] TemperamentScores { get; set; }
+        public IEnumerable<TemperamentScore> TemperamentScores { get; set; }
         public bool HasBio { get; set; }
         public bool HasTemperament { get; set; }
     }

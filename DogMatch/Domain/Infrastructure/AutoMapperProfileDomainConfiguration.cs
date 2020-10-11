@@ -49,6 +49,7 @@ namespace DogMatch.Domain.Infrastructure
                 .ForMember(d => d.Weight, cfg => cfg.MapFrom(src => src.Weight))
                 .ForMember(d => d.ProfileImage, cfg => cfg.MapFrom(src => src.DogProfileImage != null ? "/ProfileImage/" + src.DogProfileImage.Filename : "dogmatch_paw.png"))
                 .ForMember(d => d.Colors, cfg => cfg.MapFrom(src => src.Colors.Select(c => c.ColorString).ToList()))
+                .ForMember(d => d.OwnerId, cfg => cfg.MapFrom(src => src.Owner.Id))
                 .ForMember(d => d.Owner, cfg => cfg.MapFrom(src => src.Owner.UserName)); // using username for owner until collecting first/last name of user
 
             CreateMap<string, Color>()

@@ -60,20 +60,44 @@ namespace DogMatch.Client.Services
         public async Task GetDoggo(int id, string requestUser)
         {
             NewDoggo();
-            Doggo = await _http.GetFromJsonAsync<Dog>($"api/Doggo/{id}");
 
-            // ensure user trying to edit dog is dog owner
-            if (Doggo.Owner != requestUser)
+            // call WebApi to get dog's basic details
+            HttpResponseMessage response = await _http.GetAsync($"api/Doggo/{id}");
+
+            if (response.IsSuccessStatusCode)
             {
+                // set Dog instance into state
+                Doggo = await response.Content.ReadFromJsonAsync<Dog>();
+
+                // set intial dog weight for MatSlider component and authorized editor bool
+                initialWeight = Doggo.Weight;
+                loading = false;
+                NotifyStateChanged();
+            }
+            else if (response.StatusCode == HttpStatusCode.Unauthorized)
+            {
+                // user is not authorized to edit this dog (likely not owner)
                 _notification.DisplayMessage(NotificationType.NotAuthorizedOwnerEditError);
                 _navigate.ToAllDoggos();
                 return;
             }
-
-            // set intial dog weight for MatSlider component and authorized editor bool
-            initialWeight = Doggo.Weight;
-            loading = false; 
-            NotifyStateChanged();
+            else if (response.StatusCode == HttpStatusCode.NotFound)
+            {
+                // dog not found / does not exist
+                _notification.DisplayMessage(NotificationType.DogNotFound, "Basic Details Profile");
+                _navigate.ToAllDoggos();
+                return;
+            }
+            else
+            {
+                // general error message
+                _notification.DisplayMessage(
+                    NotificationType.GeneralError, 
+                    "There was an error getting dog's Basic Details Profile."
+                );
+                _navigate.ToAllDoggos();
+                return;
+            }
         }
 
         /// <summary>

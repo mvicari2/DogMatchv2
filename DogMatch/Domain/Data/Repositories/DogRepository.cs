@@ -54,12 +54,13 @@ namespace DogMatch.Domain.Data.Repositories
                 .SingleOrDefaultAsync(d => d.Id == id && d.IsDeleted != true);
 
             // for now (until efcore 5 / lambdas within include), get album images separately for active/non-deleted album images
-            dog.AlbumImages = _context.DogImages
-                .AsNoTracking()
-                .Where(i => i.DogId == id && 
-                    !(i.IsProfileImage ?? false) && 
-                    !(i.IsDeleted ?? false))
-                .ToList();
+            if (dog != null)
+                dog.AlbumImages = _context.DogImages
+                    .AsNoTracking()
+                    .Where(i => i.DogId == id && 
+                        !(i.IsProfileImage ?? false) && 
+                        !(i.IsDeleted ?? false))
+                    .ToList();
 
             return dog;
         }
@@ -104,12 +105,13 @@ namespace DogMatch.Domain.Data.Repositories
                 .SingleOrDefaultAsync(d => d.Id == id && d.IsDeleted != true);
 
             // for now (until efcore 5), get album images separately for active/non-deleted album images
-            dog.AlbumImages = _context.DogImages
-                .AsNoTracking()
-                .Where(i => i.DogId == id && 
-                    !(i.IsProfileImage ?? false) && 
-                    !(i.IsDeleted ?? false))
-                .ToList();
+            if (dog != null)
+                dog.AlbumImages = _context.DogImages
+                    .AsNoTracking()
+                    .Where(i => i.DogId == id && 
+                        !(i.IsProfileImage ?? false) && 
+                        !(i.IsDeleted ?? false))
+                    .ToList();
 
             return dog;
         }
