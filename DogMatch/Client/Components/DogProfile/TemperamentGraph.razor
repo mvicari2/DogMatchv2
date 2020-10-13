@@ -1,4 +1,5 @@
 ﻿@using DogMatch.Client.Services
+@using DogMatch.Client.Components.DogProfile.IncompleteProfile
 
 @inject DogProfileState state
 @inject NavigationService navigate
@@ -40,28 +41,9 @@
         }
         else
         {
-            <div class="center-align">
-                @if (state.Profile.Dog.Owner == context.User.Identity.Name)
-                {
-                    <MatOverline>
-                        Temperament Profile not completed for @state.Profile.Dog.Name,
-                        Cannot Display Scores.
-                        <br />
-                        <button class="btn btn-primary"
-                                type="button"
-                                @onclick="() => navigate.ToTemperament(state.Profile.Dog.Id)">
-                            Complete Temperament Profile Now
-                        </button>
-                    </MatOverline>
-                }
-                else
-                {
-                    <MatOverline>
-                        User Has Not Completed Temperament Profile, Ratings Scores Unavailable.
-                    </MatOverline>
-                }
-            </div>
-            <br />
+            <TemperamentIncomplete DogId="@state.Profile.Dog.Id"
+                                   DogName="@state.Profile.Dog.Name"
+                                   Owner="@state.Profile.Dog.Owner" />
         }
     </Authorized>
 </AuthorizeView>

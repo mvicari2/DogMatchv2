@@ -133,7 +133,7 @@
                         <AuthorizeView>
                             <Authorized>
                                 <span class="oi oi-person" aria-hidden="true"></span>
-                                @if (context.User.Identity.Name == null || context.User.Identity.ToString().Length < 0)
+                                @if (string.IsNullOrWhiteSpace(context.User.Identity.Name))
                                 {
                                     <span>Profile</span>
                                 }

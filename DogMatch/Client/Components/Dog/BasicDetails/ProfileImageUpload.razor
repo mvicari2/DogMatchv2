@@ -18,7 +18,7 @@
                @ondragleave=OnDragLeave />
 
             @if (profileImage.Length > 0 ||
-              (state.Doggo.ProfileImage != null
+              (!string.IsNullOrWhiteSpace(state.Doggo.ProfileImage)
               && !state.Doggo.ProfileImage.Contains("dogmatch_paw.png")))
             {
                 <MatOverline>
@@ -52,7 +52,7 @@
                 <br />
                 <img src="@profileImage" style="max-height:400px;height:auto" />
             }
-            else if (state.Doggo.ProfileImage != null)
+            else if (!string.IsNullOrWhiteSpace(state.Doggo.ProfileImage))
             {
                 if (!state.Doggo.ProfileImage.Contains("dogmatch_paw.png"))
                 {

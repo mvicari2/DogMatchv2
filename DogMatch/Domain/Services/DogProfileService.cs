@@ -117,12 +117,12 @@ namespace DogMatch.Domain.Services
         {
             if (b == null)
                 return false;
-            else if (StringIsPopulated(b.AboutDoggo) ||
-                StringIsPopulated(b.FavoriteMemory) ||
-                StringIsPopulated(b.FavoriteFoods) ||
-                StringIsPopulated(b.FavoriteFoods) ||
-                StringIsPopulated(b.AboutDoggo) ||
-                StringIsPopulated(b.AboutDoggo))
+            else if (!string.IsNullOrWhiteSpace(b.AboutDoggo) ||
+                !string.IsNullOrWhiteSpace(b.FavoriteMemory) ||
+                !string.IsNullOrWhiteSpace(b.FavoriteFoods) ||
+                !string.IsNullOrWhiteSpace(b.FavoriteFoods) ||
+                !string.IsNullOrWhiteSpace(b.AboutDoggo) ||
+                !string.IsNullOrWhiteSpace(b.AboutDoggo))
                 return true;
             else
                 return false;
@@ -250,19 +250,6 @@ namespace DogMatch.Domain.Services
                     ScoreValue = Convert.ToInt32((decimal)t.SmellRating / 10 * 100)
                 }
             };
-        }       
-
-        /// <summary>
-        /// Checks if string is not null and has length > 0
-        /// </summary>
-        /// <param name="str"><see cref="string"/> to evaluate</param>
-        /// <returns><see cref="bool"/>, true is string is not null and length > 0</returns>
-        private bool StringIsPopulated(string str)
-        {
-            if (str != null && str.Length > 0)
-                return true;
-            else
-                return false;
         }
 
         /// <summary>
@@ -270,13 +257,7 @@ namespace DogMatch.Domain.Services
         /// </summary>
         /// <param name="i">nullable <see cref="int"/> to evaluate</param>
         /// <returns><see cref="bool"/>, true is nullable int is not null or zero</returns>
-        private bool IntHasNonZeroValue(int? i)
-        {
-            if (i.GetValueOrDefault() != 0) // default of null is 0
-                return true;
-            else
-                return false;
-        }
+        private bool IntHasNonZeroValue(int? i) => i.GetValueOrDefault() != 0;
     #endregion Intneral Methods
     }
 }

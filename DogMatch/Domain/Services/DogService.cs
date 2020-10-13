@@ -91,7 +91,7 @@ namespace DogMatch.Domain.Services
             _mapper.Map(dog, dogEntity);            
 
             // save updated profile image if changed and get new image id
-            if (dog.ProfileImage != null && dog.Extension != null)
+            if (!string.IsNullOrWhiteSpace(dog.ProfileImage) && !string.IsNullOrWhiteSpace(dog.Extension))
             {                
                 dogEntity.ProfileImageId = await _imgService.SaveProfileImage(dog.ProfileImage, dog.Extension, dog.Id, userId);
             }

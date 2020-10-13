@@ -1,0 +1,38 @@
+﻿@using DogMatch.Client.Services
+@inject NavigationService navigate
+
+<AuthorizeView>
+    <Authorized>
+        <div class="center-align">
+            @if (Owner == context.User.Identity.Name)
+            {
+                <MatOverline>
+                    Temperament Profile not completed for @DogName,
+                    Cannot Display Scores.
+                    <br />
+                    <button class="btn btn-primary"
+                            type="button"
+                            @onclick="() => navigate.ToTemperament(DogId)">
+                        Complete Temperament Profile Now
+                    </button>
+                </MatOverline>
+            }
+            else
+            {
+                <MatOverline>
+                    Owner Has Not Completed Temperament Profile for @DogName, Ratings Scores Unavailable.
+                </MatOverline>
+            }
+        </div>
+        <br />
+    </Authorized>
+</AuthorizeView>
+
+@code {
+    [Parameter]
+    public int DogId { get; set; }
+    [Parameter]
+    public string DogName { get; set; }
+    [Parameter]
+    public string Owner { get; set; }
+}
