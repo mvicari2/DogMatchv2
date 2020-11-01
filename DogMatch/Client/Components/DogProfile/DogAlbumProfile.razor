@@ -1,0 +1,72 @@
+﻿@using DogMatch.Client.Services
+@using DogMatch.Client.Components.DogProfile.IncompleteProfile
+@using DogMatch.Shared.Models
+
+@inject DogProfileState state
+@inject NavigationService navigate
+
+<AuthorizeView>
+    <Authorized>
+        <div class="center-align" style="margin-top:20px;">
+            @if (state.Profile.AlbumImages.Count() > 0)
+            {
+                <div style="margin-bottom:25px;">
+                    <MatCaption>(Click to Enlarge)</MatCaption>
+                    <div class="row justify-content-center">
+                        <RadzenDataList WrapItems="true"
+                                        AllowPaging="false"
+                                        Data="@state.Profile.AlbumImages"
+                                        TItem="AlbumImage">
+                            <Template Context="image">
+                                @{
+                                    // set index for this iteration only, component index is useless for remove btn (index acts as count in that case)
+                                    int iteration = index;
+                                }
+                                <button @onclick="() => OpenModal(iteration)"
+                                        type="button"
+                                        class="album-thumbnail">
+                                    <RadzenCard class="album-preview-card">
+                                        <div class="img-preview-container">
+                                            <img class="album-preview-img" src="@image.ImageString" />
+                                        </div>
+                                    </RadzenCard>
+                                </button>
+                                @{index++;}
+                            </Template>                            
+                        </RadzenDataList>
+                        <br />
+                        <br />
+                    </div>
+                </div>
+                <AlbumImageModal @ref="Modal" />
+            }
+            else
+            {
+                <AlbumIncomplete DogId="@state.Profile.Dog.Id"
+                                 DogName="@state.Profile.Dog.Name"
+                                 Owner="@state.Profile.Dog.Owner" />
+            }
+        </div>
+    </Authorized>
+</AuthorizeView>
+
+@code {
+    private AlbumImageModal Modal { get; set; }
+    int index = 0;
+
+    protected override void OnInitialized() => state.OnChange += RefreshComponent;
+    private void RefreshComponent() => StateHasChanged();
+
+    /// <summary>
+    /// Opens Album Image Modal
+    /// </summary>
+    /// <param name="i">index <see cref="int"/> of selected image in album image list</param>
+    private void OpenModal(int i)
+    {
+        // open model, pass index of selected image to display in modal
+        Modal.Open(i);
+
+        // reset datalist index because state has changed and component is re-rendered
+        index = 0;
+    }
+}

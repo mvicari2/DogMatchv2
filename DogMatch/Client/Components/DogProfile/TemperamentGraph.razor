@@ -6,45 +6,44 @@
 
 <AuthorizeView>
     <Authorized>
-        @if (state.Profile.HasTemperament)
-        {
-            <div>
-                <MatH5 Style="margin-top:20px;">
-                    Temperament and Personality
-                </MatH5>
-                <div class="row justify-content-center">
-                    <div class="col-sm-8">
-                        <MatCaption>
-                            The 13 categories below reflect the temperament and personality of
-                            this dog and are based on the results of temperament profile survey.
-                            The results of the full survey are used to find similar dog matches.
-                            Mouse over or click each catagory to see exact scores.
-                        </MatCaption>
+        <div class="center-align" style="margin-top:20px;">
+            @if (state.Profile.HasTemperament)
+            {
+                <div>
+                    <div class="row justify-content-center">
+                        <div class="col-sm-8">
+                            <MatCaption>
+                                The 13 categories below reflect the temperament and personality of
+                                this dog and are based on the results of temperament profile survey.
+                                The results of the full survey are used to find similar dog matches.
+                                Mouse over or click each catagory to see exact scores.
+                            </MatCaption>
+                        </div>
+                    </div>
+                    <div style="width:100%;">
+                        <RadzenChart Style="height:400px;">
+                            <RadzenColumnSeries Data="@state.Profile.TemperamentScores"
+                                                CategoryProperty="ScoreLabel"
+                                                Title="Score"
+                                                LineType="LineType.Dashed"
+                                                ValueProperty="ScoreValue" />
+                            <RadzenColumnOptions Radius="5" />
+                            <RadzenValueAxis Max="100" Min="0" Step="10">
+                                <RadzenGridLines Visible="true" />
+                                <RadzenAxisTitle Text="Ratings Score (out of 100)" />
+                            </RadzenValueAxis>
+                            <RadzenLegend Visible="false" />
+                        </RadzenChart>
                     </div>
                 </div>
-                <div style="width:100%;">
-                    <RadzenChart Style="height:400px;">
-                        <RadzenColumnSeries Data="@state.Profile.TemperamentScores"
-                                            CategoryProperty="ScoreLabel"
-                                            Title="Score"
-                                            LineType="LineType.Dashed"
-                                            ValueProperty="ScoreValue" />
-                        <RadzenColumnOptions Radius="5" />
-                        <RadzenValueAxis Max="100" Min="0" Step="10">
-                            <RadzenGridLines Visible="true" />
-                            <RadzenAxisTitle Text="Ratings Score (out of 100)" />
-                        </RadzenValueAxis>
-                        <RadzenLegend Visible="false" />
-                    </RadzenChart>
-                </div>
-            </div>
-        }
-        else
-        {
-            <TemperamentIncomplete DogId="@state.Profile.Dog.Id"
-                                   DogName="@state.Profile.Dog.Name"
-                                   Owner="@state.Profile.Dog.Owner" />
-        }
+            }
+            else
+            {
+                <TemperamentIncomplete DogId="@state.Profile.Dog.Id"
+                                       DogName="@state.Profile.Dog.Name"
+                                       Owner="@state.Profile.Dog.Owner" />
+            }
+        </div>
     </Authorized>
 </AuthorizeView>
 

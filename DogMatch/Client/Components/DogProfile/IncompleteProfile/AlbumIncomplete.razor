@@ -1,0 +1,37 @@
+﻿@using DogMatch.Client.Services
+@inject NavigationService navigate
+
+<AuthorizeView>
+    <Authorized>
+        <div class="center-align">
+            @if (Owner == context.User.Identity.Name)
+            {
+                <MatOverline>
+                    No Album Images Uploaded for @DogName.
+                    <br />
+                    <button class="btn btn-primary"
+                            type="button"
+                            @onclick="() => navigate.ToDogAlbum(DogId)">
+                        Add Images to Album Now
+                    </button>
+                </MatOverline>
+            }
+            else
+            {
+                <MatOverline>
+                    Owner Has Not Added Any Album Images for @DogName.
+                </MatOverline>
+            }
+        </div>
+        <br />
+    </Authorized>
+</AuthorizeView>
+
+@code {
+    [Parameter]
+    public int DogId { get; set; }
+    [Parameter]
+    public string DogName { get; set; }
+    [Parameter]
+    public string Owner { get; set; }
+}

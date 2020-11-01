@@ -136,7 +136,7 @@ input.image-drop-clickable {
     margin-right: auto;
 }
 
-/* create dog card styles */
+/* dog card styles */
 .create-dog-card {
     display: block;
     margin-left: auto;
@@ -144,6 +144,12 @@ input.image-drop-clickable {
     width: 60%;
     margin-bottom: 20px;
     height: 200px;
+}
+
+.dog-profile-card {
+    width: 90%;
+    margin-bottom: 20px;
+    margin-top: 20px;
 }
 
 /* styles for image drop zone, file uploader */
@@ -203,14 +209,13 @@ input.image-drop-clickable {
         background-color: #1174d6 !important;
     }
 
-/* dog profile image for actual dog profile page */
+/* dog profile - profile image and album images styles */
 .profile-page-image {
     max-width: 200px;
     height: auto;
     max-height: 300px;
 }
 
-/* dog album preview Styles */
 .album-preview-card {
     max-width: 300px;
     max-height: 350px;
@@ -230,6 +235,55 @@ input.image-drop-clickable {
 img.album-preview-img {
     max-height: 200px;
 }
+
+.modal-image-container {
+    width: 100%;
+    margin: 7px 0 7px 0;
+    overflow: hidden;
+    height: 65vh;
+    text-align: center;
+}
+
+img.modal-album-img {
+    max-height: 65vh;
+}
+
+.album-thumbnail {
+    background-color: transparent;
+    border: 0px solid;
+}
+
+    .album-thumbnail:focus {
+        outline: none;
+    }
+
+.album-btn-container {
+    width: 100%;
+    float: left;
+    text-align: center;
+    margin-top: -20px;
+}
+
+    .album-btn-container button {
+        display: inline-block;
+    }
+
+.album-btn-group {
+    margin: 0;
+    margin-top: 9px;
+    position: absolute;
+    left: 50%;
+    -ms-transform: translate(-50%, 0);
+    transform: translate(-50%, 0);
+    width: 100%;
+}
+
+.material-icon-btn {
+}
+    /* hide btn outline on mat icon button */
+    .material-icon-btn:focus {
+        outline: none;
+    }
 /*--------------------------*/
 
 .margin-ten-top-bottom {

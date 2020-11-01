@@ -40,7 +40,7 @@ namespace DogMatch.Domain.Services
             DogProfile dogProfile = new DogProfile()
             {
                 Dog = _mapper.Map<Dog>(dog),
-                AlbumImages = _mapper.Map<IEnumerable<AlbumImage>>(dog.AlbumImages)
+                AlbumImages = _mapper.Map<List<AlbumImage>>(dog.AlbumImages)
             };
 
             // if all temperament values are populated (not null or zero), generate and set temperament scores

@@ -8,7 +8,9 @@
 
 <AuthorizeView>
     <Authorized>
-        <MatH2>@state.Profile?.Dog?.Name</MatH2>
+        <MatH2 Class="center-align">
+            @state.Profile?.Dog?.Name
+        </MatH2>
         <br />
 
         @if (state.Profile?.Dog == null)
@@ -19,29 +21,68 @@
         }
         else
         {
-            <DogCard />
-            <div class="center-align">
-                @if (state.Profile?.Dog?.Owner == context.User.Identity.Name)
-                {
+            <MatThemeProvider Theme="@TabsTheme">
+                <MatTabGroup>
+                    <MatTab>
+                        <LabelContent>
+                            <MatIcon Icon="@MatIconNames.Pets" Class="icon-align" />
+                            <span class="nav-text-align">
+                                Basic Details
+                            </span>
+                        </LabelContent>
+                        <ChildContent>
+                            <DogCard />
+                        </ChildContent>
+                    </MatTab>
+                    <MatTab>
+                        <LabelContent>
+                            <MatIcon Icon="@MatIconNames.Bar_chart" Class="icon-align" />
+                            <span class="nav-text-align">
+                                Temperament and Personality
+                            </span>
+                        </LabelContent>
+                        <ChildContent>
+                            <TemperamentGraph />
+                        </ChildContent>
+                    </MatTab>
+                    <MatTab>
+                        <LabelContent>
+                            <MatIcon Icon="@MatIconNames.Speaker_notes" Class="icon-align" />
+                            <span class="nav-text-align">
+                                About Dog
+                            </span>
+                        </LabelContent>
+                        <ChildContent>
+                            <BiographyProfile />
+                        </ChildContent>
+                    </MatTab>
+                    <MatTab>
+                        <LabelContent>
+                            <MatIcon Icon="@MatIconNames.Image" Class="icon-align" />
+                            <span class="nav-text-align">
+                                Photo Album
+                            </span>
+                        </LabelContent>
+                        <ChildContent>
+                            <DogAlbumProfile />
+                        </ChildContent>
+                    </MatTab>
+                </MatTabGroup>
+            </MatThemeProvider>
+
+            @if (state.Profile?.Dog?.Owner == context.User.Identity.Name)
+            {
+                <div class="center-align">
+                    <MatDivider Padded="true" Class="margin-ten-top-bottom" />
                     <div class="center-row">
                         <ProfileNavigator DogId="state.Profile?.Dog?.Id ?? 0" />
                     </div>
-                }
-
-                <MatDivider Padded="true" Class="margin-ten-top-bottom" />
-                <TemperamentGraph />
-                <MatDivider Padded="true" Class="margin-ten-top-bottom" />
-                <BiographyProfile />
-                <MatDivider Padded="true" Class="margin-ten-top-bottom" />
-
-                @if (state.Profile?.Dog?.Owner == context.User.Identity.Name)
-                {
                     <div class="center-row margin-ten-top-bottom">
                         <DeleteProfile DogId="state.Profile?.Dog?.Id ?? 0"
                                        DogName="@state.Profile?.Dog?.Name" />
                     </div>
-                }
-            </div>
+                </div>
+            }
         }
         <br />
     </Authorized>
@@ -58,4 +99,9 @@
     }
 
     private void RefreshComponent() => StateHasChanged();
+
+    /// <summary>
+    /// Initialize new color scheme for MatTabs
+    /// </summary>
+    MatTheme TabsTheme = new MatTheme() { Primary = "#275381" };
 }

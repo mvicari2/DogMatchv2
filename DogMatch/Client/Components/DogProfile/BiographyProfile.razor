@@ -6,74 +6,73 @@
 
 <AuthorizeView>
     <Authorized>
-        @if (state.Profile.HasBio)
-        {
-            <div style="margin-bottom:25px;">
-                <MatH5 Style="margin-top:20px;">
-                    About @state.Profile.Dog.Name
-                </MatH5>
-                <div class="row justify-content-center">
-                    <RadzenTabs>
-                        <Tabs>
-                            <RadzenTabsItem Text="About Dog">
-                                <MatBody2>
-                                    <BiographyTab FieldName="About Dog"
-                                                  FieldValue="@state.Profile.Bio.AboutDoggo"
-                                                  Owner="@state.Profile.Dog.Owner"
-                                                  DogId="state.Profile.Dog.Id" />
-                                </MatBody2>
-                            </RadzenTabsItem>
-                            <RadzenTabsItem Text="Favorite Memories">
-                                <MatBody2>
-                                    <BiographyTab FieldName="Favorite Memories"
-                                                  FieldValue="@state.Profile.Bio.FavoriteMemory"
-                                                  Owner="@state.Profile.Dog.Owner"
-                                                  DogId="state.Profile.Dog.Id" />
-                                </MatBody2>
-                            </RadzenTabsItem>
-                            <RadzenTabsItem Text="Favorite Foods">
-                                <MatBody2>
-                                    <BiographyTab FieldName="Favorite Foods"
-                                                  FieldValue="@state.Profile.Bio.FavoriteFoods"
-                                                  Owner="@state.Profile.Dog.Owner"
-                                                  DogId="state.Profile.Dog.Id" />
-                                </MatBody2>
-                            </RadzenTabsItem>
-                            <RadzenTabsItem Text="Favorite Toys">
-                                <MatBody2>
-                                    <BiographyTab FieldName="Favorite Toys"
-                                                  FieldValue="@state.Profile.Bio.FavoriteToy"
-                                                  Owner="@state.Profile.Dog.Owner"
-                                                  DogId="state.Profile.Dog.Id" />
-                                </MatBody2>
-                            </RadzenTabsItem>
-                            <RadzenTabsItem Text="Favorite Place to Sleep">
-                                <MatBody2>
-                                    <BiographyTab FieldName="Favorite Sleep Location"
-                                                  FieldValue="@state.Profile.Bio.FavoriteSleepLocation"
-                                                  Owner="@state.Profile.Dog.Owner"
-                                                  DogId="state.Profile.Dog.Id" />
-                                </MatBody2>
-                            </RadzenTabsItem>
-                            <RadzenTabsItem Text="Favorite Place to Walk">
-                                <MatBody2>
-                                    <BiographyTab FieldName="Favorite Walk Location"
-                                                  FieldValue="@state.Profile.Bio.FavoriteWalkLocation"
-                                                  Owner="@state.Profile.Dog.Owner"
-                                                  DogId="state.Profile.Dog.Id" />
-                                </MatBody2>
-                            </RadzenTabsItem>
-                        </Tabs>
-                    </RadzenTabs>
+        <div class="center-align" style="margin-top:20px;">
+            @if (state.Profile.HasBio)
+            {
+                <div style="margin-bottom:25px;">
+                    <div class="row justify-content-center">
+                        <RadzenTabs>
+                            <Tabs>
+                                <RadzenTabsItem Text="About Dog">
+                                    <MatBody2>
+                                        <BiographyTab FieldName="About Dog"
+                                                      FieldValue="@state.Profile.Bio.AboutDoggo"
+                                                      Owner="@state.Profile.Dog.Owner"
+                                                      DogId="state.Profile.Dog.Id" />
+                                    </MatBody2>
+                                </RadzenTabsItem>
+                                <RadzenTabsItem Text="Favorite Memories">
+                                    <MatBody2>
+                                        <BiographyTab FieldName="Favorite Memories"
+                                                      FieldValue="@state.Profile.Bio.FavoriteMemory"
+                                                      Owner="@state.Profile.Dog.Owner"
+                                                      DogId="state.Profile.Dog.Id" />
+                                    </MatBody2>
+                                </RadzenTabsItem>
+                                <RadzenTabsItem Text="Favorite Foods">
+                                    <MatBody2>
+                                        <BiographyTab FieldName="Favorite Foods"
+                                                      FieldValue="@state.Profile.Bio.FavoriteFoods"
+                                                      Owner="@state.Profile.Dog.Owner"
+                                                      DogId="state.Profile.Dog.Id" />
+                                    </MatBody2>
+                                </RadzenTabsItem>
+                                <RadzenTabsItem Text="Favorite Toys">
+                                    <MatBody2>
+                                        <BiographyTab FieldName="Favorite Toys"
+                                                      FieldValue="@state.Profile.Bio.FavoriteToy"
+                                                      Owner="@state.Profile.Dog.Owner"
+                                                      DogId="state.Profile.Dog.Id" />
+                                    </MatBody2>
+                                </RadzenTabsItem>
+                                <RadzenTabsItem Text="Favorite Place to Sleep">
+                                    <MatBody2>
+                                        <BiographyTab FieldName="Favorite Sleep Location"
+                                                      FieldValue="@state.Profile.Bio.FavoriteSleepLocation"
+                                                      Owner="@state.Profile.Dog.Owner"
+                                                      DogId="state.Profile.Dog.Id" />
+                                    </MatBody2>
+                                </RadzenTabsItem>
+                                <RadzenTabsItem Text="Favorite Place to Walk">
+                                    <MatBody2>
+                                        <BiographyTab FieldName="Favorite Walk Location"
+                                                      FieldValue="@state.Profile.Bio.FavoriteWalkLocation"
+                                                      Owner="@state.Profile.Dog.Owner"
+                                                      DogId="state.Profile.Dog.Id" />
+                                    </MatBody2>
+                                </RadzenTabsItem>
+                            </Tabs>
+                        </RadzenTabs>
+                    </div>
                 </div>
-            </div>
-        }
-        else
-        {
-            <BiographyIncomplete DogId="@state.Profile.Dog.Id"
-                                 DogName="@state.Profile.Dog.Name"
-                                 Owner="@state.Profile.Dog.Owner" />
-        }
+            }
+            else
+            {
+                <BiographyIncomplete DogId="@state.Profile.Dog.Id"
+                                     DogName="@state.Profile.Dog.Name"
+                                     Owner="@state.Profile.Dog.Owner" />
+            }
+        </div>
     </Authorized>
 </AuthorizeView>
 
