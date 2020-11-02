@@ -1,4 +1,5 @@
-﻿@inherits LayoutComponentBase
+﻿@using System.Reflection
+@inherits LayoutComponentBase
 
 <RadzenNotification />
 <header>
@@ -14,6 +15,20 @@
 
 <footer class="fixed-bottom footer-block">
     <div class="footer-custom">
-        &copy; 2020 - DogMatch v0.5.5
+        &copy; 2020 DogMatch - @version
     </div>
 </footer>
+
+@code {
+    private string version;
+
+    protected override void OnInitialized()
+    {
+        // get global assembly informational version
+        var assemblyVersionAttribute = (AssemblyInformationalVersionAttribute)Assembly
+            .GetExecutingAssembly()
+            .GetCustomAttributes(typeof(AssemblyInformationalVersionAttribute), true)
+            .Single();
+        version = string.Concat("v", assemblyVersionAttribute.InformationalVersion);
+    }
+}

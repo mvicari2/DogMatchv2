@@ -1,4 +1,6 @@
-﻿<!DOCTYPE html>
+﻿@using System.Reflection
+
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -19,9 +21,18 @@
         </main>
     </div>
 
+    @{
+        // get global assembly informational version
+        var assemblyVersionAttribute = (AssemblyInformationalVersionAttribute)Assembly
+            .GetEntryAssembly()
+            .GetCustomAttributes(typeof(AssemblyInformationalVersionAttribute), true)
+            .Single();
+        var version = string.Concat("v", assemblyVersionAttribute.InformationalVersion);
+    }
+
     <footer class="fixed-bottom footer-block">
         <div class="footer-custom">
-            &copy; 2020 - DogMatch v0.5.5
+            &copy; 2020 DogMatch - @version
         </div>
     </footer>
 
