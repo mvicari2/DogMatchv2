@@ -16,10 +16,11 @@ namespace DogMatch.Domain.Services
         Task<Dog> GetDog(int id);
 
         /// <summary>
-        /// Gets all active dogs
-        /// </summary>        
+        /// Gets or searches all active dogs
+        /// </summary>
+        /// <param name="searchStr">search <see cref="string"/> used to search/filter dogs</param>
         /// <returns>Mapped, <see cref="IEnumerable{Dog}"/><see cref="Dog"/></returns>
-        Task<IEnumerable<Dog>> GetAllDogs();
+        Task<IEnumerable<Dog>> GetAllDogs(string searchStr = null);
 
         /// <summary>
         /// Gets all active dogs owned by single user

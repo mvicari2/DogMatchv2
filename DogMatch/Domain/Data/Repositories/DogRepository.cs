@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Data;
 using Microsoft.Extensions.Logging;
+using System;
 
 namespace DogMatch.Domain.Data.Repositories
 {
@@ -57,8 +58,8 @@ namespace DogMatch.Domain.Data.Repositories
             if (dog != null)
                 dog.AlbumImages = _context.DogImages
                     .AsNoTracking()
-                    .Where(i => i.DogId == id && 
-                        !(i.IsProfileImage ?? false) && 
+                    .Where(i => i.DogId == id &&
+                        !(i.IsProfileImage ?? false) &&
                         !(i.IsDeleted ?? false))
                     .ToList();
 
@@ -66,16 +67,27 @@ namespace DogMatch.Domain.Data.Repositories
         }
 
         /// <summary>
-        /// Finds all active (non-deleted) Dogs
-        /// </summary>        
-        /// <returns><see cref="IEnumerable{Dogs}" /><see cref="Dogs"/> All active Dogs</returns>
-        public async Task<IEnumerable<Dogs>> FindAllDogs() =>
-            await _dbSet
-            .AsNoTracking()
-            .Where(d => d.IsDeleted != true)
-            .Include(d => d.Owner)
-            .Include(d => d.DogProfileImage)
-            .ToListAsync();
+        /// Finds or searches all active (non-deleted) Dogs
+        /// </summary>
+        /// <param name="searchStr">search <see cref="string"/></param>
+        ///<returns><see cref = "IEnumerable{Dogs}" />< see cref="Dogs"/> All active Dogs or dog search results</returns>
+        public async Task<IEnumerable<Dogs>> FindAllDogs(string searchStr = null)
+        {
+            // get all dogs
+            IEnumerable<Dogs> dogs = await _dbSet
+                    .AsNoTracking()
+                    .Where(d => d.IsDeleted != true)
+                    .Include(d => d.Owner)
+                    .Include(d => d.DogProfileImage)
+                    .ToListAsync();
+
+            // search dogs list if search string is not null or empty, else return all dogs
+            if (!string.IsNullOrWhiteSpace(searchStr))
+                return Search(dogs, searchStr);
+            else
+                return dogs;
+        }
+
 
         /// <summary>
         /// Find Dogs by Owner (finds all dogs where current user is owner)
@@ -108,8 +120,8 @@ namespace DogMatch.Domain.Data.Repositories
             if (dog != null)
                 dog.AlbumImages = _context.DogImages
                     .AsNoTracking()
-                    .Where(i => i.DogId == id && 
-                        !(i.IsProfileImage ?? false) && 
+                    .Where(i => i.DogId == id &&
+                        !(i.IsProfileImage ?? false) &&
                         !(i.IsDeleted ?? false))
                     .ToList();
 
@@ -165,6 +177,25 @@ namespace DogMatch.Domain.Data.Repositories
         private bool DogExists(int id) =>
             _dbSet.Any(d => d.Id == id && d.IsDeleted != false);
 
+        /// <summary>
+        /// Searches all dogs and returns any results containing search string
+        /// </summary>
+        /// <param name="dogs">dogs <see cref="IEnumerable{Dogs}"/> object to search</param>
+        /// <param name="searchStr">search <see cref="string"/></param>
+        /// <returns>Search Results <see cref="IEnumerable{Dogs}"/></returns>
+        private IEnumerable<Dogs> Search(IEnumerable<Dogs> dogs, string searchStr)
+        {
+            // format search string and split terms into string array          
+            var searchStrArr = searchStr.Trim().ToUpper()
+                .Split(' ', StringSplitOptions.RemoveEmptyEntries);
+
+            // search and return results
+            return dogs.Where(d => 
+                searchStrArr.Any(s => d.Name.ToUpper().Contains(s)) ||
+                searchStrArr.Any(s => d.Breed.ToUpper().Contains(s)) ||
+                searchStrArr.Any(s => d.Owner.UserName.ToUpper().Contains(s)))
+                .ToList();
+        }
         #endregion Internal
     }
 }

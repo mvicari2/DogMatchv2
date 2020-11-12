@@ -27,12 +27,12 @@ namespace DogMatch.Server.Controllers
             _logger = logger;
         }
         #endregion DI
-
+    
         #region WebApi Methods
-        // GET: api/Doggo
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<Dog>>> GetDogs() =>
-            Ok(await _service.GetAllDogs());
+        // GET: api/Doggos/{searchStr}
+        [HttpGet("/api/Doggos/{searchStr?}")]
+        public async Task<ActionResult<IEnumerable<Dog>>> GetDogs(string searchStr = null) =>
+            Ok(await _service.GetAllDogs(searchStr));        
 
         // GET: api/Doggo/{id} 
         [HttpGet("{id}")]

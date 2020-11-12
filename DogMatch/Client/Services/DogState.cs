@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Json;
+using System.Text.Encodings.Web;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using DogMatch.Shared.Globals;
 using DogMatch.Shared.Models;
@@ -41,10 +43,26 @@ namespace DogMatch.Client.Services
 
         #region Methods / WebApi Calls
         /// <summary>
-        /// Calls WebApi that returns all doggos and sets them into state.
-        /// </summary>        
-        public async Task GetAllDoggos() =>
-            Doggos = await _http.GetFromJsonAsync<IEnumerable<Dog>>("/api/Doggo");
+        /// Invokes OnChange Action to notify subscribers state has changed.
+        /// </summary>
+        public void NotifyStateChanged() => OnChange?.Invoke();
+
+        /// <summary>
+        /// Calls WebApi that gets (or searches) all doggos and sets returned dogs into state.
+        /// </summary>
+        /// <param name="searchStr">search <see cref="string"/></param>
+        public async Task GetAllDoggos(string searchStr = null)
+        {
+            if (string.IsNullOrWhiteSpace(searchStr))
+                searchStr = string.Empty;
+
+            // remove special chars/symbols from search string and encode for URL
+            searchStr = UrlEncoder.Create()
+                .Encode(Regex.Replace(searchStr, @"[^0-9a-zA-Z]+", " "));
+
+            // get any found dogs and set into state
+            Doggos = await _http.GetFromJsonAsync<IEnumerable<Dog>>($"/api/Doggos/{searchStr}");
+        }      
 
         /// <summary>
         /// Calls WebApi that returns all doggos owned by current user and sets them into state.
@@ -256,11 +274,6 @@ namespace DogMatch.Client.Services
         #endregion Property Methods            
 
         #region Internal Methods
-        /// <summary>
-        /// Invokes OnChange Action to notify subscribers state has changed.
-        /// </summary>
-        private void NotifyStateChanged() => OnChange?.Invoke();
-
         /// <summary>
         /// Sets dog.Birthday and gets current age (dog.Age) string based on birthday <see cref="DateTime?"/>.
         /// </summary>        

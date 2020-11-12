@@ -297,6 +297,41 @@ img.modal-album-img {
     align-items: center;
 }
 
+/* make form input focus outlines to app theme color */
+.form-control:focus {
+    border-color: #275381;
+    box-shadow: 0 0 0 0.2rem RGBA(39, 83, 129, 0.50);
+}
+
+/* dog search styles */
+.dog-search .form-control {
+    padding-left: 2.375rem;
+}
+
+.dog-search .form-control-feedback {
+    position: absolute;
+    z-index: 2;
+    display: block;
+    width: 2.375rem;
+    height: 2.375rem;
+    line-height: 2.375rem;
+    text-align: center;
+    pointer-events: none;
+    color: #aaa;
+}
+
+.search-btn {
+    color: ghostwhite;
+    display: inline;
+    margin-left: 5px;
+}
+
+.search-row {
+    margin-left: 12px;
+    margin-bottom: 10px;
+}
+/*---------------------------*/
+
 .main {
     flex: 1;
 }

@@ -21,10 +21,11 @@ namespace DogMatch.Domain.Data.Repositories
         Task<Dogs> FindFullDogProfileById(int id);
 
         /// <summary>
-        /// Finds all active (non-deleted) Dogs
-        /// </summary>        
-        /// <returns><see cref="IEnumerable{Dogs}" /><see cref="Dogs"/> All active Dogs</returns>
-        Task<IEnumerable<Dogs>> FindAllDogs();
+        /// Finds or searches all active (non-deleted) Dogs
+        /// </summary>
+        /// <param name="searchStr">search <see cref="string"/></param>
+        ///<returns><see cref = "IEnumerable{Dogs}" />< see cref="Dogs"/> All active Dogs or dog search results</returns>
+        Task<IEnumerable<Dogs>> FindAllDogs(string searchStr = null);
 
         /// <summary>
         /// Find Dogs by Owner (finds all dogs where current user is owner)

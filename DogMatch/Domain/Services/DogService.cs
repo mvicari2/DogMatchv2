@@ -37,11 +37,12 @@ namespace DogMatch.Domain.Services
             _mapper.Map<Dog>(await _repository.FindDogById(id));
 
         /// <summary>
-        /// Gets all active dogs
-        /// </summary>        
+        /// Gets or searches all active dogs
+        /// </summary>
+        /// <param name="searchStr">search <see cref="string"/> used to search/filter dogs</param>
         /// <returns>Mapped, <see cref="IEnumerable{Dog}"/><see cref="Dog"/></returns>
-        public async Task<IEnumerable<Dog>> GetAllDogs() =>
-            _mapper.Map<IEnumerable<Dog>>(await _repository.FindAllDogs());
+        public async Task<IEnumerable<Dog>> GetAllDogs(string searchStr = null) =>
+            _mapper.Map<IEnumerable<Dog>>(await _repository.FindAllDogs(searchStr));
 
         /// <summary>
         /// Gets all active dogs owned by single user
