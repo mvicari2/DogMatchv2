@@ -1,0 +1,347 @@
+﻿@using DogMatch.Client.Services
+@using DogMatch.Shared.Globals
+@using DogMatch.Shared.Models
+
+@inject DogState state
+
+<MatThemeProvider Theme="@SearchTheme">
+    <div class="row search-row">
+        <form @onsubmit="() => Submit()">
+            <div class="form-group dog-search">
+                <span class="form-control-feedback">
+                    <MatIcon Icon="@MatIconNames.Search" Class="icon-align" />
+                </span>
+                <input type="search"
+                       class="form-control"
+                       placeholder="Search Dogs..."
+                       @bind-value="Filter.SearchString" />
+            </div>
+        </form>
+        <MatTooltip Position="@MatTooltipPosition.Top"
+                    Tooltip="Search Now"
+                    TargetId="search_btn">
+            <MatButton OnClick="() => Submit()"
+                       Unelevated="true"
+                       Class="btn btn-primary search-btn"
+                       Id="search_btn"
+                       Type="button">
+                <MatIcon Icon="@MatIconNames.Search" Class="icon-align" />
+            </MatButton>
+        </MatTooltip>
+
+        <MatTooltip Position="@MatTooltipPosition.Top"
+                    Tooltip="@filterBtnText"
+                    TargetId="filter_btn">
+            <MatButton OnClick="() => ToggleFilterSection()"
+                       Unelevated="true"
+                       Class="btn btn-secondary search-btn"
+                       Id="filter_btn"
+                       Type="button">
+                @if (showFilters)
+                {
+                    <MatIcon Icon="@MatIconNames.Arrow_upward" Class="icon-align" />
+                }
+                else
+                {
+                    <MatIcon Icon="@MatIconNames.Tune" Class="icon-align" />
+                }
+            </MatButton>
+        </MatTooltip>
+
+        @if (searched) // show refresh btn if currently displaying search results
+        {
+            <MatTooltip Position="@MatTooltipPosition.Top"
+                        Tooltip="Reset Search and Filters"
+                        TargetId="refresh_btn">
+                <MatButton OnClick="() => ResetDogs()"
+                           Unelevated="true"
+                           Class="btn btn-primary search-btn"
+                           Id="refresh_btn"
+                           Type="button">
+                    <MatIcon Icon="@MatIconNames.Refresh" Class="icon-align" />
+                </MatButton>
+            </MatTooltip> <span class="search-btn" style="margin-top:12px;color:#275381;">
+                <MatCaption>@resultsCount Dogs Found</MatCaption>
+            </span>
+        }
+    </div>
+
+    @if (showFilters)
+    {
+        <RadzenCard>
+            <div class="row search-row">
+                <span class="col inline-center-col">
+                    <MatOverline>Filter By Age</MatOverline><br />
+                    <MatSlideToggle @bind-Value="@Filter.FilterAge" />
+                    <br />
+                    @if (Filter.FilterAge)
+                    {
+                        <RadzenSlider Change="(range) => SetAgeRange(range)"
+                                      Range="true"
+                                      Min="0"
+                                      Max="30"
+                                      Value="new List<int>()
+                                             {
+                                                 Filter.AgeRange.Start,
+                                                 Filter.AgeRange.End
+                                             }"
+                                      TValue="IEnumerable<int>" />
+                        <br />
+                        <span>
+                            <MatCaption>
+                                @string.Format("{0} - {1} years old",
+                                   Filter.AgeRange.Start,
+                                   Filter.AgeRange.End)
+                            </MatCaption>
+                        </span>
+                    }
+                </span>
+
+                <span class="col inline-center-col">
+                    <MatOverline>Filter By Weight</MatOverline><br />
+                    <MatSlideToggle @bind-Value="@Filter.FilterWeight" />
+                    <br />
+                    @if (Filter.FilterWeight)
+                    {
+                        <RadzenSlider Change="@((range) => SetWeightRange(range))"
+                                      Range="true"
+                                      Min="0"
+                                      Max="150"
+                                      Value="new List<int>()
+                                             {
+                                                 Filter.WeightRange.Start,
+                                                 Filter.WeightRange.End
+                                             }"
+                                      TValue="IEnumerable<int>" />
+                        <br />
+                        <span>
+                            <MatCaption>
+                                @string.Format("{0} - {1} lbs.",
+                                   Filter.WeightRange.Start,
+                                   Filter.WeightRange.End)
+                            </MatCaption>
+                        </span>
+
+                    }
+                </span>
+
+                <span class="col inline-center-col">
+                    <MatOverline>Gender Filter</MatOverline><br />
+                    <span class="d-flex flex-column align-items-center">
+                        <MatChipSet Choice="true">
+                            <MatChip Label="All"
+                                     IsCheckable="true"
+                                     @onclick="() => UpdateGenderFilter(DogGenderTypes.All)"
+                                     IsSelected="@(Filter.Gender == DogGenderTypes.All ? true : false)" />
+                            <MatChip Label="Female"
+                                     IsCheckable="true"
+                                     @onclick="() => UpdateGenderFilter(DogGenderTypes.Female)"
+                                     IsSelected="@(Filter.Gender ==  DogGenderTypes.Female ? true : false)" />
+                            <MatChip Label="Male"
+                                     IsCheckable="true"
+                                     @onclick="() => UpdateGenderFilter(DogGenderTypes.Male)"
+                                     IsSelected="@(Filter.Gender == DogGenderTypes.Male ? true : false)" />
+                        </MatChipSet>
+                    </span>
+                </span>
+
+                <span class="col inline-center-col">
+                    <MatOverline>Show Completed Profiles Only</MatOverline><br />
+                    <MatSlideToggle @bind-Value="@Filter.ShowCompletedProfiles" />
+                </span>
+            </div>
+
+            <div class="center-align" style="display:block;">
+                <MatTooltip Position="@MatTooltipPosition.Top"
+                            Tooltip="Set Filters, Get Dogs"
+                            TargetId="set_filter_btn">
+                    <MatButton OnClick="() => Submit()"
+                               Unelevated="true"
+                               Class="btn btn-primary search-btn"
+                               Id="set_filter_btn"
+                               Type="button">
+                        <MatIcon Icon="@MatIconNames.Check" Class="icon-align" />
+                    </MatButton>
+                </MatTooltip>
+
+                @if (searched)
+                {
+                    <MatTooltip Position="@MatTooltipPosition.Top"
+                                Tooltip="Reset Filters and Search"
+                                TargetId="reset_filter_btn">
+                        <MatButton OnClick="() => ResetDogs()"
+                                   Unelevated="true"
+                                   Class="btn btn-primary search-btn"
+                                   Id="reset_filter_btn"
+                                   Type="button">
+                            <MatIcon Icon="@MatIconNames.Close" Class="icon-align" />
+                        </MatButton>
+                    </MatTooltip>
+                }
+            </div>
+        </RadzenCard>
+    }
+</MatThemeProvider>
+
+@code {
+    #region Properties / Variables
+    [Parameter]
+    public DogsFilter Filter { get; set; }
+
+    private bool searched = false;
+    private int resultsCount = 0;
+    private bool showFilters = false;
+    private string filterBtnText = "Show Dog Filters";
+    #endregion Properties / Variables
+
+    #region Methods
+    protected override void OnInitialized() => state.OnChange += RefreshComponent;
+    private void RefreshComponent() => StateHasChanged();
+
+    /// <summary>
+    /// Call state method to get dogs with search and filters
+    /// </summary>
+    private async Task Submit()
+    {
+        // get dogs
+        await state.GetDogsAndFilter(Filter);
+        searched = true;
+
+        switch (Filter.DogListType)
+        {
+            case DogListType.AllDogs:
+                resultsCount = state.Doggos.Count();
+                break;
+            case DogListType.Owners:
+                resultsCount = state.OwnersDogs.Count();
+                break;
+            default:
+                resultsCount = state.Doggos.Count();
+                break;
+        };
+        StateHasChanged();
+    }
+
+    /// <summary>
+    /// Resets dogs filter and search state, refreshes dogs
+    /// </summary>
+    private async Task ResetDogs()
+    {
+        // show loading animation by clearing doggos
+        switch (Filter.DogListType)
+        {
+            case DogListType.AllDogs:
+                state.dogsListLoading = true;
+                break;
+            case DogListType.Owners:
+                state.ownersDogsLoading = true;
+                break;
+            default:
+                state.dogsListLoading = true;
+                break;
+        };
+
+        // reset vars and re-initialize DogsFilter (including search)
+        ResetDogsFilter(Filter.DogListType);
+        searched = false;
+        resultsCount = 0;
+        StateHasChanged();
+
+        // get dogs
+        await state.GetDogsAndFilter(Filter);
+    }
+
+    /// <summary>
+    /// Shows or hides dog filter controls section
+    /// </summary>
+    private void ToggleFilterSection()
+    {
+        showFilters = !showFilters;
+        filterBtnText = showFilters ? "Hide Dog Filters" : "Show Dog Filters";
+        StateHasChanged();
+    }
+
+    /// <summary>
+    /// Sets age range into local dogs filter state
+    /// </summary>
+    /// <param name="range"><see cref="IEnumerable{int}"/> contains start and end ages for range</param>
+    private void SetAgeRange(IEnumerable<int> range)
+    {
+        List<int> rangeList = range.ToList();
+        Filter.AgeRange.Start = rangeList[0];
+        Filter.AgeRange.End = rangeList[1];
+        StateHasChanged();
+    }
+
+    /// <summary>
+    /// Sets weight range into local dogs filter state
+    /// </summary>
+    /// <param name="range"><see cref="IEnumerable{int}"/> contains start and end weights for range</param>
+    private void SetWeightRange(IEnumerable<int> range)
+    {
+        List<int> rangeList = range.ToList();
+        Filter.WeightRange.Start = rangeList[0];
+        Filter.WeightRange.End = rangeList[1];
+        StateHasChanged();
+    }
+
+    /// <summary>
+    /// Sets se;ected gender filter into local dogs filter state
+    /// </summary>
+    /// <param name="type"><see cref="DogGenderTypes"/> type to set</param>
+    private void UpdateGenderFilter(DogGenderTypes type)
+    {
+        switch (type)
+        {
+            case DogGenderTypes.All:
+                Filter.Gender = DogGenderTypes.All;
+                break;
+            case DogGenderTypes.Female:
+                Filter.Gender = DogGenderTypes.Female;
+                break;
+            case DogGenderTypes.Male:
+                Filter.Gender = DogGenderTypes.Male;
+                break;
+            default:
+                Filter.Gender = DogGenderTypes.All;
+                break;
+        }
+
+        StateHasChanged();
+    }
+
+    /// <summary>
+    /// Resets local and state dogs filter back to initial configuration
+    /// </summary>
+    /// <param name="dogListType"><see cref="DogListType"/> current dog list type</param>
+    private void ResetDogsFilter(DogListType dogListType)
+    {
+        // Reset Local Dogs Filter
+        Filter = new DogsFilter()
+        {
+            DogListType = dogListType,
+            AgeRange = new AgeRange()
+            {
+                Start = 0,
+                End = 30
+            },
+            WeightRange = new WeightRange()
+            {
+                Start = 0,
+                End = 150
+            }
+        };
+
+        // reset state filters
+        state.NewDogFilter(Filter.DogListType);
+    }
+
+    #endregion Methods
+
+    #region Theme
+    /// <summary>
+    /// Initialize new color scheme for Search components
+    /// </summary>
+    MatTheme SearchTheme = new MatTheme() { Primary = "#275381", Secondary = "#5bc0de" };
+    #endregion Theme
+}

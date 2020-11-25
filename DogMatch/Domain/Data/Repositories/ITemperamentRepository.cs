@@ -25,5 +25,12 @@ namespace DogMatch.Domain.Data.Repositories
         /// <param name="temperament">Temperament entity object.</param>
         /// <returns>Bool to confirm changes saved.</returns>
         Task<bool> SaveTemperament(Temperament temperament);
+
+        /// <summary>
+        /// Evaluates all rating values in single dog <see cref="Temperament"/> object to confirm if all <see cref="int"/> properties are populated (not null or zero)
+        /// </summary>
+        /// <param name="t"><see cref="Temperament"/> entity object with values to evaluate</param>
+        /// <returns><see cref="bool"/>, true if all temperament ratings values are not null or zero</returns>
+        public bool HasCompletedTemperament(Temperament t);
     }
 }

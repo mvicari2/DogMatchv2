@@ -2,26 +2,35 @@
 @using Microsoft.AspNetCore.Authorization
 @using DogMatch.Client.Services
 @using DogMatch.Client.Components.Dog
+@using DogMatch.Shared.Globals
 
 @attribute [Authorize]
 @inject DogState state
 
 <AuthorizeView>
     <Authorized>
-        <MatH2 Style="margin-left:12px;">
+        <MatH4 Style="margin-left:12px;">
             All Doggos
-        </MatH2>
+        </MatH4>
         <br />
-        <DogSearch />
-        <DogsList Dogs="state.Doggos" />
+        <SearchAndFilters Filter="state.Filter" />
+        <DogsList Dogs="state.Doggos"
+                  Loading="state.dogsListLoading"
+                  DogListType="DogListType.AllDogs" />
     </Authorized>
 </AuthorizeView>
 
 @code {
     protected override async Task OnInitializedAsync()
     {
+        // initialize new dogs filter for all dogs
+        state.NewDogFilter(DogListType.AllDogs);
+
+        // subscribe to state changes
         state.OnChange += RefreshComponent;
-        await state.GetAllDoggos();
+
+        // get dogs
+        await state.GetDogsAndFilter(state.Filter);
     }
 
     private void RefreshComponent() => StateHasChanged();

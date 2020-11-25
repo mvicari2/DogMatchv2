@@ -1,4 +1,5 @@
 ﻿using DogMatch.Domain.Data.Models;
+using DogMatch.Shared.Models;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -21,18 +22,12 @@ namespace DogMatch.Domain.Data.Repositories
         Task<Dogs> FindFullDogProfileById(int id);
 
         /// <summary>
-        /// Finds or searches all active (non-deleted) Dogs
+        /// Find dogs, filter and search using <see cref="DogsFilter"/> object property values
         /// </summary>
-        /// <param name="searchStr">search <see cref="string"/></param>
-        ///<returns><see cref = "IEnumerable{Dogs}" />< see cref="Dogs"/> All active Dogs or dog search results</returns>
-        Task<IEnumerable<Dogs>> FindAllDogs(string searchStr = null);
-
-        /// <summary>
-        /// Find Dogs by Owner (finds all dogs where current user is owner)
-        /// </summary>        
-        /// <param name="userId">User Id <see cref="string"/> for owner</param>
-        /// <returns><see cref="IEnumerable{Dogs}" /> All dogs owned by user</returns>
-        Task<IEnumerable<Dogs>> FindDogsByOwner(string userId);
+        /// <param name="filter"><see cref="DogsFilter"/> object containing filter and search values</param>
+        /// <param name="ownerId">request user <see cref="string"/>, for finding dogs owned by user</param>
+        /// <returns><see cref="IEnumerable{Dogs}"/> found dogs list</returns>
+        Task<IEnumerable<Dogs>> FindDogsAndFilter(DogsFilter filter, string ownerId);
 
         /// <summary>
         /// Finds single <see cref="Dogs"/> entity and includes all active, non-deleted Dog Album Images (<see cref="DogImages"/>)
@@ -53,6 +48,6 @@ namespace DogMatch.Domain.Data.Repositories
         /// </summary>
         /// <param name="dog"><see cref="Dogs"/> entity object.</param>
         /// <returns><see cref="bool"/> to confirm changes saved.</returns>
-        Task<bool> SaveDog(Dogs dog);        
+        Task<bool> SaveDog(Dogs dog);
     }
 }

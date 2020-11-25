@@ -12,12 +12,14 @@ namespace DogMatch.Domain.Services
     {
         #region DI
         private readonly IDogRepository _dogRepository;
+        private readonly ITemperamentRepository _temperamentRepository;
         private readonly IMapper _mapper;
 
-        public DogProfileService(IDogRepository dogRepository, IMapper mapper)
+        public DogProfileService(IDogRepository dogRepository, IMapper mapper, ITemperamentRepository temperamentRepository)
         {
             _dogRepository = dogRepository;
             _mapper = mapper;
+            _temperamentRepository = temperamentRepository;
         }
         #endregion DI
 
@@ -44,7 +46,7 @@ namespace DogMatch.Domain.Services
             };
 
             // if all temperament values are populated (not null or zero), generate and set temperament scores
-            if (HasCompletedTemperament(dog.Temperament))
+            if (_temperamentRepository.HasCompletedTemperament(dog.Temperament))
             {
                 dogProfile.HasTemperament = true;
                 dogProfile.TemperamentScores = GetTemperamentScores(dog.Temperament);
@@ -62,52 +64,6 @@ namespace DogMatch.Domain.Services
         #endregion Public Service Methods
 
         #region Internal Methods
-        /// <summary>
-        /// Evaluates all rating values in single dog <see cref="Temperament"/> object to confirm if all <see cref="int"/> properties are populated (not null or zero)
-        /// </summary>
-        /// <param name="t"><see cref="Temperament"/> object with values to evaluate</param>
-        /// <returns><see cref="bool"/>, true if all temperament ratings values are not null or zero</returns>
-        private bool HasCompletedTemperament(Temperament t)
-        {
-            if (t == null)
-                return false;
-            else if (IntHasNonZeroValue(t.Anxiety) && 
-                    IntHasNonZeroValue(t.Fearful) && 
-                    IntHasNonZeroValue(t.IsAfraidFireworks) && 
-                    IntHasNonZeroValue(t.FriendlinessOverall) &&
-                    IntHasNonZeroValue(t.GoodWithPeople) && 
-                    IntHasNonZeroValue(t.GoodWithOtherDogs) &&
-                    IntHasNonZeroValue(t.GoodWithCats) &&
-                    IntHasNonZeroValue(t.GoodWithOtherAnimals) &&
-                    IntHasNonZeroValue(t.GoodWithChildren) &&
-                    IntHasNonZeroValue(t.Playfulness) &&
-                    IntHasNonZeroValue(t.LikesPlayingHumans) &&
-                    IntHasNonZeroValue(t.LikesPlayingDogs) &&
-                    IntHasNonZeroValue(t.PlaysFetch) &&
-                    IntHasNonZeroValue(t.LikesToys) &&
-                    IntHasNonZeroValue(t.LikesTreats) &&
-                    IntHasNonZeroValue(t.AthleticLevel) &&
-                    IntHasNonZeroValue(t.LikesExercise) &&
-                    IntHasNonZeroValue(t.TrainingLevel) &&
-                    IntHasNonZeroValue(t.Trainability) &&
-                    IntHasNonZeroValue(t.Stubbornness) &&
-                    IntHasNonZeroValue(t.Intelligence) &&
-                    IntHasNonZeroValue(t.SenseOfSmell) &&
-                    IntHasNonZeroValue(t.PreyDrive) &&
-                    IntHasNonZeroValue(t.AggressionLevel) &&
-                    IntHasNonZeroValue(t.Protectiveness) &&
-                    IntHasNonZeroValue(t.DistinguishThreatening) &&
-                    IntHasNonZeroValue(t.BalanceStability) &&
-                    IntHasNonZeroValue(t.Confidence) &&
-                    IntHasNonZeroValue(t.IsPickyEater) &&
-                    IntHasNonZeroValue(t.Shedding) &&
-                    IntHasNonZeroValue(t.Barking) &&
-                    IntHasNonZeroValue(t.SmellRating))
-                return true;
-            else
-                return false;            
-        }
-
         /// <summary>
         /// Checks if any biography property string in <see cref="Biography"/> object have value
         /// </summary>
@@ -250,14 +206,7 @@ namespace DogMatch.Domain.Services
                     ScoreValue = Convert.ToInt32((decimal)t.SmellRating / 10 * 100)
                 }
             };
-        }
-
-        /// <summary>
-        /// Checks if nullable <see cref="int"/> is not null or 0
-        /// </summary>
-        /// <param name="i">nullable <see cref="int"/> to evaluate</param>
-        /// <returns><see cref="bool"/>, true is nullable int is not null or zero</returns>
-        private bool IntHasNonZeroValue(int? i) => i.GetValueOrDefault() != 0;
+        }        
     #endregion Intneral Methods
     }
 }

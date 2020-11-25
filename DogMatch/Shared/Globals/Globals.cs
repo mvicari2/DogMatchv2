@@ -59,7 +59,14 @@
 
     public enum DogGenderTypes
     {
-        female = 1,
-        male = 2
+        All = 0,
+        Female = 1,
+        Male = 2
+    }
+
+    public enum DogListType
+    {
+        AllDogs = 1,
+        Owners = 2
     }
 }

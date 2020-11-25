@@ -34,23 +34,20 @@ namespace DogMatch.Domain.Services
         /// <param name="id">Dog Id integer</param>
         /// <returns>The found (mapped) <see cref="Dog"/> instance if it exists</returns>
         public async Task<Dog> GetDog(int id) =>
-            _mapper.Map<Dog>(await _repository.FindDogById(id));
+            _mapper.Map<Dog>(
+                await _repository.FindDogById(id)
+            );
 
         /// <summary>
-        /// Gets or searches all active dogs
+        /// Gets, searches, and filters all active dogs
         /// </summary>
-        /// <param name="searchStr">search <see cref="string"/> used to search/filter dogs</param>
-        /// <returns>Mapped, <see cref="IEnumerable{Dog}"/><see cref="Dog"/></returns>
-        public async Task<IEnumerable<Dog>> GetAllDogs(string searchStr = null) =>
-            _mapper.Map<IEnumerable<Dog>>(await _repository.FindAllDogs(searchStr));
-
-        /// <summary>
-        /// Gets all active dogs owned by single user
-        /// </summary>
-        /// <param name="userId">Owner/User Id <see cref="string"/></param>
-        /// <returns><see cref="IEnumerable{Dog}"/> Owner's/User's dogs, mapped to <see cref="Dog"/> from entity</returns>
-        public async Task<IEnumerable<Dog>> GetDogsByOwner(string userId) =>
-            _mapper.Map<IEnumerable<Dog>>(await _repository.FindDogsByOwner(userId));
+        /// <param name="filter"><see cref="DogsFilter"/> object containing filter properties</param>
+        /// <param name="userId">current request user Id <see cref="string"/></param>
+        /// <returns><see cref="IEnumerable{Dogs}"/> active filtered/searched dog results </returns>
+        public async Task<IEnumerable<Dog>> GetDogsAndFilter(DogsFilter filter, string userId) =>
+            _mapper.Map<IEnumerable<Dog>>(
+                await _repository.FindDogsAndFilter(filter, userId)
+            );
 
         /// <summary>
         /// Create and save new <see cref="Dogs"/> entity

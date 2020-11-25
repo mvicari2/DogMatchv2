@@ -12,11 +12,11 @@
             <MatChipSet Choice="true">
                 <MatChip Label="Female"
                          IsCheckable="true"
-                         @onclick="() => state.UpdateGender(DogGenderTypes.female)"
+                         @onclick="() => state.UpdateGender(DogGenderTypes.Female)"
                          IsSelected="@(state.Doggo.Gender == "female" ? true : false)" />
                 <MatChip Label="Male"
                          IsCheckable="true"
-                         @onclick="() => state.UpdateGender(DogGenderTypes.male)"
+                         @onclick="() => state.UpdateGender(DogGenderTypes.Male)"
                          IsSelected="@(state.Doggo.Gender == "male" ? true : false)" />
             </MatChipSet>
         </div>

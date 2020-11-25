@@ -1,9 +1,11 @@
 ﻿@using DogMatch.Shared.Models
 @using DogMatch.Client.Services
+@using DogMatch.Shared.Globals
 
+@inject DogState state
 @inject NavigationService navigate
 
-@if (Dogs == null)
+@if (Loading)
 {
     <div class="col-lg-12">
         <Flow Size="200px" Color="#003366" Center="true" />
@@ -21,96 +23,103 @@ else if (Dogs.Count() < 1)
         </MatH5>
     </div>
 }
-
-<AuthorizeView>
-    <Authorized>
-        <RadzenDataList WrapItems="true"
-                        AllowPaging="true"
-                        Data="@Dogs"
-                        TItem="Dog"
-                        PageSize="9"
-                        class="custom-paginator-bottom">
-            <Template Context="dog">
-                <RadzenCard Style="width:300px;max-width: 420px">
-                    <img src="@dog.ProfileImage"
-                         style="width:auto; height: 250px" />
-                    <div class="inline-center-row" style="margin-bottom:-20px;">
-                        <MatH5>@dog.Name</MatH5>
-                    </div>
-                    <div class="row inline-center-row">
-                        <div class="col-md-12">
-                            @if (dog.Owner == context.User.Identity.Name)
-                            {
-                                <OwnerMenuBtn DogId="dog.Id"
-                                              DogName="@dog.Name"
-                                              BtnStyle="width:100%;" />
-                            }
-                            else
-                            {
-                                <MatThemeProvider Theme="@ViewProfileBtnTheme">
-                                    <MatButton @onclick="@(e => navigate.ToProfile(dog.Id))"
-                                               Class="btn btn-primary"
-                                               style="width: 100%"
-                                               Unelevated="true">
-                                        View Profile
-                                    </MatButton>
-                                </MatThemeProvider>
-                            }
+else
+{
+    <AuthorizeView>
+        <Authorized>
+            <RadzenDataList WrapItems="true"
+                            AllowPaging="true"
+                            Data="@Dogs"
+                            TItem="Dog"
+                            PageSize="9"
+                            class="custom-paginator-bottom">
+                <Template Context="dog">
+                    <RadzenCard Style="width:300px;max-width: 420px">
+                        <img src="@dog.ProfileImage"
+                             style="width:auto; height: 250px" />
+                        <div class="inline-center-row" style="margin-bottom:-20px;">
+                            <MatH5>@dog.Name</MatH5>
                         </div>
-                    </div>
-                    <div class="row center-align">
-                        <div class="col-md-6">
-                            <div style="margin-top:20px">
-                                <MatOverline>Breed</MatOverline>
+                        <div class="row inline-center-row">
+                            <div class="col-md-12">
+                                @if (dog.Owner == context.User.Identity.Name)
+                                {
+                                    <OwnerMenuBtn DogId="dog.Id"
+                                                  DogName="@dog.Name"
+                                                  BtnStyle="width:100%;"
+                                                  DogListType="DogListType"/>
+                                }
+                                else
+                                {
+                                    <MatThemeProvider Theme="@ViewProfileBtnTheme">
+                                        <MatButton @onclick="@(e => navigate.ToProfile(dog.Id))"
+                                                   Class="btn btn-primary"
+                                                   style="width: 100%"
+                                                   Unelevated="true">
+                                            View Profile
+                                        </MatButton>
+                                    </MatThemeProvider>
+                                }
                             </div>
-                            <MatSubtitle2>
-                                <b>@dog.Breed</b>
-                            </MatSubtitle2>
-                            <div style="margin-top:20px">
-                                <MatOverline>Gender</MatOverline>
-                            </div>
-                            <MatSubtitle2>
-                                <b>@dog.Gender</b>
-                            </MatSubtitle2>
-                            <br />
                         </div>
-                        <div class="col-md-6">
-                            <div style="margin-top:20px">
-                                <MatOverline>Weight</MatOverline>
+                        <div class="row center-align">
+                            <div class="col-md-6">
+                                <div style="margin-top:20px">
+                                    <MatOverline>Breed</MatOverline>
+                                </div>
+                                <MatSubtitle2>
+                                    <b>@dog.Breed</b>
+                                </MatSubtitle2>
+                                <div style="margin-top:20px">
+                                    <MatOverline>Gender</MatOverline>
+                                </div>
+                                <MatSubtitle2>
+                                    <b>@dog.Gender</b>
+                                </MatSubtitle2>
+                                <br />
                             </div>
-                            <MatSubtitle2>
-                                <b>@dog.Weight lbs</b>
-                            </MatSubtitle2>
-                            <div style="margin-top:20px">
-                                <MatOverline>Birthday/Age</MatOverline>
+                            <div class="col-md-6">
+                                <div style="margin-top:20px">
+                                    <MatOverline>Weight</MatOverline>
+                                </div>
+                                <MatSubtitle2>
+                                    <b>@dog.Weight lbs</b>
+                                </MatSubtitle2>
+                                <div style="margin-top:20px">
+                                    <MatOverline>Birthday/Age</MatOverline>
+                                </div>
+                                <MatSubtitle2>
+                                    <b>
+                                        @dog.Birthday?.ToShortDateString()
+                                        <br /> @dog.Age
+                                    </b>
+                                </MatSubtitle2>
                             </div>
-                            <MatSubtitle2>
-                                <b>
-                                    @dog.Birthday?.ToShortDateString()
-                                    <br /> @dog.Age
-                                </b>
-                            </MatSubtitle2>
                         </div>
-                    </div>
-                    <div class="row inline-center-row">
-                        <div>
-                            <MatOverline>Owner</MatOverline>
+                        <div class="row inline-center-row">
+                            <div>
+                                <MatOverline>Owner</MatOverline>
+                            </div>
+                            <MatSubtitle1>
+                                <b>@dog.Owner</b>
+                            </MatSubtitle1>
                         </div>
-                        <MatSubtitle1>
-                            <b>@dog.Owner</b>
-                        </MatSubtitle1>
-                    </div>
-                    <br />
-                </RadzenCard>
-            </Template>
-        </RadzenDataList>
-        <br /><br />
-    </Authorized>
-</AuthorizeView>
+                        <br />
+                    </RadzenCard>
+                </Template>
+            </RadzenDataList>
+            <br /><br />
+        </Authorized>
+    </AuthorizeView>
+}
 
 @code {
     [Parameter]
     public IEnumerable<Dog> Dogs { get; set; }
+    [Parameter]
+    public bool Loading { get; set; }
+    [Parameter]
+    public DogListType DogListType { get; set; }
 
     /// <summary>
     /// Initialize new primary btn color for MatButton

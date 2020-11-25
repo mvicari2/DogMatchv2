@@ -88,6 +88,52 @@ namespace DogMatch.Domain.Data.Repositories
                 return false;
             }            
         }
+
+        /// <summary>
+        /// Evaluates all rating values in single dog <see cref="Temperament"/> object to confirm if all <see cref="int"/> properties are populated (not null or zero)
+        /// </summary>
+        /// <param name="t"><see cref="Temperament"/> entity object with values to evaluate</param>
+        /// <returns><see cref="bool"/>, true if all temperament ratings values are not null or zero</returns>
+        public bool HasCompletedTemperament(Temperament t)
+        {
+            if (t == null)
+                return false;
+            else if (IntHasNonZeroValue(t.Anxiety) &&
+                    IntHasNonZeroValue(t.Fearful) &&
+                    IntHasNonZeroValue(t.IsAfraidFireworks) &&
+                    IntHasNonZeroValue(t.FriendlinessOverall) &&
+                    IntHasNonZeroValue(t.GoodWithPeople) &&
+                    IntHasNonZeroValue(t.GoodWithOtherDogs) &&
+                    IntHasNonZeroValue(t.GoodWithCats) &&
+                    IntHasNonZeroValue(t.GoodWithOtherAnimals) &&
+                    IntHasNonZeroValue(t.GoodWithChildren) &&
+                    IntHasNonZeroValue(t.Playfulness) &&
+                    IntHasNonZeroValue(t.LikesPlayingHumans) &&
+                    IntHasNonZeroValue(t.LikesPlayingDogs) &&
+                    IntHasNonZeroValue(t.PlaysFetch) &&
+                    IntHasNonZeroValue(t.LikesToys) &&
+                    IntHasNonZeroValue(t.LikesTreats) &&
+                    IntHasNonZeroValue(t.AthleticLevel) &&
+                    IntHasNonZeroValue(t.LikesExercise) &&
+                    IntHasNonZeroValue(t.TrainingLevel) &&
+                    IntHasNonZeroValue(t.Trainability) &&
+                    IntHasNonZeroValue(t.Stubbornness) &&
+                    IntHasNonZeroValue(t.Intelligence) &&
+                    IntHasNonZeroValue(t.SenseOfSmell) &&
+                    IntHasNonZeroValue(t.PreyDrive) &&
+                    IntHasNonZeroValue(t.AggressionLevel) &&
+                    IntHasNonZeroValue(t.Protectiveness) &&
+                    IntHasNonZeroValue(t.DistinguishThreatening) &&
+                    IntHasNonZeroValue(t.BalanceStability) &&
+                    IntHasNonZeroValue(t.Confidence) &&
+                    IntHasNonZeroValue(t.IsPickyEater) &&
+                    IntHasNonZeroValue(t.Shedding) &&
+                    IntHasNonZeroValue(t.Barking) &&
+                    IntHasNonZeroValue(t.SmellRating))
+                return true;
+            else
+                return false;
+        }
         #endregion Repository Methods
 
         #region Internal
@@ -99,6 +145,12 @@ namespace DogMatch.Domain.Data.Repositories
         private bool TemperamentExists(int id) =>
             _dbSet.Any(t => t.Id == id);
 
+        /// <summary>
+        /// Checks if nullable <see cref="int"/> is not null or 0
+        /// </summary>
+        /// <param name="i">nullable <see cref="int"/> to evaluate</param>
+        /// <returns><see cref="bool"/>, true is nullable int is not null or zero</returns>
+        private bool IntHasNonZeroValue(int? i) => i.GetValueOrDefault() != 0;
         #endregion Internal
 
     }

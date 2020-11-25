@@ -1,4 +1,5 @@
 ﻿@using DogMatch.Client.Services
+@using DogMatch.Shared.Globals 
 @using Microsoft.AspNetCore.Components
 
 @inject DogState state
@@ -88,6 +89,8 @@
     public string DogName { get; set; }
     [Parameter]
     public string BtnStyle { get; set; }
+    [Parameter]
+    public DogListType DogListType { get; set; }
 
     string dogButtonId = string.Empty;
     bool modalIsOpen = false;
@@ -101,7 +104,7 @@
     private async Task DeleteConfirmed()
     {
         modalIsOpen = false;
-        await state.DeleteDog(DogId, DogName);
+        await state.DeleteDog(DogId, DogName, DogListType);
     }
 
     /// <summary>

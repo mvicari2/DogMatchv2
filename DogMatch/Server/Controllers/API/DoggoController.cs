@@ -29,10 +29,10 @@ namespace DogMatch.Server.Controllers
         #endregion DI
     
         #region WebApi Methods
-        // GET: api/Doggos/{searchStr}
-        [HttpGet("/api/Doggos/{searchStr?}")]
-        public async Task<ActionResult<IEnumerable<Dog>>> GetDogs(string searchStr = null) =>
-            Ok(await _service.GetAllDogs(searchStr));        
+        // POST: api/Doggos/
+        [HttpPost("/api/GetDogs")]
+        public async Task<ActionResult<IEnumerable<Dog>>> GetFilteredDogs(DogsFilter filter) =>
+            Ok(await _service.GetDogsAndFilter(filter, GetUserId()));            
 
         // GET: api/Doggo/{id} 
         [HttpGet("{id}")]
@@ -114,7 +114,6 @@ namespace DogMatch.Server.Controllers
         #region Internal 
         private string GetUserId() =>
             User.FindFirstValue(ClaimTypes.NameIdentifier);
-
         #endregion Internal
     }
 }

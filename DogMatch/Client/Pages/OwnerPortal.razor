@@ -2,29 +2,48 @@
 @using Microsoft.AspNetCore.Authorization
 @using DogMatch.Client.Services
 @using DogMatch.Client.Components.Dog
+@using DogMatch.Shared.Globals
 
 @attribute [Authorize]
 @inject DogState state
 @inject NavigationService navigate
 
-<MatH2>Owner Portal</MatH2>
-<br />
-
 <AuthorizeView>
     <Authorized>
-        <MatH6>Your active Dog Profiles: @state.OwnersDogs?.Count()</MatH6>
-        <br />
-        <MatH5>My Doggos</MatH5>
-        <br />
-        <DogsList Dogs="state.OwnersDogs" />
+        <div class="search-row">
+            <MatH5>Owner Portal &nbsp;&nbsp;<MatIcon Icon="@MatIconNames.Pets" Class="icon-align" />&nbsp;&nbsp; @context.User.Identity.Name</MatH5>
+        </div>
+
+        @if (state.OwnersDogs != null)
+        {
+            <div class="search-row">
+                <MatOverline>Total Active Dog Profiles: @TotalDogCount</MatOverline>
+            </div>
+        }
+
+        <div>
+            <SearchAndFilters Filter="state.OwnersDogFilter" />
+            <DogsList Dogs="state.OwnersDogs"
+                      Loading="state.ownersDogsLoading"
+                      DogListType="DogListType.Owners" />
+        </div>
     </Authorized>
 </AuthorizeView>
 
 @code {
+    private int TotalDogCount { get; set; }
+
     protected override async Task OnInitializedAsync()
     {
+        // initialize new dogs filter for owner's dogs
+        state.NewDogFilter(DogListType.Owners);
+
+        // subscribe to state changes
         state.OnChange += RefreshComponent;
-        await state.GetOwnersDoggos();
+
+        // get dogs, set total count
+        await state.GetDogsAndFilter(state.OwnersDogFilter);
+        TotalDogCount = state.OwnersDogs.Count();
     }
 
     private void RefreshComponent() => StateHasChanged();

@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Json;
-using System.Text.Encodings.Web;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using DogMatch.Shared.Globals;
 using DogMatch.Shared.Models;
@@ -22,9 +20,13 @@ namespace DogMatch.Client.Services
         public Dog Doggo { get; set; }
         public IEnumerable<Dog> Doggos { get; set; }
         public IEnumerable<Dog> OwnersDogs { get; set; }
+        public DogsFilter Filter { get; set; }
+        public DogsFilter OwnersDogFilter { get; set; }
         public DateTime today = DateTime.Now;
         public int? initialWeight = null;
         public bool loading = false;
+        public bool dogsListLoading = false;
+        public bool ownersDogsLoading = false;
         public event Action OnChange;
         #endregion Properties / Variables
 
@@ -48,27 +50,63 @@ namespace DogMatch.Client.Services
         public void NotifyStateChanged() => OnChange?.Invoke();
 
         /// <summary>
-        /// Calls WebApi that gets (or searches) all doggos and sets returned dogs into state.
+        /// Calls WebApi to get (and search/filter) all dogs or owner's dogs
         /// </summary>
-        /// <param name="searchStr">search <see cref="string"/></param>
-        public async Task GetAllDoggos(string searchStr = null)
+        /// <param name="filter"><see cref="DogsFilter"/> object to post to WebApi</param>
+        public async Task GetDogsAndFilter(DogsFilter filter)
         {
-            if (string.IsNullOrWhiteSpace(searchStr))
-                searchStr = string.Empty;
+            // show loading animation
+            switch (filter.DogListType)
+            {
+                case DogListType.AllDogs:
+                    dogsListLoading = true;
+                    break;
+                case DogListType.Owners:
+                    ownersDogsLoading = true;
+                    break;
+                default:
+                    Filter = filter;
+                    break;
+            }       
 
-            // remove special chars/symbols from search string and encode for URL
-            searchStr = UrlEncoder.Create()
-                .Encode(Regex.Replace(searchStr, @"[^0-9a-zA-Z]+", " "));
+            NotifyStateChanged();
+             
+            // post filter object, returns dogs
+            HttpResponseMessage response = await _http.PostAsJsonAsync($"/api/GetDogs", filter);
 
-            // get any found dogs and set into state
-            Doggos = await _http.GetFromJsonAsync<IEnumerable<Dog>>($"/api/Doggos/{searchStr}");
-        }      
+            if (response.IsSuccessStatusCode)
+            {
+                var dogs = await response.Content.ReadFromJsonAsync<IEnumerable<Dog>>();
 
-        /// <summary>
-        /// Calls WebApi that returns all doggos owned by current user and sets them into state.
-        /// </summary>        
-        public async Task GetOwnersDoggos() =>
-            OwnersDogs = await _http.GetFromJsonAsync<IEnumerable<Dog>>("/api/Owners");
+                // set returned dogs into state based on which dog list is active
+                switch (filter.DogListType)
+                {
+                    case DogListType.AllDogs:
+                        Doggos = dogs;
+                        Filter = filter;
+                        dogsListLoading = false;
+                        break;
+                    case DogListType.Owners:
+                        OwnersDogs = dogs;
+                        OwnersDogFilter = filter;
+                        ownersDogsLoading = false;
+                        break;
+                    default:
+                        Filter = filter;
+                        break;
+                }
+                
+                NotifyStateChanged();
+            }
+            else
+            {
+                // api call failed, display error message notification
+                _notification.DisplayMessage(
+                    NotificationType.GeneralError, 
+                    "Could not return the requested dogs, please reload."
+                );
+            }
+        }
 
         /// <summary>
         /// Calls WebApi to get single dog and set dog into state.
@@ -178,7 +216,8 @@ namespace DogMatch.Client.Services
         /// </summary>
         /// <param name="dogId">Dog Id <see cref="int"/></param>
         /// <param name="dogName">Current Username <see cref="string"/></param>
-        public async Task DeleteDog(int dogId, string dogName)
+        /// <param name="dogListType"><see cref="DogListType"/> active dog list type</param>
+        public async Task DeleteDog(int dogId, string dogName, DogListType dogListType)
         {
             HttpResponseMessage response = await _http.DeleteAsync($"api/Doggo/{dogId}");
 
@@ -186,8 +225,12 @@ namespace DogMatch.Client.Services
             {
                 _notification.DisplayMessage(NotificationType.DogDeleted, dogName);
 
-                // refresh all doggogs and notify subscribers state has changed
-                await GetAllDoggos();
+                // refresh all doggogs or owner's dogs and notify subscribers state has changed
+                await GetDogsAndFilter(
+                    dogListType == DogListType.AllDogs ? 
+                    Filter : 
+                    OwnersDogFilter
+                );
                 NotifyStateChanged();
             }
             else if (response.StatusCode == HttpStatusCode.Unauthorized)
@@ -253,10 +296,10 @@ namespace DogMatch.Client.Services
         {
             switch (type)
             {
-                case DogGenderTypes.female:
+                case DogGenderTypes.Female:
                     Doggo.Gender = "female";
                     break;
-                case DogGenderTypes.male:
+                case DogGenderTypes.Male:
                     Doggo.Gender = "male";
                     break;
             }
@@ -270,7 +313,7 @@ namespace DogMatch.Client.Services
         {
             GetAge(bday);
             Doggo.Birthday = bday;
-        }
+        }        
         #endregion Property Methods            
 
         #region Internal Methods
@@ -324,6 +367,42 @@ namespace DogMatch.Client.Services
         /// Initializes new <see cref="Dog"/> instance dog in state.
         /// </summary>
         public void NewDoggo() => Doggo = new Dog();
+
+        /// <summary>
+        /// Initialize new DogsFilter instance and set in state based on current active dog list
+        /// </summary>
+        /// <param name="dogListType"><see cref="DogListType"/> current active dog list type</param>
+        public void NewDogFilter(DogListType dogListType)
+        {
+            var filter = new DogsFilter()
+            {
+                DogListType = dogListType,
+                AgeRange = new AgeRange()
+                {
+                    Start = 0,
+                    End = 30
+                },
+                WeightRange = new WeightRange()
+                {
+                    Start = 0,
+                    End = 150
+                }
+            };
+
+            // set in state
+            switch (dogListType)
+            {
+                case DogListType.AllDogs:
+                    Filter = filter;
+                    break;
+                case DogListType.Owners:
+                    OwnersDogFilter = filter;
+                    break;
+                default:
+                    Filter = filter;
+                    break;
+            }
+        }
         #endregion Initialize Classes
     }
 }
