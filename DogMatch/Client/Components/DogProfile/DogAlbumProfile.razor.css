@@ -1,0 +1,8 @@
+﻿.album-thumbnail {
+    background-color: transparent;
+    border: 0px solid;
+}
+
+    .album-thumbnail:focus {
+        outline: none;
+    }

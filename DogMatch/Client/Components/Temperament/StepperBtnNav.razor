@@ -6,7 +6,7 @@
 @if (state.tabIndex != 0)
 {
     <button type="button"
-            class="btn btn-primary"
+            class="btn btn-primary button-margin"
             @onclick="@(args => state.StepperChange(TemperamentDirection.Back))">
         Previous Step
     </button>
@@ -15,7 +15,7 @@
 @if (state.tabIndex != 6)
 {
     <button type="button"
-            class="btn btn-primary"
+            class="btn btn-primary button-margin"
             @onclick="@(args => state.StepperChange(TemperamentDirection.Forward))">
         Next Step
     </button>
@@ -23,7 +23,7 @@
 else
 {
     <button type="button"
-            class="btn btn-primary"
+            class="btn btn-primary button-margin"
             @onclick="@(args => state.StepperChange(TemperamentDirection.Biography))">
         Next to Biography
     </button>

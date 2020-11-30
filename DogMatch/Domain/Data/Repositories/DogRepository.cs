@@ -48,28 +48,17 @@ namespace DogMatch.Domain.Data.Repositories
         /// </summary>
         /// <param name="id">Dog Id <see cref="int"/></param>
         /// <returns>Single <see cref="Dogs"/> entity for full profile</returns>
-        public async Task<Dogs> FindFullDogProfileById(int id)
-        {
-            var dog = await _dbSet
+        public async Task<Dogs> FindFullDogProfileById(int id) =>
+            await _dbSet
                 .AsNoTracking()
                 .Include(d => d.Owner)
                 .Include(d => d.DogProfileImage)
                 .Include(d => d.Colors)
                 .Include(d => d.Biography)
                 .Include(d => d.Temperament)
+                .Include(d => d.AlbumImages
+                    .Where(a => !(a.IsDeleted ?? false) && !(a.IsProfileImage ?? false)))
                 .SingleOrDefaultAsync(d => d.Id == id && d.IsDeleted != true);
-
-            // for now (until efcore 5 / lambdas within include), get album images separately for active/non-deleted album images
-            if (dog != null)
-                dog.AlbumImages = _context.DogImages
-                    .AsNoTracking()
-                    .Where(i => i.DogId == id &&
-                        !(i.IsProfileImage ?? false) &&
-                        !(i.IsDeleted ?? false))
-                    .ToList();
-
-            return dog;
-        }
 
         /// <summary>
         /// Find dogs, filter and search using <see cref="DogsFilter"/> object property values
@@ -139,26 +128,12 @@ namespace DogMatch.Domain.Data.Repositories
         /// </summary>
         /// <param name="id">Dog Id <see cref="int"/></param>
         /// <returns>Single <see cref="Dogs"/> entity object instance with album images</returns>
-        public async Task<Dogs> FindDogWithAlbumImagesById(int id)
-        {
-            Dogs dog = await _dbSet
+        public async Task<Dogs> FindDogWithAlbumImagesById(int id) =>
+            await _dbSet
                 .AsNoTracking()
-                // lambda within include not available in efcore 3.x, but will be in efcore 5.0 (saving for future upgrade)
-                //.Include(d => d.AlbumImages.Where(a => !(a.IsDeleted ?? false)
-                //    && !(a.IsProfileImage ?? false)))
+                .Include(d => d.AlbumImages
+                    .Where(a => !(a.IsDeleted ?? false) && !(a.IsProfileImage ?? false)))
                 .SingleOrDefaultAsync(d => d.Id == id && d.IsDeleted != true);
-
-            // for now (until efcore 5), get album images separately for active/non-deleted album images
-            if (dog != null)
-                dog.AlbumImages = _context.DogImages
-                    .AsNoTracking()
-                    .Where(i => i.DogId == id &&
-                        !(i.IsProfileImage ?? false) &&
-                        !(i.IsDeleted ?? false))
-                    .ToList();
-
-            return dog;
-        }
 
         /// <summary>
         /// Writes new, single <see cref="Dogs"/> entity to database.
@@ -225,7 +200,8 @@ namespace DogMatch.Domain.Data.Repositories
             // search and return results
             return dogs.Where(d =>
                 searchStrArr.Any(s => d.Name.ToUpper().Contains(s)) ||
-                searchStrArr.Any(s => d.Breed.ToUpper().Contains(s)) ||
+                (!string.IsNullOrWhiteSpace(d.Breed) &&
+                searchStrArr.Any(s => d.Breed.ToUpper().Contains(s))) ||
                 searchStrArr.Any(s => d.Owner.UserName.ToUpper().Contains(s)))
                 .ToList();
         }

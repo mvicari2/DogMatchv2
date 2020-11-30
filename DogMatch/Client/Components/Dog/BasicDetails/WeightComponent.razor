@@ -8,17 +8,12 @@
         </MatOverline>
         @if (state.initialWeight.HasValue)
         {
-            <MatSlider Value="state.initialWeight ?? 0"
-                       Discrete="true"
-                       Immediate="true"
-                       Pin="true"
-                       TValue="int"
+            <MatSlider @bind-Value="state.Doggo.Weight"
                        ValueMin="0"
-                       ValueMax="150"
-                       Style="width: 100%;"
-                       EnableStep="true"
-                       Step="1"
-                       ValueChanged="weight => state.UpdateWeight(weight)" />
+                       ValueMax="150" 
+                       Immediate="true" 
+                       Pin="true"
+                       Discrete="true" />
         }
 
         @if (state.Doggo.Weight > 149)

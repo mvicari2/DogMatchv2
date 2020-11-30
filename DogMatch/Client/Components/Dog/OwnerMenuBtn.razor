@@ -17,7 +17,7 @@
                 Owner Portal
                 <MatIcon Icon="expand_more" />
             </MatButton>
-            <MatMenu @ref="Menu" TargetForwardRef="@buttonForwardRef">
+            <MatMenu @ref="Menu" TargetForwardRef="@buttonForwardRef" Class="custom-mat-menu">
                 <MatList Style="text-align: left;">
                     <MatListItem OnClick="() => navigate.ToProfile(DogId)">
                         <MatIcon Icon="visibility" Class="icon-align" />
@@ -34,13 +34,13 @@
                     <MatListItem OnClick="() => navigate.ToTemperament(DogId)">
                         <MatIcon Icon="bar_chart" Class="icon-align" />
                         <span class="nav-text-align">
-                            &nbsp Update Temperament Profile
+                            &nbsp Update Temperament
                         </span>
                     </MatListItem>
                     <MatListItem OnClick="() => navigate.ToBiography(DogId)">
                         <MatIcon Icon="speaker_notes" Class="icon-align" />
                         <span class="nav-text-align">
-                            &nbsp Update Biography Profile
+                            &nbsp Update Biography
                         </span>
                     </MatListItem>
                     <MatListItem OnClick="() => navigate.ToDogAlbum(DogId)">

@@ -5,7 +5,7 @@
 @inject DogState state
 
 <MatThemeProvider Theme="@SearchTheme">
-    <div class="row search-row">
+    <div class="row left-margin-row">
         <form @onsubmit="() => Submit()">
             <div class="form-group dog-search">
                 <span class="form-control-feedback">
@@ -22,7 +22,7 @@
                     TargetId="search_btn">
             <MatButton OnClick="() => Submit()"
                        Unelevated="true"
-                       Class="btn btn-primary search-btn"
+                       Class="btn btn-primary inline-btn"
                        Id="search_btn"
                        Type="button">
                 <MatIcon Icon="@MatIconNames.Search" Class="icon-align" />
@@ -34,7 +34,7 @@
                     TargetId="filter_btn">
             <MatButton OnClick="() => ToggleFilterSection()"
                        Unelevated="true"
-                       Class="btn btn-secondary search-btn"
+                       Class="btn btn-secondary inline-btn"
                        Id="filter_btn"
                        Type="button">
                 @if (showFilters)
@@ -55,12 +55,12 @@
                         TargetId="refresh_btn">
                 <MatButton OnClick="() => ResetDogs()"
                            Unelevated="true"
-                           Class="btn btn-primary search-btn"
+                           Class="btn btn-primary inline-btn"
                            Id="refresh_btn"
                            Type="button">
                     <MatIcon Icon="@MatIconNames.Refresh" Class="icon-align" />
                 </MatButton>
-            </MatTooltip> <span class="search-btn" style="margin-top:12px;color:#275381;">
+            </MatTooltip> <span class="inline-btn" style="margin-top:12px;color:#275381;">
                 <MatCaption>@resultsCount Dogs Found</MatCaption>
             </span>
         }
@@ -69,7 +69,7 @@
     @if (showFilters)
     {
         <RadzenCard>
-            <div class="row search-row">
+            <div class="row left-margin-row">
                 <span class="col inline-center-col">
                     <MatOverline>Filter By Age</MatOverline><br />
                     <MatSlideToggle @bind-Value="@Filter.FilterAge" />
@@ -157,7 +157,7 @@
                             TargetId="set_filter_btn">
                     <MatButton OnClick="() => Submit()"
                                Unelevated="true"
-                               Class="btn btn-primary search-btn"
+                               Class="btn btn-primary inline-btn"
                                Id="set_filter_btn"
                                Type="button">
                         <MatIcon Icon="@MatIconNames.Check" Class="icon-align" />
@@ -171,7 +171,7 @@
                                 TargetId="reset_filter_btn">
                         <MatButton OnClick="() => ResetDogs()"
                                    Unelevated="true"
-                                   Class="btn btn-primary search-btn"
+                                   Class="btn btn-primary inline-btn"
                                    Id="reset_filter_btn"
                                    Type="button">
                             <MatIcon Icon="@MatIconNames.Close" Class="icon-align" />

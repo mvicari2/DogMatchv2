@@ -15,16 +15,16 @@ namespace DogMatch.Domain.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "3.1.6")
+                .UseIdentityColumns()
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
-                .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                .HasAnnotation("ProductVersion", "5.0.0");
 
             modelBuilder.Entity("DogMatch.Domain.Data.Models.Addresses", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .UseIdentityColumn();
 
                     b.Property<string>("Address1")
                         .HasColumnType("nvarchar(200)");
@@ -84,7 +84,7 @@ namespace DogMatch.Domain.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .UseIdentityColumn();
 
                     b.Property<string>("AboutDoggo")
                         .HasColumnType("nvarchar(max)");
@@ -141,7 +141,7 @@ namespace DogMatch.Domain.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .UseIdentityColumn();
 
                     b.Property<Guid>("ColorGUID")
                         .ValueGeneratedOnAdd()
@@ -167,7 +167,7 @@ namespace DogMatch.Domain.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .UseIdentityColumn();
 
                     b.Property<DateTime>("Created")
                         .HasColumnType("datetime");
@@ -221,8 +221,8 @@ namespace DogMatch.Domain.Migrations
                         .HasColumnType("datetime");
 
                     b.Property<string>("Email")
-                        .HasColumnType("nvarchar(256)")
-                        .HasMaxLength(256);
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
 
                     b.Property<bool>("EmailConfirmed")
                         .HasColumnType("bit");
@@ -255,12 +255,12 @@ namespace DogMatch.Domain.Migrations
                         .HasColumnType("nvarchar(20)");
 
                     b.Property<string>("NormalizedEmail")
-                        .HasColumnType("nvarchar(256)")
-                        .HasMaxLength(256);
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
 
                     b.Property<string>("NormalizedUserName")
-                        .HasColumnType("nvarchar(256)")
-                        .HasMaxLength(256);
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
 
                     b.Property<string>("PasswordHash")
                         .HasColumnType("nvarchar(max)");
@@ -289,17 +289,17 @@ namespace DogMatch.Domain.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("UserName")
-                        .HasColumnType("nvarchar(256)")
-                        .HasMaxLength(256);
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
 
                     b.HasKey("Id");
 
                     b.HasIndex("NormalizedEmail")
-                        .HasName("EmailIndex");
+                        .HasDatabaseName("EmailIndex");
 
                     b.HasIndex("NormalizedUserName")
                         .IsUnique()
-                        .HasName("UserNameIndex")
+                        .HasDatabaseName("UserNameIndex")
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
                     b.HasIndex("PrimaryAddressId")
@@ -318,7 +318,7 @@ namespace DogMatch.Domain.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .UseIdentityColumn();
 
                     b.Property<int?>("AddressId")
                         .HasColumnType("int");
@@ -401,7 +401,7 @@ namespace DogMatch.Domain.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .UseIdentityColumn();
 
                     b.Property<int?>("AggressionLevel")
                         .HasColumnType("int");
@@ -552,7 +552,7 @@ namespace DogMatch.Domain.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .UseIdentityColumn();
 
                     b.Property<DateTime>("Created")
                         .HasColumnType("datetime");
@@ -590,34 +590,42 @@ namespace DogMatch.Domain.Migrations
             modelBuilder.Entity("IdentityServer4.EntityFramework.Entities.DeviceFlowCodes", b =>
                 {
                     b.Property<string>("UserCode")
-                        .HasColumnType("nvarchar(200)")
-                        .HasMaxLength(200);
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
 
                     b.Property<string>("ClientId")
                         .IsRequired()
-                        .HasColumnType("nvarchar(200)")
-                        .HasMaxLength(200);
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
 
                     b.Property<DateTime>("CreationTime")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Data")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)")
-                        .HasMaxLength(50000);
+                        .HasMaxLength(50000)
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
 
                     b.Property<string>("DeviceCode")
                         .IsRequired()
-                        .HasColumnType("nvarchar(200)")
-                        .HasMaxLength(200);
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
 
                     b.Property<DateTime?>("Expiration")
                         .IsRequired()
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("SessionId")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
                     b.Property<string>("SubjectId")
-                        .HasColumnType("nvarchar(200)")
-                        .HasMaxLength(200);
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
 
                     b.HasKey("UserCode");
 
@@ -632,39 +640,52 @@ namespace DogMatch.Domain.Migrations
             modelBuilder.Entity("IdentityServer4.EntityFramework.Entities.PersistedGrant", b =>
                 {
                     b.Property<string>("Key")
-                        .HasColumnType("nvarchar(200)")
-                        .HasMaxLength(200);
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
 
                     b.Property<string>("ClientId")
                         .IsRequired()
-                        .HasColumnType("nvarchar(200)")
-                        .HasMaxLength(200);
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<DateTime?>("ConsumedTime")
+                        .HasColumnType("datetime2");
 
                     b.Property<DateTime>("CreationTime")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Data")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)")
-                        .HasMaxLength(50000);
+                        .HasMaxLength(50000)
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
 
                     b.Property<DateTime?>("Expiration")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("SessionId")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
                     b.Property<string>("SubjectId")
-                        .HasColumnType("nvarchar(200)")
-                        .HasMaxLength(200);
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
 
                     b.Property<string>("Type")
                         .IsRequired()
-                        .HasColumnType("nvarchar(50)")
-                        .HasMaxLength(50);
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
                     b.HasKey("Key");
 
                     b.HasIndex("Expiration");
 
                     b.HasIndex("SubjectId", "ClientId", "Type");
+
+                    b.HasIndex("SubjectId", "SessionId", "Type");
 
                     b.ToTable("PersistedGrants");
                 });
@@ -679,18 +700,18 @@ namespace DogMatch.Domain.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Name")
-                        .HasColumnType("nvarchar(256)")
-                        .HasMaxLength(256);
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
 
                     b.Property<string>("NormalizedName")
-                        .HasColumnType("nvarchar(256)")
-                        .HasMaxLength(256);
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
 
                     b.HasKey("Id");
 
                     b.HasIndex("NormalizedName")
                         .IsUnique()
-                        .HasName("RoleNameIndex")
+                        .HasDatabaseName("RoleNameIndex")
                         .HasFilter("[NormalizedName] IS NOT NULL");
 
                     b.ToTable("AspNetRoles");
@@ -701,7 +722,7 @@ namespace DogMatch.Domain.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .UseIdentityColumn();
 
                     b.Property<string>("ClaimType")
                         .HasColumnType("nvarchar(max)");
@@ -725,7 +746,7 @@ namespace DogMatch.Domain.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .UseIdentityColumn();
 
                     b.Property<string>("ClaimType")
                         .HasColumnType("nvarchar(max)");
@@ -747,12 +768,12 @@ namespace DogMatch.Domain.Migrations
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
                 {
                     b.Property<string>("LoginProvider")
-                        .HasColumnType("nvarchar(128)")
-                        .HasMaxLength(128);
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
 
                     b.Property<string>("ProviderKey")
-                        .HasColumnType("nvarchar(128)")
-                        .HasMaxLength(128);
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
 
                     b.Property<string>("ProviderDisplayName")
                         .HasColumnType("nvarchar(max)");
@@ -789,12 +810,12 @@ namespace DogMatch.Domain.Migrations
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("LoginProvider")
-                        .HasColumnType("nvarchar(128)")
-                        .HasMaxLength(128);
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
 
                     b.Property<string>("Name")
-                        .HasColumnType("nvarchar(128)")
-                        .HasMaxLength(128);
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
 
                     b.Property<string>("Value")
                         .HasColumnType("nvarchar(max)");
@@ -822,6 +843,12 @@ namespace DogMatch.Domain.Migrations
                         .HasConstraintName("FK_Addresses_User")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("CreatedByUser");
+
+                    b.Navigation("ModifiedByUser");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("DogMatch.Domain.Data.Models.Biography", b =>
@@ -835,6 +862,10 @@ namespace DogMatch.Domain.Migrations
                         .WithMany("BiographiesModifiedByUser")
                         .HasForeignKey("LastModifiedBy")
                         .HasConstraintName("FK_Biographies_ModifiedByUser");
+
+                    b.Navigation("CreatedByUser");
+
+                    b.Navigation("ModifiedByUser");
                 });
 
             modelBuilder.Entity("DogMatch.Domain.Data.Models.Color", b =>
@@ -845,6 +876,8 @@ namespace DogMatch.Domain.Migrations
                         .HasConstraintName("FK_Color_Dog")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Dog");
                 });
 
             modelBuilder.Entity("DogMatch.Domain.Data.Models.DogImages", b =>
@@ -860,6 +893,10 @@ namespace DogMatch.Domain.Migrations
                         .HasConstraintName("FK_AlbumImage_Dog")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("CreatedByUser");
+
+                    b.Navigation("Dog");
                 });
 
             modelBuilder.Entity("DogMatch.Domain.Data.Models.DogMatchUser", b =>
@@ -873,6 +910,10 @@ namespace DogMatch.Domain.Migrations
                         .WithOne("ProfileImageUser")
                         .HasForeignKey("DogMatch.Domain.Data.Models.DogMatchUser", "UserImageId")
                         .HasConstraintName("FK_DogMatchUser_UserProfileImage");
+
+                    b.Navigation("PrimaryAddress");
+
+                    b.Navigation("UserProfileImage");
                 });
 
             modelBuilder.Entity("DogMatch.Domain.Data.Models.Dogs", b =>
@@ -911,6 +952,20 @@ namespace DogMatch.Domain.Migrations
                         .WithOne("Dog")
                         .HasForeignKey("DogMatch.Domain.Data.Models.Dogs", "TemperamentId")
                         .HasConstraintName("FK_Dog_Temperament");
+
+                    b.Navigation("Address");
+
+                    b.Navigation("Biography");
+
+                    b.Navigation("CreatedByUser");
+
+                    b.Navigation("DogProfileImage");
+
+                    b.Navigation("ModifiedByUser");
+
+                    b.Navigation("Owner");
+
+                    b.Navigation("Temperament");
                 });
 
             modelBuilder.Entity("DogMatch.Domain.Data.Models.Temperament", b =>
@@ -924,6 +979,10 @@ namespace DogMatch.Domain.Migrations
                         .WithMany("TemperamentsModifiedByUser")
                         .HasForeignKey("LastModifiedBy")
                         .HasConstraintName("FK_Temperaments_ModifiedByUser");
+
+                    b.Navigation("CreatedByUser");
+
+                    b.Navigation("ModifiedByUser");
                 });
 
             modelBuilder.Entity("DogMatch.Domain.Data.Models.UserImages", b =>
@@ -939,6 +998,10 @@ namespace DogMatch.Domain.Migrations
                         .HasConstraintName("FK_UserImages_User")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("CreatedByUser");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -990,6 +1053,69 @@ namespace DogMatch.Domain.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("DogMatch.Domain.Data.Models.Addresses", b =>
+                {
+                    b.Navigation("Dogs");
+
+                    b.Navigation("PrimaryAddressUser");
+                });
+
+            modelBuilder.Entity("DogMatch.Domain.Data.Models.Biography", b =>
+                {
+                    b.Navigation("Dog");
+                });
+
+            modelBuilder.Entity("DogMatch.Domain.Data.Models.DogImages", b =>
+                {
+                    b.Navigation("ProfileImageDog");
+                });
+
+            modelBuilder.Entity("DogMatch.Domain.Data.Models.DogMatchUser", b =>
+                {
+                    b.Navigation("Addresses");
+
+                    b.Navigation("AddressesCreatedByUser");
+
+                    b.Navigation("AddressesModifiedByUser");
+
+                    b.Navigation("BiographiesCreatedByUser");
+
+                    b.Navigation("BiographiesModifiedByUser");
+
+                    b.Navigation("DogAlbumImages");
+
+                    b.Navigation("Dogs");
+
+                    b.Navigation("DogsCreatedByUser");
+
+                    b.Navigation("DogsModifiedByUser");
+
+                    b.Navigation("TemperamentsCreatedByUser");
+
+                    b.Navigation("TemperamentsModifiedByUser");
+
+                    b.Navigation("UserImages");
+
+                    b.Navigation("UserImagesCreatedBy");
+                });
+
+            modelBuilder.Entity("DogMatch.Domain.Data.Models.Dogs", b =>
+                {
+                    b.Navigation("AlbumImages");
+
+                    b.Navigation("Colors");
+                });
+
+            modelBuilder.Entity("DogMatch.Domain.Data.Models.Temperament", b =>
+                {
+                    b.Navigation("Dog");
+                });
+
+            modelBuilder.Entity("DogMatch.Domain.Data.Models.UserImages", b =>
+                {
+                    b.Navigation("ProfileImageUser");
                 });
 #pragma warning restore 612, 618
         }

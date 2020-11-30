@@ -15,25 +15,32 @@ namespace DogMatch.Client
         public static async Task Main(string[] args)
         {
             var builder = WebAssemblyHostBuilder.CreateDefault(args);
-            builder.RootComponents.Add<App>("app");
+            builder.RootComponents.Add<App>("#app");
 
             builder.Services.AddHttpClient("DogMatch.ServerAPI", client => client.BaseAddress = new Uri(builder.HostEnvironment.BaseAddress))
                 .AddHttpMessageHandler<BaseAddressAuthorizationMessageHandler>();
 
             // Supply HttpClient instances that include access tokens when making requests to the server project
-            builder.Services.AddTransient(sp => sp.GetRequiredService<IHttpClientFactory>().CreateClient("DogMatch.ServerAPI"));
+            builder.Services.AddScoped(sp => sp.GetRequiredService<IHttpClientFactory>()
+                .CreateClient("DogMatch.ServerAPI"));
 
             builder.Services.AddApiAuthorization();
             builder.Services.AddFileReaderService(options => options.UseWasmSharedBuffer = true);
 
-            builder.Services.AddSingleton<DogState>();
-            builder.Services.AddSingleton<DogProfileState>();
-            builder.Services.AddSingleton<TemperamentState>();
-            builder.Services.AddSingleton<BiographyState>();
-            builder.Services.AddSingleton<DogAlbumState>();
-            builder.Services.AddSingleton<NotificationService>();
-            builder.Services.AddSingleton<NotificationMsgService>();
-            builder.Services.AddSingleton<NavigationService>();
+            /// Initially configured all client state management services w/Singleton lifetime,
+            /// but due to changing HttpClient to scoped for .net 5 upgrade 
+            /// (because of transient memory leaks), these services now must also have scoped lifetimes.
+            /// However, per Blazor documentation:
+            /// "Blazor WebAssembly apps don't currently have a concept of DI scopes. 
+            /// Scoped-registered services behave like Singleton services" 
+            builder.Services.AddScoped<DogState>();
+            builder.Services.AddScoped<DogProfileState>();
+            builder.Services.AddScoped<TemperamentState>();
+            builder.Services.AddScoped<BiographyState>();
+            builder.Services.AddScoped<DogAlbumState>();
+            builder.Services.AddScoped<NotificationService>();
+            builder.Services.AddScoped<NotificationMsgService>();
+            builder.Services.AddScoped<NavigationService>();
 
             await builder.Build().RunAsync();
         }

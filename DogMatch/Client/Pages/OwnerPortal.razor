@@ -10,13 +10,13 @@
 
 <AuthorizeView>
     <Authorized>
-        <div class="search-row">
+        <div class="left-margin-row">
             <MatH5>Owner Portal &nbsp;&nbsp;<MatIcon Icon="@MatIconNames.Pets" Class="icon-align" />&nbsp;&nbsp; @context.User.Identity.Name</MatH5>
         </div>
 
         @if (state.OwnersDogs != null)
         {
-            <div class="search-row">
+            <div class="left-margin-row">
                 <MatOverline>Total Active Dog Profiles: @TotalDogCount</MatOverline>
             </div>
         }

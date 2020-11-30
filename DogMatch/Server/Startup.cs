@@ -61,6 +61,7 @@ namespace DogMatch.Server
 
             services.AddControllersWithViews();
             services.AddRazorPages();
+            services.AddDatabaseDeveloperPageExceptionFilter();
 
             // scoped services
             services.AddScoped<IDogService, DogService>();
@@ -93,7 +94,7 @@ namespace DogMatch.Server
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
-                app.UseDatabaseErrorPage();
+                app.UseMigrationsEndPoint();
                 app.UseWebAssemblyDebugging();
             }
             else

@@ -283,12 +283,6 @@ namespace DogMatch.Client.Services
 
         #region Property Methods
         /// <summary>
-        /// Update <see cref="Doggo"/> weight (on change)
-        /// </summary>
-        /// <param name="weight">Dog's weight <see cref="int"/></param>
-        public void UpdateWeight(int weight) => Doggo.Weight = weight;
-
-        /// <summary>
         /// Update <see cref="Doggo"/> Gender (on change)
         /// </summary>
         /// <param name="type"></param>

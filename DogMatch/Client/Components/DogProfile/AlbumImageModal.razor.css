@@ -1,0 +1,32 @@
+﻿.modal-image-container {
+    width: 100%;
+    margin: 7px 0 7px 0;
+    overflow: hidden;
+    height: 65vh;
+    text-align: center;
+}
+
+img.modal-album-img {
+    max-height: 65vh;
+}
+
+.album-btn-container {
+    width: 100%;
+    float: left;
+    text-align: center;
+    margin-top: -20px;
+}
+
+    .album-btn-container button {
+        display: inline-block;
+    }
+
+.album-btn-group {
+    margin: 0;
+    margin-top: 9px;
+    position: absolute;
+    left: 50%;
+    -ms-transform: translate(-50%, 0);
+    transform: translate(-50%, 0);
+    width: 100%;
+}

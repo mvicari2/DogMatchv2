@@ -1,23 +1,25 @@
 ﻿@using System.Reflection
 @inherits LayoutComponentBase
 
-<RadzenNotification />
-<header>
-    <NavMenu />
-</header>
+<div class="page">
+    <RadzenNotification />
+    <header>
+        <NavMenu />
+    </header>
 
-<div class="main">
-    <div class="content px-4">
-        @Body
+    <div class="main">
+        <div class="content px-4">
+            @Body
+        </div>
     </div>
+    <br />
+
+    <footer class="fixed-bottom footer-block">
+        <div class="footer-custom">
+            &copy; 2020 DogMatch - @version
+        </div>
+    </footer>
 </div>
-<br />
-
-<footer class="fixed-bottom footer-block">
-    <div class="footer-custom">
-        &copy; 2020 DogMatch - @version
-    </div>
-</footer>
 
 @code {
     private string version;

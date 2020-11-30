@@ -5,7 +5,7 @@
 @inject NavigationService navigate
 @inject SignOutSessionStateManager SignOutManager
 
-<nav class="@NavClass" style="@NavStyle">
+<nav class="@NavClass">
     <div class="container">
         <NavLink class="navbar-brand text-light"
                  href="/"
@@ -14,7 +14,7 @@
             <span class="brand-text-align">
                 DogMatch
             </span>
-        </NavLink>
+        </NavLink>        
         <button class="navbar-toggler"
                 @onclick="() => ToggleNavMenu(false)"
                 @onfocusout="() => ToggleNavMenu(true)"
@@ -36,7 +36,7 @@
                                      Match="NavLinkMatch.All">
                                 <MatIcon Icon="apps" Class="icon-align" />
                                 <span class="nav-text-align">
-                                    All Doggos
+                                    &nbsp; All Doggos
                                 </span>
 
                             </NavLink>
@@ -47,7 +47,7 @@
                                      Match="NavLinkMatch.Prefix">
                                 <MatIcon Icon="add" Class="icon-align" />
                                 <span class="nav-text-align">
-                                    Create Doggo
+                                    &nbsp; Create Doggo
                                 </span>
                             </NavLink>
                         </li>
@@ -57,7 +57,7 @@
                                      Match="NavLinkMatch.Prefix">
                                 <MatIcon Icon="widgets" Class="icon-align" />
                                 <span class="nav-text-align">
-                                    Owner Portal
+                                    &nbsp; Owner Portal
                                 </span>
                             </NavLink>
                         </li>
@@ -85,7 +85,7 @@
                                          Match="NavLinkMatch.Prefix"
                                          href="#">
                                     <span class="oi oi-account-logout"
-                                          aria-hidden="true" 
+                                          aria-hidden="true"
                                           style="margin-left:2px">
                                     </span>
                                     &nbsp; Log Out
@@ -100,7 +100,7 @@
                                     <span class="oi oi-clipboard"
                                           aria-hidden="true">
                                     </span>
-                                    Register
+                                    &nbsp; Register
                                 </NavLink>
                             </li>
                             <li class="nav-item px-3">
@@ -110,7 +110,7 @@
                                     <span class="oi oi-account-login"
                                           aria-hidden="true">
                                     </span>
-                                    Login
+                                    &nbsp; Login
                                 </NavLink>
                             </li>
                         </NotAuthorized>
@@ -254,8 +254,7 @@
     }
 
     #region Styles
-    private string NavMenuCssClass => collapseNavMenu ? "collapse navbar-collapse d-lg-inline-flex flex-lg-row-reverse" : "navbar-collapse d-lg-inline-flex flex-lg-row-reverse";
+    private string NavMenuCssClass => collapseNavMenu ? "collapse navbar-collapse d-lg-inline-flex flex-lg-row-reverse" : "navbar-collapse d-lg-inline-flex flex-lg-row-reverse expanded-nav-custom";
     private string NavClass = "navbar navbar-expand-lg navbar-toggleable-lg navbar-dark border-bottom box-shadow mb-3 fixed-top";
-    private string NavStyle = "background-color: #273652";
     #endregion Styles
 }
