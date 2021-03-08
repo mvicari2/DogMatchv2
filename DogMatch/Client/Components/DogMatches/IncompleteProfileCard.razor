@@ -1,0 +1,23 @@
+﻿@using DogMatch.Shared.Models
+
+<RadzenCard class="incomplete-profile-card">
+    <div class="row match-row">
+        <div class="center-align">
+            <MatH4>
+                Cannot Get Matches for @Dog.DogName
+            </MatH4>
+            <br />
+            <MatOverline>
+                In order to find matches for @Dog.DogName you must fully complete the dog profile, including completing all basic details, temperament profile, and about dog in the biography profile. Use the buttons below to navigate to and edit the dog profiles you must complete for @string.Format("{0}.", Dog.DogName) <br />
+                <b>Please complete required profiles and get matches again.</b>
+            </MatOverline>
+            <br />
+            <EditNavigator DogId="Dog.DogId" />
+        </div>
+    </div>
+</RadzenCard>
+
+@code {
+    [Parameter]
+    public DogMatches Dog { get; set; }
+}

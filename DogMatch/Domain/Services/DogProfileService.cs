@@ -2,6 +2,7 @@
 using DogMatch.Domain.Data.Models;
 using DogMatch.Domain.Data.Repositories;
 using DogMatch.Shared.Models;
+using DogMatch.Shared.Globals;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -61,6 +62,143 @@ namespace DogMatch.Domain.Services
 
             return dogProfile;
         }
+
+        /// <summary>
+        /// Generates dog temperament scores for 13 categories, each score is out of 100, 
+        /// mostly derived by averaging similar or related properties in each category
+        /// </summary>
+        /// <param name="t"><see cref="Temperament"/> entity object</param>
+        /// <returns><see cref="IEnumerable{TemperamentScore}"/> list generated temperament scores, score labels, and score types</returns>
+        public IEnumerable<TemperamentScore> GetTemperamentScores(Temperament t)
+        {
+            return new TemperamentScore[]
+            {
+                new TemperamentScore
+                {
+                    ScoreType = TemperamentScoreTypes.Playfullness,
+                    ScoreLabel = "Playfullness",
+                    ScoreValue = Convert.ToInt32((decimal)(
+                        t.Playfulness +
+                        t.LikesPlayingHumans +
+                        t.LikesPlayingDogs +
+                        t.PlaysFetch +
+                        t.LikesToys +
+                        t.LikesTreats)
+                        / 60 * 100)
+                },
+                new TemperamentScore
+                {
+                    ScoreType = TemperamentScoreTypes.Friendliness,
+                    ScoreLabel = "Friendliness",
+                    ScoreValue = Convert.ToInt32((decimal)(
+                        t.FriendlinessOverall +
+                        t.GoodWithPeople +
+                        t.GoodWithOtherDogs +
+                        t.GoodWithCats +
+                        t.GoodWithOtherAnimals +
+                        t.GoodWithChildren)
+                        / 60 * 100)
+                },
+                new TemperamentScore
+                {
+                    ScoreType = TemperamentScoreTypes.Athletic,
+                    ScoreLabel = "Athletic",
+                    ScoreValue = Convert.ToInt32((decimal)(
+                        t.AthleticLevel +
+                        t.LikesExercise +
+                        t.BalanceStability)
+                        / 30 * 100)
+                },
+                new TemperamentScore
+                {
+                    ScoreType = TemperamentScoreTypes.Training,
+                    ScoreLabel = "Training",
+                    ScoreValue =  Convert.ToInt32((decimal)(
+                        t.TrainingLevel +
+                        t.Trainability +
+                        t.Intelligence)
+                        / 30 * 100)
+                },
+                new TemperamentScore
+                {
+                    ScoreType = TemperamentScoreTypes.Empathy,
+                    ScoreLabel = "Empathy",
+                    ScoreValue = Convert.ToInt32((decimal)(
+                        t.Empathetic +
+                        t.Intelligence)
+                        / 20 * 100)
+                },
+                new TemperamentScore
+                {
+                    ScoreType = TemperamentScoreTypes.Intelligence,
+                    ScoreLabel = "Intelligence",
+                    ScoreValue = Convert.ToInt32((decimal)t.Intelligence / 10 * 100)
+                },
+                new TemperamentScore
+                {
+                    ScoreType = TemperamentScoreTypes.Aggression,
+                    ScoreLabel = "Aggression",
+                    ScoreValue = Convert.ToInt32((decimal)(
+                        t.AggressionLevel +
+                        t.Barking +
+                        t.PreyDrive)
+                        / 30 * 100)
+                },
+                new TemperamentScore
+                {
+                    ScoreType = TemperamentScoreTypes.Anxiety,
+                    ScoreLabel = "Anxiety",
+                    ScoreValue = Convert.ToInt32((decimal)(
+                        t.Anxiety +
+                        t.Fearful +
+                        t.IsAfraidFireworks)
+                        / 30 * 100)
+                },
+                new TemperamentScore
+                {
+                    ScoreType = TemperamentScoreTypes.Instinct,
+                    ScoreLabel = "Instinct",
+                    ScoreValue = Convert.ToInt32((decimal)(
+                        t.PreyDrive +
+                        t.DistinguishThreatening +
+                        t.Protectiveness +
+                        t.SenseOfSmell)
+                        / 40 * 100)
+                },
+                new TemperamentScore
+                {
+                    ScoreType = TemperamentScoreTypes.Confidence,
+                    ScoreLabel = "Confidence",
+                    // subtract score by 20% of t.anxiety if t.confidence is greater,
+                    // if 20% of t.anxiety is greater thescn subtract 20% of t.confidence from score
+                    ScoreValue = Convert.ToInt32(
+                        t.Confidence > (t.Anxiety * .2) ?
+                        (t.Confidence -  ((decimal)(t.Anxiety * .2))) * 10 :
+                        (t.Confidence - ((decimal)(t.Confidence * .2))) * 10)
+                },
+                new TemperamentScore
+                {
+                    ScoreType = TemperamentScoreTypes.Stubbornness,
+                    ScoreLabel = "Stubbornness",
+                    ScoreValue = Convert.ToInt32((decimal)(
+                        t.Stubbornness +
+                        t.IsPickyEater)
+                        / 20 * 100)
+                },
+                new TemperamentScore
+                {
+                    ScoreType = TemperamentScoreTypes.Shedding,
+                    ScoreLabel = "Shedding",
+                    ScoreValue = Convert.ToInt32((decimal)t.Shedding / 10 * 100)
+                },
+                new TemperamentScore
+                {
+                    ScoreType = TemperamentScoreTypes.Smelliness,
+                    ScoreLabel = "Smelliness",
+                    ScoreValue = Convert.ToInt32((decimal)t.SmellRating / 10 * 100)
+                }
+            };
+        }
         #endregion Public Service Methods
 
         #region Internal Methods
@@ -82,131 +220,7 @@ namespace DogMatch.Domain.Services
                 return true;
             else
                 return false;
-        }
-
-        /// <summary>
-        /// Generates dog temperament scores for 13 categories, each score is out of 100, 
-        /// mostly derived by averaging similar or related properties in each category
-        /// </summary>
-        /// <param name="t"><see cref="Temperament"/> entity object</param>
-        /// <returns><see cref="TemperamentScore[]"/> array of generated temperament scores and labels</returns>
-        private IEnumerable<TemperamentScore> GetTemperamentScores(Temperament t)
-        {
-            return new TemperamentScore[]
-            {
-                new TemperamentScore
-                {
-                    ScoreLabel = "Playfullness",
-                    ScoreValue = Convert.ToInt32((decimal)(
-                        t.Playfulness +
-                        t.LikesPlayingHumans +
-                        t.LikesPlayingDogs +
-                        t.PlaysFetch +
-                        t.LikesToys +
-                        t.LikesTreats) 
-                        / 60 * 100)
-                },
-                new TemperamentScore
-                {
-                    ScoreLabel = "Friendliness",
-                    ScoreValue = Convert.ToInt32((decimal)(
-                        t.FriendlinessOverall +
-                        t.GoodWithPeople +
-                        t.GoodWithOtherDogs +
-                        t.GoodWithCats +
-                        t.GoodWithOtherAnimals +
-                        t.GoodWithChildren) 
-                        / 60 * 100)
-                },
-                new TemperamentScore
-                {
-                    ScoreLabel = "Athletic",
-                    ScoreValue = Convert.ToInt32((decimal)(
-                        t.AthleticLevel +
-                        t.LikesExercise +
-                        t.BalanceStability)
-                        / 30 * 100)
-                },
-                new TemperamentScore
-                {
-                    ScoreLabel = "Training",
-                    ScoreValue =  Convert.ToInt32((decimal)(
-                        t.TrainingLevel +
-                        t.Trainability +
-                        t.Intelligence)
-                        / 30 * 100)
-                },
-                new TemperamentScore
-                {
-                    ScoreLabel = "Empathy",
-                    ScoreValue = Convert.ToInt32((decimal)(
-                        t.Empathetic +
-                        t.Intelligence)
-                        / 20 * 100)
-                },
-                new TemperamentScore
-                {
-                    ScoreLabel = "Intelligence",
-                    ScoreValue = Convert.ToInt32((decimal)t.Intelligence / 10 * 100)
-                },
-                new TemperamentScore
-                {
-                    ScoreLabel = "Aggression",
-                    ScoreValue = Convert.ToInt32((decimal)(
-                        t.AggressionLevel +
-                        t.Barking +
-                        t.PreyDrive)
-                        / 30 * 100)
-                },
-                new TemperamentScore
-                {
-                    ScoreLabel = "Anxiety",
-                    ScoreValue = Convert.ToInt32((decimal)(
-                        t.Anxiety +
-                        t.Fearful +
-                        t.IsAfraidFireworks)
-                        / 30 * 100)
-                },
-                new TemperamentScore
-                {
-                    ScoreLabel = "Instinct",
-                    ScoreValue = Convert.ToInt32((decimal)(
-                        t.PreyDrive +
-                        t.DistinguishThreatening +
-                        t.Protectiveness +
-                        t.SenseOfSmell)
-                        / 40 * 100)
-                },
-                new TemperamentScore
-                {                     
-                    ScoreLabel = "Confidence",
-                    // subtract score by 20% of t.anxiety if t.confidence is greater,
-                    // if 20% of t.anxiety is greater thescn subtract 20% of t.confidence from score
-                    ScoreValue = Convert.ToInt32(                        
-                        t.Confidence > (t.Anxiety * .2) ?
-                        (t.Confidence -  ((decimal)(t.Anxiety * .2))) * 10 :                     
-                        (t.Confidence - ((decimal)(t.Confidence * .2))) * 10)
-                },
-                new TemperamentScore
-                {
-                    ScoreLabel = "Stubbornness",
-                    ScoreValue = Convert.ToInt32((decimal)(
-                        t.Stubbornness +
-                        t.IsPickyEater)
-                        / 20 * 100)
-                },
-                new TemperamentScore
-                {
-                    ScoreLabel = "Shedding",
-                    ScoreValue = Convert.ToInt32((decimal)t.Shedding / 10 * 100)
-                },
-                new TemperamentScore
-                {
-                    ScoreLabel = "Smelliness",
-                    ScoreValue = Convert.ToInt32((decimal)t.SmellRating / 10 * 100)
-                }
-            };
-        }        
+        }                
     #endregion Intneral Methods
     }
 }

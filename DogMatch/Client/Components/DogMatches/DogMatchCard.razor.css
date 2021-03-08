@@ -1,0 +1,17 @@
+﻿.match-image {
+    width: auto;
+    height: auto;
+    max-height: 250px;
+    max-width: 200px;
+}
+
+.image-col {
+    width: 200px;
+}
+
+.match-row {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}

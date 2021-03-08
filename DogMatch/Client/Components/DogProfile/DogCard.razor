@@ -1,55 +1,86 @@
 ﻿@using DogMatch.Client.Services
+@using DogMatch.Client.Components.DogMatches
+
 @inject DogProfileState state
 
-<RadzenCard class="dog-profile-card">
-    <div class="row">
-        <div class="col-md-6">
-            <img src="@state.Profile.Dog?.ProfileImage" 
-                 class="profile-page-image" />
-            <br />
-            <div style="margin-top:20px">
-                <MatOverline>Name</MatOverline>
+<AuthorizeView>
+    <Authorized>
+        <RadzenCard class="dog-profile-card">
+            <div class="row">
+                <div class="col-md-6">
+                    <img src="@state.Profile.Dog?.ProfileImage"
+                         class="profile-page-image" />
+                    <br />
+                    @if (state.Profile.Dog?.Owner == context.User.Identity.Name)
+                    {
+                        // only show get matches btn to dog owner
+                        <div style="margin-top:10px">
+                            <MatThemeProvider Theme="MatchBtnTheme">
+                                <MatButton @onclick="() => Modal.Open()"
+                                           Class="btn btn-primary"
+                                           Unelevated="true">
+                                    Get Dog Matches
+                                </MatButton>
+                            </MatThemeProvider>
+                        </div>
+                    }
+                    <div style="margin-top:20px">
+                        <MatOverline>Name</MatOverline>
+                    </div>
+                    <MatSubtitle2>
+                        <b>@state.Profile.Dog?.Name</b>
+                    </MatSubtitle2>
+                    <div style="margin-top:20px">
+                        <MatOverline>Breed</MatOverline>
+                    </div>
+                    <MatSubtitle2>
+                        <b>@state.Profile.Dog?.Breed</b>
+                    </MatSubtitle2>
+                </div>
+                <div class="col-md-6">
+                    <div style="margin-top:20px">
+                        <MatOverline>Gender</MatOverline>
+                    </div>
+                    <MatSubtitle2>
+                        <b>@state.Profile.Dog?.Gender</b>
+                    </MatSubtitle2>
+                    <div style="margin-top:20px">
+                        <MatOverline>Weight</MatOverline>
+                    </div>
+                    <MatSubtitle2>
+                        <b>@state.Profile.Dog?.Weight lbs</b>
+                    </MatSubtitle2>
+                    <div style="margin-top:20px">
+                        <MatOverline>Birthday - Age</MatOverline>
+                    </div>
+                    <MatSubtitle2>
+                        <b>@state.Profile.Dog?.Birthday?.ToShortDateString() - @state.Profile.Dog?.Age</b>
+                    </MatSubtitle2>
+                    <div style="margin-top:20px">
+                        <MatOverline>Owner</MatOverline>
+                    </div>
+                    <MatSubtitle2>
+                        <b>@state.Profile.Dog?.Owner</b>
+                    </MatSubtitle2>
+                </div>
             </div>
-            <MatSubtitle2>
-                <b>@state.Profile.Dog?.Name</b>
-            </MatSubtitle2>
-            <div style="margin-top:20px">
-                <MatOverline>Breed</MatOverline>
-            </div>
-            <MatSubtitle2>
-                <b>@state.Profile.Dog?.Breed</b>
-            </MatSubtitle2>
-        </div>
-        <div class="col-md-6">
-            <div style="margin-top:20px">
-                <MatOverline>Gender</MatOverline>
-            </div>
-            <MatSubtitle2>
-                <b>@state.Profile.Dog?.Gender</b>
-            </MatSubtitle2>
-            <div style="margin-top:20px">
-                <MatOverline>Weight</MatOverline>
-            </div>
-            <MatSubtitle2>
-                <b>@state.Profile.Dog?.Weight lbs</b>
-            </MatSubtitle2>
-            <div style="margin-top:20px">
-                <MatOverline>Birthday - Age</MatOverline>
-            </div>
-            <MatSubtitle2>
-                <b>@state.Profile.Dog?.Birthday?.ToShortDateString() - @state.Profile.Dog?.Age</b>
-            </MatSubtitle2>
-            <div style="margin-top:20px">
-                <MatOverline>Owner</MatOverline>
-            </div>
-            <MatSubtitle2>
-                <b>@state.Profile.Dog?.Owner</b>
-            </MatSubtitle2>
-        </div>
-    </div>
-</RadzenCard>
+        </RadzenCard>
+        @if (state.Profile.Dog?.Owner == context.User.Identity.Name)
+        {
+            // don't render matches modal for non-owner
+            <DogMatchesModal @ref="Modal" DogId="state.Profile.Dog.Id" />
+        }
+    </Authorized>
+</AuthorizeView>
 
 @code {
+    public DogMatchesModal Modal { get; set; }
+
     protected override void OnInitialized() => state.OnChange += RefreshComponent;
     private void RefreshComponent() => StateHasChanged();
+
+    /// <summary>
+    /// Initialize new color scheme for Mat button
+    /// </summary>
+    MatTheme MatchBtnTheme = new MatTheme() { Primary = "#0d5aa7" };
 }

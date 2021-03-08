@@ -24,7 +24,10 @@ namespace DogMatch.Domain.Infrastructure
                 .ForMember(d => d.Name, cfg => cfg.MapFrom(src => src.Name))
                 .ForMember(d => d.Breed, cfg => cfg.MapFrom(src => src.Breed))
                 .ForMember(d => d.Birthday, cfg => cfg.MapFrom(src => src.Birthday))
-                .ForMember(d => d.Gender, cfg => cfg.MapFrom(src => src.Gender == "female" ? 'f' : src.Gender == "male" ? 'm' : ' '))
+                .ForMember(d => d.Gender, cfg => cfg.MapFrom(src => 
+                    src.Gender == "female" ? 'f' : 
+                    src.Gender == "male" ? 'm' : ' '
+                ))
                 .ForMember(d => d.Weight, cfg => cfg.MapFrom(src => src.Weight))  
                 .ForMember(d => d.Colors, cfg => cfg.Ignore())
                 .ForMember(d => d.Owner, cfg => cfg.Ignore()) // ignore temporarily
@@ -45,12 +48,43 @@ namespace DogMatch.Domain.Infrastructure
                     opt.PreCondition(src => (src.Birthday != null));
                     opt.MapFrom(src => GetAge(src.Birthday));
                 })
-                .ForMember(d => d.Gender, cfg => cfg.MapFrom(src => src.Gender == 'f' ? "female" : src.Gender == 'm' ? "male" : "unknown"))
+                .ForMember(d => d.Gender, cfg => cfg.MapFrom(src => 
+                    src.Gender == 'f' ? "female" : 
+                    src.Gender == 'm' ? "male" : "unknown"
+                ))
                 .ForMember(d => d.Weight, cfg => cfg.MapFrom(src => src.Weight))
-                .ForMember(d => d.ProfileImage, cfg => cfg.MapFrom(src => src.DogProfileImage != null ? "/ProfileImage/" + src.DogProfileImage.Filename : "dogmatch_paw.png"))
+                .ForMember(d => d.ProfileImage, cfg => cfg.MapFrom(src => 
+                    src.DogProfileImage != null ? 
+                    "/ProfileImage/" + src.DogProfileImage.Filename : 
+                    "dogmatch_paw.png"
+                ))
                 .ForMember(d => d.Colors, cfg => cfg.MapFrom(src => src.Colors.Select(c => c.ColorString).ToList()))
                 .ForMember(d => d.OwnerId, cfg => cfg.MapFrom(src => src.Owner.Id))
                 .ForMember(d => d.Owner, cfg => cfg.MapFrom(src => src.Owner.UserName)); // using username for owner until collecting first/last name of user
+
+            CreateMap<Dogs, Match>()
+                .ForMember(d => d.DogId, cfg => cfg.MapFrom(src => src.Id))
+                .ForMember(d => d.DogName, cfg => cfg.MapFrom(src => src.Name))
+                .ForMember(d => d.Breed, opt => {
+                    opt.PreCondition(src => (src.Breed != null));
+                    opt.MapFrom(src => src.Breed);
+                })
+                .ForMember(d => d.Age, opt => {
+                    opt.PreCondition(src => (src.Birthday != null));
+                    opt.MapFrom(src => GetAge(src.Birthday));
+                })
+                .ForMember(d => d.Gender, cfg => cfg.MapFrom(src => 
+                    src.Gender == 'f' ? "female" : 
+                    src.Gender == 'm' ? "male" : "unknown"
+                ))
+                .ForMember(d => d.Weight, cfg => cfg.MapFrom(src => src.Weight))
+                .ForMember(d => d.ProfileImage, cfg => cfg.MapFrom(src => 
+                    src.DogProfileImage != null ? 
+                    "/ProfileImage/" + src.DogProfileImage.Filename : 
+                    "dogmatch_paw.png"
+                ))                
+                .ForMember(d => d.OwnerId, cfg => cfg.MapFrom(src => src.Owner.Id))
+                .ForMember(d => d.OwnerName, cfg => cfg.MapFrom(src => src.Owner.UserName));
 
             CreateMap<string, Color>()
                 .ForMember(d => d.ColorString, cfg => cfg.MapFrom(src => src))

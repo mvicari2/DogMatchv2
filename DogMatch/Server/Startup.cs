@@ -70,6 +70,7 @@ namespace DogMatch.Server
             services.AddScoped<IBiographyService, BiographyService>();
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IDogProfileService, DogProfileService>();
+            services.AddScoped<IMatchesService, MatchesService>();
 
             // scoped repositories
             services.AddScoped<IDogRepository, DogRepository>();            

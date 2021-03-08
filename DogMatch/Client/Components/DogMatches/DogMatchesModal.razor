@@ -1,0 +1,116 @@
+﻿@using DogMatch.Client.Services
+@inject DogMatchesState state
+
+<div class="modal @modalClass"
+     tabindex="-1"
+     role="dialog"
+     style="display:@modalDisplay;">
+    <div class="modal-dialog" role="document" style="max-width:90%!important;">
+        <div class="modal-content">
+            <div class="modal-header" style="height:60px;">
+                <MatH5>
+                    Top Matches for @state.DogMatch?.DogName
+                </MatH5>
+                <MatIconButton Class="float-right material-icon-btn"
+                               OnClick="@Close"
+                               Icon="close" />
+            </div>
+            <div class="modal-body matches-body">
+                @if (state.LoadingMatches)
+                {
+                    <div class="col-lg-12">
+                        <Flow Size="200px" Color="#003366" Center="true" />
+                    </div>
+                    <MatOverline>Finding Matches.... Please Wait.....</MatOverline>
+                }
+                else
+                {
+                    if (state.DogMatch != null)
+                    {
+                        if (state.DogMatch.CompletedProfile)
+                        {
+                            if (state.DogMatch.Matches.Count() > 0)
+                            {
+                                // dog has completed profile, display matches
+                                <AuthorizeView>
+                                    <Authorized>
+                                        @for (int i = 0; i < state.DogMatch?.Matches.Count(); i++)
+                                        {
+                                            int rank = i + 1;
+                                            <DogMatchCard Match="@state.DogMatch.Matches[i]"
+                                                          Index="@rank" />
+                                        }
+                                        <br />
+                                    </Authorized>
+                                </AuthorizeView>
+                            }
+                            else
+                            {
+                                <MatOverline>
+                                    No Matches Found <br />
+                                    Please ensure you have completed your dog's profile
+                                    and try again.
+                                </MatOverline>
+                            }
+                        }
+                        else
+                        {
+                            //dog has incomplete profile, cannot get matches
+                            <IncompleteProfileCard Dog="@state.DogMatch" />
+                        }
+                    }
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+@if (showBackdrop)
+{
+    <div class="modal-backdrop fade show" />
+}
+
+@code {
+    #region Properties / Variables
+    [Parameter]
+    public int DogId { get; set; }
+    private string modalDisplay = "none;";
+    private string modalClass = "";
+    private bool showBackdrop = false;
+    #endregion Properties / Variables
+
+    #region Methods
+    protected override void OnInitialized()
+    {
+        state.OnChange += RefreshComponent;
+        state.CloseModal += Close;
+    }
+    private void RefreshComponent() => StateHasChanged();
+
+    /// <summary>
+    /// Opens dog matches modal, call state get matches for current dog
+    /// </summary>
+    public async Task Open()
+    {
+        state.LoadingMatches = true;
+        modalDisplay = "block;";
+        modalClass = "Show";
+        showBackdrop = true;
+        StateHasChanged();
+
+        await state.GetMatches(DogId);
+    }
+
+    /// <summary>
+    /// Closes album image modal
+    /// </summary>
+    public void Close()
+    {
+        modalDisplay = "none";
+        modalClass = "";
+        showBackdrop = false;
+        StateHasChanged();
+        state.DogMatch = null;
+    }
+    #endregion Methods
+}

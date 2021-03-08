@@ -69,6 +69,9 @@ namespace DogMatch.Client.Services
                 case NotificationType.GeneralError:
                     GeneralError(argStr);
                     break;
+                case NotificationType.MatchesUnauthorized:
+                    MatchesUnauthorized();
+                    break;
             }
         }
         #endregion Public Methods
@@ -279,6 +282,18 @@ namespace DogMatch.Client.Services
                     "Error!",
                     $"{message}",
                     7000
+                ));
+
+        /// <summary>
+        /// Creates new <see cref="NotificationMessage"/> for unauthorized to get matches for dog,
+        /// and calls <see cref="NotificationService"/> Notify.
+        /// </summary>
+        private void MatchesUnauthorized() =>
+            _service.Notify(
+                GetErrorMessage(
+                    "Error!",
+                    $"You are not authorized to get dog matches for this dog.",
+                    8500
                 ));
         #endregion Notify Methods (Internal)
 

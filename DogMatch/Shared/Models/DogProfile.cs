@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using DogMatch.Shared.Globals;
+using System.Collections.Generic;
 
 namespace DogMatch.Shared.Models
 {
@@ -16,5 +17,6 @@ namespace DogMatch.Shared.Models
     {
         public string ScoreLabel { get; set; }
         public int ScoreValue { get; set; }
+        public TemperamentScoreTypes ScoreType { get; set; }
     }
 }

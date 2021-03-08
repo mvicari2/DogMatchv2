@@ -17,7 +17,8 @@
         DogAlbumError = 13,
         DogAlbumExcessImages = 14,
         DogNotFound = 15,
-        GeneralError = 16
+        GeneralError = 16,
+        MatchesUnauthorized = 17
     }
 
     public enum TemperamentDirection
@@ -68,5 +69,22 @@
     {
         AllDogs = 1,
         Owners = 2
+    }
+
+    public enum TemperamentScoreTypes
+    {
+        Playfullness = 1,
+        Friendliness = 2,
+        Athletic = 3,
+        Training = 4,
+        Empathy = 5,
+        Intelligence = 6,
+        Aggression = 7,
+        Anxiety = 8,
+        Instinct = 9,
+        Confidence = 10,
+        Stubbornness = 11,
+        Shedding = 12,
+        Smelliness = 13
     }
 }

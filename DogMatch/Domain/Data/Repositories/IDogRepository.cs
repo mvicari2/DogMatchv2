@@ -30,6 +30,15 @@ namespace DogMatch.Domain.Data.Repositories
         Task<IEnumerable<Dogs>> FindDogsAndFilter(DogsFilter filter, string ownerId);
 
         /// <summary>
+        /// Finds all active dogs where the temperament profile ratings have been completed,
+        /// the basic details are completed, and are not owned by request user or the request
+        /// dog. Each dog includes dog owner, profile image, and temperament profile
+        /// </summary>
+        /// <param name="id">Dog Id <see cref="int"/> for current dog to exlcude from match results</param>
+        /// <returns><see cref="IEnumerable{Dogs}"/> all active dogs list where temperament ratings are completed</returns>
+        Task<IEnumerable<Dogs>> FindAllActiveMatchableDogs(int id, string ownerId);
+
+        /// <summary>
         /// Finds single <see cref="Dogs"/> entity and includes all active, non-deleted Dog Album Images (<see cref="DogImages"/>)
         /// </summary>
         /// <param name="id">Dog Id <see cref="int"/></param>

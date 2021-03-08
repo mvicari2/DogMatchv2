@@ -34,6 +34,7 @@ namespace DogMatch.Client
             /// "Blazor WebAssembly apps don't currently have a concept of DI scopes. 
             /// Scoped-registered services behave like Singleton services" 
             builder.Services.AddScoped<DogState>();
+            builder.Services.AddScoped<DogMatchesState>();
             builder.Services.AddScoped<DogProfileState>();
             builder.Services.AddScoped<TemperamentState>();
             builder.Services.AddScoped<BiographyState>();

@@ -1,0 +1,80 @@
+﻿@using DogMatch.Shared.Models
+@using DogMatch.Client.Services
+
+@inject DogMatchesState state
+
+<RadzenCard class="dog-match-card">
+    <div class="row match-row">
+        <div class="col image-col">
+            <img src="@Match.ProfileImage" class="match-image" />
+        </div>
+
+        <div class="col">
+            <MatH6>
+                @string.Format("{0}. {1}", Index, Match.DogName)
+                <br />
+                <MatOverline>
+                    Breed:
+                </MatOverline>
+                <MatSubtitle2>
+                    @Match.Breed
+                </MatSubtitle2>
+            </MatH6>
+        </div>
+
+        <div class="col center-align">
+            <MatOverline>
+                Age:
+            </MatOverline>
+            <MatSubtitle2>
+                @Match.Age
+            </MatSubtitle2>
+            <br />
+            <MatOverline>
+                Gender:
+            </MatOverline>
+            <MatSubtitle2>
+                @Match.Gender
+            </MatSubtitle2>
+        </div>
+
+        <div class="col center-align">
+            <MatOverline>
+                Weight:
+            </MatOverline>
+            <MatSubtitle2>
+                @Match.Weight lbs.
+            </MatSubtitle2>
+            <br />
+            <MatOverline>
+                Owner:
+            </MatOverline>
+            <MatSubtitle2>
+                @Match.OwnerName
+            </MatSubtitle2>
+        </div>
+
+        <div class="col center-align">
+            <MatThemeProvider Theme="@ViewProfileBtnTheme">
+                <MatButton @onclick="@(e => state.NavigateAndCloseModal(Match.DogId))"
+                           Class="btn btn-primary"
+                           style="width: 100%"
+                           Unelevated="true">
+                    View Profile
+                </MatButton>
+            </MatThemeProvider>
+        </div>
+    </div>
+</RadzenCard>
+
+@code {
+    [Parameter]
+    public Match Match { get; set; }
+    [Parameter]
+    public int Index { get; set; }
+
+    /// <summary>
+    /// Initialize new primary btn color for MatButton
+    /// </summary>
+    MatTheme ViewProfileBtnTheme = new MatTheme() { Primary = "#275381" };
+}

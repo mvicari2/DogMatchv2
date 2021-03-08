@@ -41,7 +41,7 @@ namespace DogMatch.Domain.Data.Repositories
             .Include(d => d.Owner)
             .Include(d => d.DogProfileImage)
             .Include(d => d.Colors)
-            .SingleOrDefaultAsync(d => d.Id == id && d.IsDeleted != true);
+            .SingleOrDefaultAsync(d => d.Id == id && !(d.IsDeleted ?? false));
 
         /// <summary>
         /// Find single <see cref="Dogs"/> entity with navigation properties for Owner, Profile Image, Colors, Biography, Temperament and Album Images included
@@ -58,7 +58,7 @@ namespace DogMatch.Domain.Data.Repositories
                 .Include(d => d.Temperament)
                 .Include(d => d.AlbumImages
                     .Where(a => !(a.IsDeleted ?? false) && !(a.IsProfileImage ?? false)))
-                .SingleOrDefaultAsync(d => d.Id == id && d.IsDeleted != true);
+                .SingleOrDefaultAsync(d => d.Id == id && !(d.IsDeleted ?? false));
 
         /// <summary>
         /// Find dogs, filter and search using <see cref="DogsFilter"/> object property values
@@ -122,6 +122,38 @@ namespace DogMatch.Domain.Data.Repositories
 
             return results;
         }
+
+        /// <summary>
+        /// Finds all active dogs where the temperament profile ratings have been completed,
+        /// the basic details are completed, and are not owned by request user or the request
+        /// dog. Each dog includes dog owner, profile image, and temperament profile
+        /// </summary>
+        /// <param name="id">Dog Id <see cref="int"/> for current dog to exlcude from match results</param>
+        /// <returns><see cref="IEnumerable{Dogs}"/> all active dogs list where temperament ratings are completed</returns>
+        public async Task<IEnumerable<Dogs>> FindAllActiveMatchableDogs(int id, string ownerId)
+        {
+            IEnumerable<Dogs> dogs = await _dbSet
+                .AsNoTracking()
+                .Where(d => 
+                    !(d.IsDeleted ?? false) && 
+                    d.Id != id && // exclude current dog from results
+                    d.Owner.Id != ownerId && // exclude dogs owned by request user
+                    d.Weight != null && 
+                    !string.IsNullOrWhiteSpace(d.Breed) &&
+                    d.Gender.HasValue)
+                .Include(d => d.Owner)
+                .Include(d => d.DogProfileImage)
+                .Include(d => d.Temperament)
+                .ToListAsync();
+
+            List<Dogs> dogList = new List<Dogs>();
+
+            foreach (var dog in dogs)
+                if (_temperamentRepository.HasCompletedTemperament(dog.Temperament))
+                    dogList.Add(dog);
+
+            return dogList;
+        }            
 
         /// <summary>
         /// Finds single <see cref="Dogs"/> entity and includes all active, non-deleted Dog Album Images (<see cref="DogImages"/>)

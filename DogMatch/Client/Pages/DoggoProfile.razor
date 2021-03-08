@@ -98,6 +98,12 @@
         await state.GetDoggo(Id);
     }
 
+    protected override async Task OnParametersSetAsync()
+    {
+        // get new dog when Id parameter changes
+        await state.GetDoggo(Id);
+    }
+
     private void RefreshComponent() => StateHasChanged();
 
     /// <summary>
