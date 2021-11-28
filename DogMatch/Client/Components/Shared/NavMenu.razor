@@ -1,6 +1,7 @@
 ﻿@using Microsoft.AspNetCore.Components.Authorization
 @using Microsoft.AspNetCore.Components.WebAssembly.Authentication
 @using DogMatch.Client.Services
+@using DogMatch.Client.Components.RandomDog
 
 @inject NavigationService navigate
 @inject SignOutSessionStateManager SignOutManager
@@ -58,6 +59,17 @@
                                 <MatIcon Icon="widgets" Class="icon-align" />
                                 <span class="nav-text-align">
                                     &nbsp; Owner Portal
+                                </span>
+                            </NavLink>
+                        </li>
+                        <li class="nav-item px-3">
+                            <NavLink class="nav-link"
+                                     @onclick="() => RandomDogModal.Open()"
+                                     Match="NavLinkMatch.Prefix"
+                                     href="#">
+                                <MatIcon Icon="slideshow" Class="icon-align" />
+                                <span class="nav-text-align">
+                                    &nbsp; Random
                                 </span>
                             </NavLink>
                         </li>
@@ -193,9 +205,11 @@
             }
         </div>
     </div>
+    <RandomDogModal @ref="RandomDogModal" />
 </nav>
 
 @code {
+    public RandomDogModal RandomDogModal { get; set; }
     private bool expandedState = false;
     private string profileMenuStyle = null;
     bool collapseNavMenu = true;

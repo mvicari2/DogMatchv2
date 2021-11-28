@@ -1,0 +1,29 @@
+﻿.rand-dog-modal-header {
+    height: 60px;
+}
+
+.rand-dog-modal-dialog {
+    max-width: 90% !important;
+}
+
+.rand-dog-row {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.rand-dog-data-col {
+    width: 20%;
+}
+
+.rand-dog-image-col {
+    width: 80%;
+}
+
+.rand-dog-image {
+    width: auto;
+    height: auto;
+    max-height: 500px;
+    max-width: 500px;
+}

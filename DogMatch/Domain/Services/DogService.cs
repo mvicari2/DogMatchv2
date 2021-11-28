@@ -162,7 +162,7 @@ namespace DogMatch.Domain.Services
             // map new colors to Color entities
             if (colors.Count() > 0)
             {
-                List<Color> colorEntities = new List<Color>();
+                List<Color> colorEntities = new();
 
                 colorEntities = _mapper.Map<IEnumerable<string>, List<Color>>(colors, opt =>
                     opt.AfterMap((src, dest) => {
