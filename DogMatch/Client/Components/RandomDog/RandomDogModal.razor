@@ -1,0 +1,149 @@
+﻿@using DogMatch.Client.Services
+@inject RandomDogState state
+
+<div class="modal @modalClass"
+     tabindex="-1"
+     role="dialog"
+     style="display:@modalDisplay;">
+    <div class="modal-dialog rand-dog-modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header rand-dog-modal-header">
+
+                @if (!state.Loading &&
+                state.RandomDog != null &&
+                state.RandomDog.DogFound)
+                {
+                    <MatH5>
+                        Suprise! Meet @state.RandomDog.Name
+                    </MatH5>
+                }
+                else
+                {
+                    <MatH5>
+                        Finding a random dog...
+                    </MatH5>
+                }
+
+                @if (!state.Loading)
+                {
+                    <MatThemeProvider Theme="RandomDogBtnTheme">
+                        <MatButton @onclick="() => state.GetRandomDog()"
+                               Class="btn btn-primary"
+                               Unelevated="true">
+                            Find Another Dog!
+                        </MatButton>
+                    </MatThemeProvider>
+                }
+
+                <div style="margin-top:-20px;">
+                    <MatIconButton Class="float-right material-icon-btn"
+                               OnClick="@Close"
+                               Icon="close" />
+                </div>
+                
+            </div>
+            <div class="modal-body">
+                @if (state.Loading)
+                {
+                    <div class="col-lg-12">
+                        <Flow Size="200px" Color="#003366" Center="true" />
+                    </div>
+                    <div class="center-align">
+                        <MatOverline>Finding the perfect dog, please wait....</MatOverline>
+                    </div>
+                }
+                else
+                {
+                    if (state.RandomDog != null && state.RandomDog.DogFound)
+                    {
+                        <div class="row rand-dog-row">
+                            <div class="col rand-dog-image-col">
+                                <img src="@state.RandomDog.ImageUrl" class="rand-dog-image" />
+                            </div>
+
+                            <div class="col rand-dog-data-col">
+                                <MatH6>
+                                    <MatOverline>
+                                        Name:
+                                    </MatOverline>
+                                    <MatSubtitle2>
+                                        @state.RandomDog.Name
+                                    </MatSubtitle2>
+                                    <MatOverline>
+                                        Breed:
+                                    </MatOverline>
+                                    <MatSubtitle2>
+                                        @state.RandomDog.Breed
+                                    </MatSubtitle2>
+                                    <MatOverline>
+                                        Age:
+                                    </MatOverline>
+                                    <MatSubtitle2>
+                                        @($"{@state.RandomDog.Age} years old")
+                                    </MatSubtitle2>
+                                </MatH6>
+                            </div>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="center-align">
+                            <h4>Sorry, there was a problem finding a random dog.</h4>
+                        </div>
+                    }
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+@if (showBackdrop)
+{
+    <div class="modal-backdrop fade show" />
+}
+
+@code {
+    #region Properties / Variables
+    private string modalDisplay = "none;";
+    private string modalClass = "";
+    private bool showBackdrop = false;
+    #endregion Properties / Variables
+
+    #region Methods
+    protected override void OnInitialized() => state.OnChange += RefreshComponent;
+    private void RefreshComponent() => StateHasChanged();
+
+    /// <summary>
+    /// Opens dog matches modal, call state get matches for current dog
+    /// </summary>
+    public async Task Open()
+    {
+
+        modalDisplay = "block;";
+        modalClass = "Show";
+        showBackdrop = true;
+        StateHasChanged();
+
+        await state.GetRandomDog();
+    }
+
+    /// <summary>
+    /// Closes album image modal
+    /// </summary>
+    public void Close()
+    {
+        modalDisplay = "none";
+        modalClass = "";
+        showBackdrop = false;
+        StateHasChanged();
+        //state.RandomDog.ImageUrl = null;
+    }
+    #endregion Methods
+
+    #region Theming
+    /// <summary>
+    /// Initialize new color scheme for Mat button
+    /// </summary>
+    MatTheme RandomDogBtnTheme = new MatTheme() { Primary = "#0d5aa7" };
+    #endregion Theming
+}

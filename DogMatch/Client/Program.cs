@@ -42,6 +42,7 @@ namespace DogMatch.Client
             builder.Services.AddScoped<NotificationService>();
             builder.Services.AddScoped<NotificationMsgService>();
             builder.Services.AddScoped<NavigationService>();
+            builder.Services.AddScoped<RandomDogState>();
 
             await builder.Build().RunAsync();
         }

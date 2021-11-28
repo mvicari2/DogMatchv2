@@ -11,11 +11,11 @@ The unique dog temperament and personality matching can find other dogs in your 
 1. Client: Blazor WebAssembly Client SPA (WASM Progressive web Application)
 2. Domain: Business Logic Layer (BLL Services), Data Repository Layer (uses Entity Framework Core 5.x)
 3. Server: WebApi Controllers, Identity Server, etc.
-4. Shared: Globals and Global Models and DTOs
+4. Shared: Global enums, models, and DTOs
 
 #### The original DogMatch React/Node.js/Express/MongoDB (MERN) application has been completely rewritten, redesigned, and enhanced using Blazor WASM, .Net Core 5, and SQL Server.
 
-# Compiling Application
+## Compiling Application
 ### Configure SQL server database (uses Entity Framework Core code first approach)
   1. Create new SQL Server database, named 'DogMatch' and update appsettings.json file in DogMatch.Server project with SQL credentials (and any changes to SQL configuration), 
   SQL credentials must have data read and write permissions (to write from EF Core).
@@ -27,7 +27,14 @@ The unique dog temperament and personality matching can find other dogs in your 
   1. In Visual Studio, set DogMatch.Server as startup project and run IIS, and attach to your favorite browser. Create new owner accounts, new dogs, and start finding the best matches for your dog!
 
 ## Version/Master History
-### v0.6.1 Created DogMatch README file (3/11/2020):
+### v0.6.2 Random Dog Feature Update (11/28/2021):
+  * Added new Random Dog feature, which generates a random dog (in a client modal from a nav menu button) that includes an image of the generated dog with the correct breed, age and name of the dog:  
+	* New Random Dog Domain Service which calls open source public APIs that utilize the Stanford dogs dataset to get dog image and breed information and generate random name.
+	* New random dog models and AutoMapper config mappings.
+	* New random dog WebApi controller and endpoint.
+    * Client app: new RandomDogState service to manage client state and call WebApi for random dog modal. New client modal to display random dog data and image, and request another dog. New Random button in nav bar to open random dog modal from anywhere in client app.
+  * New DomainExtensions class with service and data layer extension methods.
+### v0.6.1 Created DogMatch README file (3/11/2021):
   * Includes:
     * Information on setting up SQL database for DogMatchv2 project
     * Configuring and Debugging project
